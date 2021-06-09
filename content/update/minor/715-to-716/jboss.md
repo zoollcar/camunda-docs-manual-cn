@@ -87,6 +87,17 @@ Additionally, also replace the following dependent modules:
 * `com/fasterxml/jackson/core/jackson-databind`
 * `com/jayway/jsonpath/json-path`
 
+## GraalVM JavaScript
+
+Add the following modules from the folder `$APP_SERVER_DISTRIBUTION/modules/` to the folder `$APP_SERVER_HOME/modules/`, if present:
+
+* `org/graalvm/js/js`
+* `org/graalvm/js/js-scriptengine`
+* `org/graalvm/regex/regex`
+* `org/graalvm/sdk/graal-sdk`
+* `org/graalvm/truffle/truffle-api`
+* `com/ibm/icu/icu4j`
+
 # 3. Update Camunda Web Applications
 
 ## Update REST API

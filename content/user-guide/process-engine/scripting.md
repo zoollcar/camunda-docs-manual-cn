@@ -16,8 +16,9 @@ test the integration for Groovy, JavaScript, JRuby and Jython. To use a scriptin
 it is necessary to add the corresponding jar to the classpath.
 
 {{< note title="" class="info" >}}
-  **JavaScript** is part of the Java Runtime (JRE) and thus available out of the box.
-
+  **JavaScript** is part of the Java Runtime (JRE) with the **Nashorn** engine until Java 14 and thus only there available out of the box.
+  We include **GraalVM JavaScript** in the pre-packaged Camunda distributions as a replacement regardless of the JRE version. JavaScript code executes on GraalVM JavaScript with preference if this engine is available.
+  
   We include **Groovy** in the pre-packaged Camunda distributions.
 {{< /note >}}
 
@@ -311,6 +312,57 @@ In case the Script Engine module should be installed globally and JBoss is used,
     </dependencies>
   </deployment>
 </jboss-deployment-structure>
+```
+
+# Configure Script Engine
+
+You can configure the Script Engines used by the process engine to your needs by providing an implementation of the `org.camunda.bpm.engine.impl.scripting.engine.ScriptEngineResolver` interface. Add your custom provider to the engine configuration with the `#setScriptEngineResolver(ScriptEngineResolver)` method.
+
+You can inherit from the `org.camunda.bpm.engine.impl.scripting.engine.DefaultScriptEngineResolver` for starters in case configuring an existing Script Engine instance is sufficient for you. By overriding the `#configureScriptEngines(String, ScriptEngine)` method of the `DefaultScriptEngineResolver`, you can change settings on the Script Engine instance provided to that method as shown in the following example:
+
+```java
+public class CustomScriptEngineResolver extends DefaultScriptEngineResolver {
+
+  public CustomScriptEngineResolver(ScriptEngineManager scriptEngineManager) {
+    super(scriptEngineManager);
+  }
+
+  protected void configureScriptEngines(String language, ScriptEngine scriptEngine) {
+    super.configureScriptEngines(language, scriptEngine);
+    if (ScriptingEngines.GROOVY_SCRIPTING_LANGUAGE.equals(language)) {
+      // make sure Groovy compiled scripts only hold weak references to java methods
+      scriptEngine.getContext().setAttribute("#jsr223.groovy.engine.keep.globals", "weak", ScriptContext.ENGINE_SCOPE);
+    }
+  }
+}
+```
+
+If you need more flexibility in configuring a Script Engine, you can override a method further up the chain in the Script Engine creation or provide your own plain implementation of the interface.
+Have a look at the following example that provides a custom **GraalVM JavaScript** instance with Nashorn Compatibility Mode enabled:
+
+```java
+public class CustomScriptEngineResolver extends DefaultScriptEngineResolver {
+
+  public CustomScriptEngineResolver(ScriptEngineManager scriptEngineManager) {
+    super(scriptEngineManager);
+  }
+
+  @Override
+  protected void configureGraalJsScriptEngine(ScriptEngine scriptEngine) {
+    // do nothing
+  }
+
+  @Override
+  protected ScriptEngine getJavaScriptScriptEngine(String language) {
+    return com.oracle.truffle.js.scriptengine.GraalJSScriptEngine.create(null,
+        org.graalvm.polyglot.Context.newBuilder("js")
+        // make sure GraalVM JS can provide access to the host and can lookup classes
+        .allowHostClassLookup(s -> true)
+        // enable Nashorn Compatibility Mode
+        .allowExperimentalOptions(true)
+        .option("js.nashorn-compat", "true"));
+  }
+}
 ```
 
 
