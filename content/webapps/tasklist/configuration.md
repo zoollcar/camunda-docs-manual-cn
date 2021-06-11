@@ -165,6 +165,21 @@ export default {
 
 **Note:** This does only affect the Tasklist login page. For other webapps, you need to adjust the corresponding config file as well.
 
+# Assign Process Instance Id to Task Comments
+
+By default, only the id of a task is assigned when creating a Task Comment with Tasklist. When you 
+want to query the created Task Comments later on by process instance id, this is impossible. When 
+you set the flag `assignProcessInstanceIdToTaskComment` to `true`, Tasklist assigns both the task id 
+and the process instance id to newly created Task Comments. This allows you to query Task Comments by 
+process instance id and by task id.
+
+```javascript
+export default {
+  // …
+  assignProcessInstanceIdToTaskComment: true
+}
+```
+
 # Advanced Styles Customization
 
 In addition to the basic `user-styles.css` file, you can edit the source style- and layout files
