@@ -1,6 +1,6 @@
 ---
 
-title: "Examples"
+title: "案例"
 weight: 60
 layout: "single"
 

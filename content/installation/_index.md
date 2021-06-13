@@ -1,11 +1,11 @@
 ---
 
-title: "Install Camunda Platform"
+title: "安装 Camunda 平台"
 weight: 40
 
 menu:
   main:
-    name: "Installation"
+    name: "安装"
     identifier: "installation-guide"
     
 ---
