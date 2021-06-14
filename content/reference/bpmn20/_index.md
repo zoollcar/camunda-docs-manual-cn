@@ -1,6 +1,6 @@
 ---
 
-title: 'BPMN 2.0 Implementation Reference'
+title: 'BPMN 2.0 实施参考'
 weight: 20
 layout: "single"
 
@@ -12,24 +12,24 @@ menu:
 
 ---
 
-This page gives you an overview of the BPMN 2.0 elements and the current coverage of the process engine. 
+此页面让您概述了BPMN 2.0元素和流程引擎的当前实现范围。
 
-{{< note title="BPMN - Business Process Model and Notation" >}}
-If you are unfamiliar with BPMN 2.0, you might want to check out the
-<a href="http://camunda.org/bpmn/tutorial.html">BPMN Tutorial</a> first.
+{{< note title="BPMN - 业务流程模型和符号" >}}
+如果您不熟悉BPMN 2.0，你可能想先看看
+<a href="http://camunda.org/bpmn/tutorial.html">BPMN教程</a>。
 {{< /note >}}
 
-# Coverage
+# 实现范围
 
-The elements marked in <span class="label label-warning label-implemented">orange</span> are supported.
+标注为 <span class="label label-warning label-implemented">橙子</span> 的部分被实现了.
 
-## Symbols
+## 符号
 
 <div class="bpmn-symbols">
 
   <div class="row">
     <div class="col-md-12">
-      <h3>Participants</h3>
+      <h3>参与者</h3>
       <div style="position: relative">
         <div class="bpmn-symbol-container implemented">
           <svg height="90" version="1.1" width="130" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +52,7 @@ The elements marked in <span class="label label-warning label-implemented">orang
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h3>Subprocesses</h3>
+      <h3>子过程</h3>
       <div class="bpmn-symbol-container implemented">
         <svg height="90" version="1.1" width="110" xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; position: relative; left: -0.375px;">
           <rect x="5" y="5" width="100" height="80" r="5" rx="5" ry="5" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" style="stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 1;"></rect>
@@ -111,7 +111,7 @@ The elements marked in <span class="label label-warning label-implemented">orang
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h3>Tasks</h3>
+      <h3>任务</h3>
       <div class="bpmn-symbol-container implemented">
         <svg height="90" version="1.1" width="110" xmlns="http://www.w3.org/2000/svg">
           <rect x="5" y="5" width="100" height="80" r="5" rx="5" ry="5" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" style="stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 1;"></rect>
@@ -229,7 +229,7 @@ The elements marked in <span class="label label-warning label-implemented">orang
   </div>
   <div class="row">
     <div class="col-md-6">
-      <h3>Gateways</h3>
+      <h3>Gateways（网关）</h3>
       <div class="bpmn-symbol-container implemented">
         <svg height="60" version="1.1" width="60" xmlns="http://www.w3.org/2000/svg">
           <path fill="#ffffff" stroke="#333333" d="M5,25L25,5L45,25L25,45L5,25" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" style="stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 1;"></path>
@@ -293,7 +293,7 @@ The elements marked in <span class="label label-warning label-implemented">orang
       </div>
     </div>
     <div class="col-md-3">
-      <h3>Data</h3>
+      <h3>数据</h3>
       <div class="bpmn-symbol-container">
         <svg height="100" version="1.1" width="60" xmlns="http://www.w3.org/2000/svg">
           <path fill="none" stroke="#333333" d="M5,5L45,5L55,15L55,65L5,65L5,5M45,5L45,15L55,15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" style="stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 1;"></path>
@@ -314,7 +314,7 @@ The elements marked in <span class="label label-warning label-implemented">orang
       </div>
     </div>
     <div class="col-md-3">
-      <h3>Artifacts</h3>
+      <h3>注释</h3>
       <div class="bpmn-symbol-container">
         <svg height="110" version="1.1" width="70" xmlns="http://www.w3.org/2000/svg">
           <path fill="none" stroke="#333333" d="M15,5L5,5L5,65L15,65" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" style="stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 1;"></path>
@@ -337,14 +337,15 @@ The elements marked in <span class="label label-warning label-implemented">orang
   </div>
 </div>
 
-## Events
+## Events（活动）
 
-In BPMN there are start events, intermediate events and end events. These three event types can be catching events or throwing events. Intermediate events can be used as boundary events on tasks, in which case they can be interrupting or non-interrupting. This gives you a lot of flexibility to use events in your processes.
+在BPMN中，有开始事件，中间事件和结束事件。这三种事件类型都可以捕捉事件或抛出事件。中间事件可以用作任务上的里程碑事件，在这种情况下，它们可以是中断或非中断的。在您的进程中使用事件可以为您提供了许多灵活性。
 
-{{< note title="Understanding BPMN Events" >}}
-To help understand the principle behavior of events in BPMN, we recommend to check the
-[Events: Basic Concepts](http://camunda.org/bpmn/reference.html#events-basic-concepts)
-chapter of the [BPMN Modeling Reference](http://camunda.org/bpmn/reference.html).
+{{< note title="了解BPMN事件" >}}
+为了帮助了解BPMN中活动的原理行为，我们建议查看
+[BPMN建模参考](http://camunda.org/bpmn/reference.html) 的
+[事件：基本概念](http://camunda.org/bpmn/reference.html#events-basic-concepts)
+章节。
 {{< /note >}}
 
 <table class="table table-responsive table-bordered bpmn-events">

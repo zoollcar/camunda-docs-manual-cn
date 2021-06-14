@@ -1,6 +1,6 @@
 ---
 
-title: 'Send Task'
+title: 'Send Task （发送消息任务）'
 weight: 20
 
 menu:
@@ -11,9 +11,9 @@ menu:
 
 ---
 
-A Send Task is used to send a message. In Camunda this is done by calling Java code.
+发送任务用于发送消息。在Camunda，这是通过调用Java代码来完成的。
 
-The Send Task has the same behavior as a Service Task.
+发送任务具有与服务任务相同的行为。
 
 {{< bpmn-symbol type="send-task" >}}
 
@@ -26,7 +26,7 @@ The Send Task has the same behavior as a Service Task.
 
 <table class="table table-striped">
   <tr>
-    <th>Attributes</th>
+    <th>属性</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncbefore" >}}">camunda:asyncBefore</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncafter" >}}">camunda:asyncAfter</a>,
@@ -42,7 +42,7 @@ The Send Task has the same behavior as a Service Task.
     </td>
   </tr>
   <tr>
-    <th>Extension Elements</th>
+    <th>扩展元素</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#failedjobretrytimecycle" >}}">camunda:failedJobRetryTimeCycle</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#field" >}}">camunda:field</a>,
@@ -51,7 +51,7 @@ The Send Task has the same behavior as a Service Task.
     </td>
   </tr>
   <tr>
-    <th>Constraints</th>
+    <th>约束</th>
     <td>
       One of the attributes <code>camunda:class</code>, <code>camunda:delegateExpression</code>,
       <code>camunda:type</code> or <code>camunda:expression</code> is mandatory

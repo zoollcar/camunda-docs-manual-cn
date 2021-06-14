@@ -1,6 +1,6 @@
 ---
 
-title: 'Service Task'
+title: 'Service Task （服务任务）'
 weight: 10
 
 menu:
@@ -13,20 +13,20 @@ menu:
 
 
 
-A Service Task is used to invoke services. In Camunda this is done by calling Java code or providing a work item for an external worker to complete asynchronously or invoking a logic which is implemented in form of webservices.
+服务任务用于调用服务。在Camunda中，这是通过调用Java代码来完成的，或者为外部工作者提供的工作项来完成以异步或直接调用Web服务的形式实现逻辑。
 
 {{< bpmn-symbol type="service-task" >}}
 
-# Calling Java Code
+# 调用Java Code.
 
-There are four ways of declaring how to invoke Java logic:
+有四种方式配置如何调用Java逻辑：
 
-* Specifying a class that implements a JavaDelegate or ActivityBehavior
-* Evaluating an expression that resolves to a delegation object
-* Invoking a method expression
-* Evaluating a value expression
+* 指定实现Java委托或活动行为的类
+* 计算解析为委派对象的表达式
+* 调用方法表达式
+* 计算表达式
 
-To specify a class that is called during process execution, the fully qualified classname needs to be provided by the `camunda:class` attribute.
+要指定在进程执行期间调用的类，所需的完全限定类名需要由`camunda:class`属性提供。
 
 ```xml
 <serviceTask id="javaService"
@@ -34,10 +34,9 @@ To specify a class that is called during process execution, the fully qualified 
              camunda:class="org.camunda.bpm.MyJavaDelegate" />
 ```
 
-Please refer to the [Java Delegate]({{< ref "/user-guide/process-engine/delegation-code.md#java-delegate" >}}) section of the [User Guide]({{< ref "/user-guide/_index.md" >}}) for details on how to implement a Java Delegate.
+请参阅[User Guide]({{< ref "/user-guide/_index.md" >}}) 中的 [Java 委托类]({{< ref "/user-guide/process-engine/delegation-code.md#java-delegate" >}}) 章节，了解有关如何实现Java委托的详细信息。
 
-It is also possible to use an expression that resolves to an object. This object must follow the
-same rules as objects that are created when the `camunda:class` attribute is used.
+还可以使用解析为对象的表达式。这个对象必须遵循使用与`Camunda：Class`属性时创建的对象相同的规则。
 
 ```xml
 <serviceTask id="beanService"
@@ -45,7 +44,7 @@ same rules as objects that are created when the `camunda:class` attribute is use
              camunda:delegateExpression="${myDelegateBean}" />
 ```
 
-Or an expression which calls a method or resolves to a value.
+或调用方法或解析值的表达式。
 
 ```xml
 <serviceTask id="expressionService"
@@ -53,20 +52,22 @@ Or an expression which calls a method or resolves to a value.
              camunda:expression="${myBean.doWork()}" />
 ```
 
-For more information about expression language as delegation code, please see the corresponding
-[section]({{< ref "/user-guide/process-engine/expression-language.md#use-expression-language-as-delegation-code" >}})
-of the [User Guide]({{< ref "/user-guide/_index.md" >}}).
+有关表达式语言作为委派代码的详细信息，请参阅相应的
+[User Guide]({{< ref "/user-guide/_index.md" >}}) 的
+[section]({{< ref "/user-guide/process-engine/expression-language.md#use-expression-language-as-delegation-code" >}}) 章节。
 
-It is also possible to invoke logic which is implemented in form of webservices. `camunda:connector` is an extension that allows calling REST/SOAP APIs directly from the workflow. For more information about using connectors, please see the corresponding [section]({{< ref "/user-guide/process-engine/connectors.md#use-connectors" >}}) of the [User Guide]({{< ref "/user-guide/_index.md" >}})
-
-## Generic Java Delegates & Field Injection
-
-You can easily write generic Java Delegate classes which can be configured later on via the BPMN 2.0 XML in the Service Task. Please refer to the [Field Injection]({{< ref "/user-guide/process-engine/delegation-code.md#field-injection" >}}) section of the [User Guide]({{< ref "/user-guide/_index.md" >}}) for details.
+也可以调用以Web服务形式实现的逻辑。 `camunda:connector` 是一个扩展，允许直接从工作流程调用REST/SOAP API。
+有关使用连接器的更多信息，请参阅相应的信息 [User Guide]({{< ref "/user-guide/_index.md" >}}) 中的 [section]({{< ref "/user-guide/process-engine/connectors.md#use-connectors" >}}) 章节。
 
 
-## Service Task Results
+## 通过 Java 委托类 & 参数注入
 
-The return value of a service execution (for a Service Task exclusively using expressions) can be assigned to an already existing or to a new process variable by specifying the process variable name as a literal value for the `camunda:resultVariable` attribute of a Service Task definition. Any existing value for a specific process variable will be overwritten by the result value of the service execution. When not specifying a result variable name, the service execution result value is ignored.
+您可以轻松地编写通用Java委托类，该类可以通过BPMN 2稍后配置.  0 XML在服务任务中。请参考 [User Guide]({{< ref "/user-guide/_index.md" >}}) 中的 [参数注入]({{< ref "/user-guide/process-engine/delegation-code.md#field-injection" >}}) 章节。
+
+
+## 服务任务结果
+
+服务执行的返回值（对于专门使用表达式的服务任务）可以通过将 `camunda:resultVariable` 指定为流程变量名来分配给已存在的或新进程变量。特定进程变量的任何现有值将被服务执行的结果值覆盖。未指定结果变量名时，忽略服务执行结果值。
 
 ```xml
 <serviceTask id="aMethodExpressionServiceTask"
@@ -74,17 +75,17 @@ The return value of a service execution (for a Service Task exclusively using ex
            camunda:resultVariable="myVar" />
 ```
 
-In the example above, the result of the service execution (the return value of the `doSomething()` method invocation on object `myService`) is set to the process variable named `myVar` after the service execution completes.
+在上面的示例中，服务执行的结果 (返回值的 `doSomething()`对象上的方法调用 `myService`) 在服务执行完成后，将被设置为命名的流程变量 `myVar` 。
 
-{{< note title="Result variables and multi-instance" class="warning" >}}
-Note that when you use <code>camunda:resultVariable</code> in a multi-instance construct, for example in a multi-instance subprocess, the result variable is overwritten every time the task completes, which may appear as random behavior. See <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resultvariable" >}}">camunda:resultVariable</a> for details.
+{{< note title="结果变量和多实例" class="warning" >}}
+请注意，当您使用时 <code>camunda:resultVariable</code> 在多实例构造中，例如在多实例子处理中，每次任务完成时都会覆盖结果变量，这可能显示为随机行为。看 <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resultvariable" >}}">camunda:resultVariable</a> 有关详细信息。
 {{< /note >}}
 
-# External Tasks
+# 外部任务
 
-In contrast to calling Java code, where the process engine synchronously invokes Java logic, it is possible to implement a Service Task outside of the process engine's boundaries in the form of an external task. When a Service Task is declared external, the process engine offers a work item to workers that independently poll the engine for work to do. This decouples the implementation of tasks from the process engine and allows to cross system and technology boundaries. See the [user guide on external tasks]({{< ref "/user-guide/process-engine/external-tasks.md" >}}) for details on the concept and the relevant API.
+与调用Java代码相比，进程引擎同步调用Java逻辑，可以以外部任务的形式实现流程引擎边界之外的服务任务。当服务任务声明为外部时，流程引擎为工人提供工作项，该工人独立地研究了发动机以进行工作。这使得从过程引擎执行任务的实施，并允许跨系统和技术边界。查阅 [外部任务的用户指南]({{< ref "/user-guide/process-engine/external-tasks.md" >}}) 了解相关概念和相关API的详细信息。
 
-To declare a Service Task to be handled externally, the attribute `camunda:type` can be set to `external` and the attribute `camunda:topic` specifies the external task's topic. For example, the following XML snippet defines an external Service Task with topic `ShipmentProcessing`:
+要声明要在外部处理的服务任务，属性 `camunda:type` 可以设置为 `external` 和属性 `camunda:topic` 指定外部任务的主题。例如，以下XML片段定义了具有主题的外部服务任务`ShipmentProcessing`:
 
 ```xml
 <serviceTask id="anExternalServiceTask"
@@ -92,11 +93,11 @@ To declare a Service Task to be handled externally, the attribute `camunda:type`
            camunda:topic="ShipmentProcessing" />
 ```
 
-# Camunda Extensions
+# Camunda 扩展
 
 <table class="table table-striped">
   <tr>
-    <th>Attributes</th>
+    <th>属性</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncbefore" >}}">camunda:asyncBefore</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncafter" >}}">camunda:asyncAfter</a>,
@@ -112,7 +113,7 @@ To declare a Service Task to be handled externally, the attribute `camunda:type`
     </td>
   </tr>
   <tr>
-    <th>Extension Elements</th>
+    <th>扩展元素</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#erroreventdefinition" >}}">camunda:errorEventDefinition</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#failedjobretrytimecycle" >}}">camunda:failedJobRetryTimeCycle</a>,
@@ -122,7 +123,7 @@ To declare a Service Task to be handled externally, the attribute `camunda:type`
     </td>
   </tr>
   <tr>
-    <th>Constraints</th>
+    <th>约束</th>
     <td>
       One of the attributes <code>camunda:class</code>, <code>camunda:delegateExpression</code>,
       <code>camunda:type</code> or <code>camunda:expression</code> is mandatory
@@ -163,7 +164,7 @@ To declare a Service Task to be handled externally, the attribute `camunda:type`
 </table>
 
 
-# Additional Resources
+# 相关资源
 
-* [Tasks](http://camunda.org/bpmn/reference.html#activities-task) in the [BPMN Modeling Reference](http://camunda.org/bpmn/reference.html) section
-* [How to call a Webservice from BPMN](http://www.bpm-guide.de/2010/12/09/how-to-call-a-webservice-from-bpmn/). Please note that this article is outdated. However, it is still valid regarding how you would call a Web Service using the process engine.
+* [BPMN Modeling Reference](http://camunda.org/bpmn/reference.html) 的 [Tasks](http://camunda.org/bpmn/reference.html#activities-task) 章节。
+* [How to call a Webservice from BPMN](http://www.bpm-guide.de/2010/12/09/how-to-call-a-webservice-from-bpmn/)。请注意，本文已过时。但是，关于如何使用流程引擎调用Web服务的方式仍然有效。

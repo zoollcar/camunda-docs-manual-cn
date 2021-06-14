@@ -1,6 +1,6 @@
 ---
 
-title: 'User Task'
+title: 'User Task （人工任务）'
 weight: 30
 
 menu:
@@ -11,20 +11,20 @@ menu:
 
 ---
 
-A User Task is used to model work that needs to be done by a human actor. When the process execution arrives at such a User Task, a new task is created in the task list of the user(s) or group(s) assigned to that task.
+用户任务用于模拟人类演员需要完成的工作。当进程执行到达这样的用户任务时，在分配给该任务的用户或组的任务列表中创建一个新任务。
 
 {{< bpmn-symbol type="user-task" >}}
 
-A User Task is defined in XML as follows. The id attribute is required, while the name attribute is optional.
+用户任务在XML中定义如下。 id属性是必需的，而name属性是可选的。
 
 ```xml
 <userTask id="theTask" name="Important task" />
 ```
 
 
-# Description
+# 描述
 
-A User Task can also have a description. In fact, any BPMN 2.0 element can have a description. A description is defined by adding the documentation element.
+用户任务还可以具有描述。事实上，任何BPMN 2.0元素可以有描述。通过添加 documentation 元素来定义描述。
 
 ```xml
 <userTask id="theTask" name="Schedule meeting" >
@@ -33,49 +33,49 @@ A User Task can also have a description. In fact, any BPMN 2.0 element can have 
   </documentation>
 ```
 
-The description text can be retrieved from the task in the standard Java way:
+可以从标准Ja​​va方式中的任务中检索 documentation 文本：
 
 ```java
 task.getDescription();
 ```
 
 
-# Properties
+# 特性
 
-## Due Date
+## 截止日期
 
-Each task has a field indicating the due date of that task. The Query API can be used to query for tasks that are due on, before or after a certain date.
+每个任务都有一个字段，指示该任务的截止日期。查询API可用于查询到某个日期之前或之后截止的任务。
 
-There is an activity extension which allows you to specify an expression in your task-definition to set the initial due date of a task when it is created. The expression should always resolve to a java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) formatted) or null. When using ISO8601 formatted Strings, you may either specify an exact point in time or a time period relative to the time the task is created. For example, you could use a date that was entered in a previous form in the process or calculated in a previous Service Task.
+有一个活动扩展名，允许您在任务定义中指定表达式，以在创建时设置任务的初始截止日期。表达式应该始终解析为 java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) 格式化) 或 null。 使用ISO8601格式化字符串时，您可以指定相对于创建任务的时间的时间或时间段。例如，您可以使用在此过程中以先前表单输入的日期，或者在以前的服务任务中计算。
 
 ```xml
 <userTask id="theTask" name="Important task" camunda:dueDate="${dateVariable}"/>
 ```
 
-The due date of a task can also be altered using the TaskService or in TaskListeners using the passed DelegateTask.
+任务的截止日期也可以使用任务服务或任务侦听器中使用传递的委托任务更改。
 
-## Follow Up Date
+## 跟进日期
 
-Each task has a field indicating the follow up date of that task. The Query API can be used to query for tasks that need to be followed up on, before or after a certain date.
+每个任务都有一个字段，指示该任务的跟进日期。查询API可用于查询需要在特定日期之前或之后进行操作的任务。
 
-There is an activity extension which allows you to specify an expression in your task-definition to set the initial follow up date of a task when it is created. The expression should always resolve to a java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) formatted) or null. When using ISO8601 formatted Strings, you may either specify an exact point in time or a time period relative to the time the task is created. For example, you could use a date that was entered in a previous form in the process or calculated in a previous Service Task.
+有一个活动扩展名，允许您在任务定义中指定表达式，以在创建时设置任务的初始后续后续日期。表达式应该始终解析为 java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) 格式化) 或 null。 使用ISO8601格式化字符串时，您可以指定相对于创建任务的时间的时间或时间段。例如，您可以使用在此过程中以先前表单输入的日期，或者在以前的服务任务中计算。
 
 ```xml
 <userTask id="theTask" name="Important task" camunda:followUpDate="${dateVariable}"/>
 ```
 
-# User Assignment
+# 用户分配
 
-A User Task can be directly assigned to a single user, a list of users or a list of groups.
+用户任务可以直接分配给单个用户，用户列表或组列表。
 
-## Assignment using BPMN Resource Assignments
+## 使用BPMN资源分配分配
 
-BPMN defines some native assignment concepts which can be used in camunda.
-As a more powerful alternative, Camunda also defines a set of custom extension elements (see below).
+BPMN定义了一些可以在Camunda中使用的本机分配概念。
+作为一种更强大的替代方案，Camunda还定义了一组自定义扩展元素（见下文）。
 
 ### Human Performer
 
-This is done by defining a humanPerformer sub element. Such a humanPerformer definition needs a resourceAssignmentExpression that actually defines the user. Currently, only formalExpressions are supported.
+这是通过定义人类执行者的子元素来完成的。这种人类执行者定义需要实际定义用户的资源分配表达式。目前，只有 formalExpressions 支持.
 
 ```xml
 <process ... >
@@ -89,9 +89,9 @@ This is done by defining a humanPerformer sub element. Such a humanPerformer def
   </userTask>
 ```
 
-Only one user can be assigned to the task as a human performer. In the engine terminology, this user is called the assignee. Tasks that have an assignee are not visible in the task lists of other users and can be found in the so-called personal task list of the assignee instead.
+只有一个用户可以分配给任务作为人类执行者。在引擎术语中，此用户称为assignee（受让人）。在其他用户的任务列表中，具有assignee（受让人）的任务在其他用户的任务列表中不可见，只能在受让人的个人任务列表中找到。
 
-Tasks directly assigned to users can be retrieved through the TaskService as follows:
+可以通过任务服务检索直接分配给用户的任务，如下所示：
 
 ```java
 List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
@@ -99,7 +99,7 @@ List<Task> tasks = taskService.createTaskQuery().taskAssignee("kermit").list();
 
 ### Potential Owner
 
-Tasks can also be put in the so-called candidate task list of people. In that case, the potentialOwner construct must be used. The usage is similar to the humanPerformer construct. Please note that for each element in the formal expression it is required to specifically define if it is a user or a group (the engine cannot guess this).
+任务也可以放在所谓的候选人任务列表中。在这种情况下，必须使用潜在的所有者构造。使用类似于人类执行者构造。请注意，对于formalExpressions的每个人选，需要特别定义它是用户或组（引擎无法猜到）。
 
 ```xml
 <process ... >
@@ -113,74 +113,75 @@ Tasks can also be put in the so-called candidate task list of people. In that ca
   </userTask>
 ```
 
-Tasks defined with the potential owner construct can be retrieved as follows (or a similar TaskQuery, such as for tasks which have an assignee, can be used):
+可以使用潜在所有者构造定义的任务，如下所示（或者可以使用类似的任务查询，例如用于具有受让人的任务）：
 
 ```java
 List<Task> tasks = taskService.createTaskQuery().taskCandidateUser("kermit");
 ```
 
-This will retrieve all tasks where `kermit` is a candidate user, i.e., the formal expression contains the user `kermit`. This will also retrieve all tasks that are assigned to a group of which `kermit` is a member (e.g., `group(management)`, if kermit is a member of that group and the identity component is used). The groups of a user are resolved at runtime and these can be managed through the IdentityService.
+这将检索所有`kermit`是候选用户的任务，也就是说，formalExpression 包含用户`kermit`。这也将检索所有分配给`kermit`为成员的组的任务（`group(management)`，如果kermit是该组的成员并且使用了身份组件）。
+用户的组在运行时被解析，这些可以通过IdentityService来管理。
 
-If no specifics are given whether the given text string is a user or a group, the engine defaults to group. So the following two alternatives lead to the same result:
+如果没有给出给定文本字符串是用户或组的细节，则引擎默认为组。所以以下两个写法是相同的：
 
 ```xml
 <formalExpression>accountancy</formalExpression>
 <formalExpression>group(accountancy)</formalExpression>
 ```
 
-## User Assignment using Camunda Extensions
+## 使用Camunda扩展进行用户分配
 
-It is clear that user and group assignments are quite cumbersome for use cases where the assignment is more complicated. To avoid these complexities, custom extensions on the User Task are possible.
+很明显，用户和组分配非常麻烦，使用分配更复杂。为避免这些复杂性，可以进行用户任务的自定义扩展。
 
-### Assignee
+### Assignee（受让人）
 
-The `assignee` attribute: this custom extension allows direct assignment of a User Task to a given user.
+`assignee` 属性: 这个自定义扩展允许将用户任务直接分配给一个给定的用户。
 
 ```xml
 <userTask id="theTask" name="my task" camunda:assignee="kermit" />
 ```
-This is exactly the same as using a humanPerformer construct as defined above.
+这与使用上面定义的humanPerformer结构完全相同。
 
-### Candidate Users
+### Candidate Users （候选人）
 
-The `candidateUsers` attribute: this custom extension allows you to make a user a candidate for a task.
+`candidateUsers` 属性: 这个自定义扩展允许你使用户成为一项任务的候选人。
 
 ```xml
 <userTask id="theTask" name="my task" camunda:candidateUsers="kermit, gonzo" />
 ```
 
-This is exactly the same as using a potentialOwner construct as defined above. Note that it is not required to use the `user(kermit)` declaration as is the case with the potential owner construct, since this attribute can only be used for users.
+这与使用上面定义的潜在所有者构造完全相同。请注意，不需要使用 `user(kermit)` 声明与潜在所有者构造的情况一样，因为此属性只能用于用户。
 
-### Candidate Groups
+### Candidate Groups （候选组）
 
-The `candidateGroups` attribute: this custom extension allows you to make a group a candidate for a task.
+`candidateGroups` 属性: 这个自定义扩展允许你使一个组成为一个任务的候选人。
 
 ```xml
 <userTask id="theTask" name="my task" camunda:candidateGroups="management, accountancy" />
 ```
 
-This is exactly the same as using a potentialOwner construct as defined above. Note that it is not required to use the `group(management)` declaration as is the case with the potential owner construct, since this attribute can only be used for groups.
+这与使用上面定义的潜在所有者构造完全相同。请注意，不需要使用 `group(management)` 声明与潜在所有者构造的情况一样，因为此属性只能用于组。
 
-### Combining Candidate Users and Groups
+### 结合使用候选用户和组
 
-`candidateUsers` and `candidateGroups` can both be defined for the same User Task.
+`candidateUsers` 和 `candidateGroups` 可以同时为一个用户任务定义。
 
 
-## Assignment based on Data and Service Logic
+## 基于数据和服务逻辑的赋值
 
-In the above examples, constant values such as `kermit` or `management` are used. But what if the exact name of an assignee or a candidate group is not known at design time? And what if the assignee is not a constant value but depends on data such as _"The person who started the process"_? Maybe the assigment logic is also more complex and needs to access an external data source such as LDAP to implement a lookup such as _"The manager of the employee who started the process"_.
+在上面的例子中， 使用了类似 `kermit` 或 `management` 的常量值。 但是如果在设计时不知道被指派人或候选组的确切名称呢？ 如果被指派者不是一个常量值，而是取决于数据例如 _"The person who started the process"_ 应该怎么办? 有时赋值逻辑也更复杂，甚至需要访问外部数据源，例如LDAP以实现诸如 _"The manager of the employee who started the process"_ 的查询。
 
-Such things can be implemented using assignment expressions or task listeners.
+可以使用赋值表达式或任务侦听器来实现这样的功能。
 
-### Assignment Expressions
+### 赋值表达
 
-Assignment expressions allow accessing process variables or calling out to beans and services.
+赋值表达式允许访问流程变量或调用beans和services。
 
-#### Using Process Variables
+#### 使用流程变量
 
-Process variables are useful for assignments based on data which has been collected or calculated up front.
+流程变量对于基于已经收集或计算的数据的分配非常有用。
 
-The following example shows how to assign a User Task to the person who started the process:
+以下示例显示了如何将用户任务分配给启动该过程的人：
 
 ```xml
 <startEvent id="startEvent" camunda:initiator="starter" />
@@ -189,27 +190,27 @@ The following example shows how to assign a User Task to the person who started 
 ...
 ```
 
-First, the `camunda:initiator` extension is used to bind the user id of the person who started (_"initiated"_) the process to the variable `starter`. Then the expression `${ starter }` retrieves that value and uses it as assignee for the task.
+首先, `camunda:initiator` 参数用于绑定启动的人的用户标识 (_"initiated"_) 变量的过程 `starter`. 然后是表达式 `${ starter }` 检索该值并将其用作任务的assignee（受让人）。
 
-It is possible to use all process variables [visible]({{< ref "/user-guide/process-engine/variables.md#variable-scopes-and-variable-visibility" >}}) from the User Task in the expression.
+可以使用所有[可见]({{< ref "/user-guide/process-engine/variables.md#variable-scopes-and-variable-visibility" >}})的过程变量用于用户任务的表达式。
 
-#### Invoking a Service / Bean
+#### 调用 Service / Bean
 
-When using Spring or CDI, it is possible to delegate to a bean or service implementation. This way it is possible to call out to complex assignment logic without modeling it as an explicit service task in the process which would then produce a variable used in the assignment.
+当使用Spring或CDI时，有可能委托给Bean或Service实现。这样就有可能调用复杂的赋值逻辑，而不需要在过程中把它建模为一个显式的服务任务，然后产生一个用于赋值的变量。
 
-In the following example, the assignee will be set by calling the `findManagerOfEmployee()` on the `ldapService` Spring/CDI bean. The `emp` parameter that is passed is a process variable.
+在下面的例子中，assignee（受让人）将通过调用名为`ldapService`的Spring/CDI bean上的`findManagerOfEmployee()`方法来设置。输出的`emp`参数是一个流程变量。
 
 ```xml
 <userTask id="task" name="My Task" camunda:assignee="${ldapService.findManagerForEmployee(emp)}"/>
 ```
 
-This also works in a similar way for candidate users and groups:
+这也适用于候选用户和组的类似方式工作：
 
 ```xml
 <userTask id="task" name="My Task" camunda:candidateUsers="${ldapService.findAllSales()}"/>
 ```
 
-Note that this will only work if the return type of the invoked methods is String or Collection<String> (for candidate users and groups):
+请注意，调用方法的返回类型只能是String(候选用户)或Collection\<String\>（组）：
 
 ```java
 public class FakeLdapService {
@@ -224,9 +225,9 @@ public class FakeLdapService {
 }
 ```
 
-### Assignments in Listeners
+### 在任务侦听器（task listener）中进行分配
 
-It is also possible to use [task listeners]({{< ref "/user-guide/process-engine/delegation-code.md#task-listener" >}}) for handling assignments. The following example demonstrates a task listener on the `create` event:
+也可以使用[任务侦听器]({{< ref "/user-guide/process-engine/delegation-code.md#task-listener" >}}) 处理任务。以下示例演示了“创建”事件的任务侦听器：
 
 ```xml
 <userTask id="task1" name="My task" >
@@ -236,7 +237,7 @@ It is also possible to use [task listeners]({{< ref "/user-guide/process-engine/
 </userTask>
 ```
 
-The DelegateTask that is passed to the TaskListener implementation allows you to set the assignee and candidate-users/groups:
+传递给任务侦听器实现的委托任务允许您设置受让人和候选用户/组：
 
 ```java
 public class MyAssignmentHandler implements TaskListener {
@@ -251,19 +252,18 @@ public class MyAssignmentHandler implements TaskListener {
 }
 ```
 
-{{< note title="Note" class="info" >}}
-Assigning a task, or setting any other property through a TaskListener, will not result in an
-`assignment` or `update` event unless a `TaskService` method is used to perform these actions. This
-is intentional, in order to avoid creating event loops.
+{{< note title="提示" class="info" >}}
+通过TaskListener分配任务或设置任何其他属性，将不会触发 `assignment` 或 `update` 事件。使用 `TaskService` 则会触发。
+这是故意设计的，用来避免产生事件循环。
 {{< /note >}}
 
-## Assignments and Identity Service
+## 在身份服务（Identity Service） 中进行分配
 
-Although the Camunda engine provides an identity management component, which is exposed through the IdentityService, it does not check whether a provided user is known by the identity component. This allows integration of the engine with existing identity management solutions when it is embedded into an application.
+尽管Camunda引擎提供了一个身份管理组件，该组件通过IdentityService访问，但它并不检查所提供的用户是否被 identity component 所知。这提供了当引擎被嵌入到一个应用程序中时，可以与现有的身份管理解决方案进行整合的能力。
 
-However, note that you can use the identity service in a service / bean or listener to query your user repository if this is useful to you.
+然而，如果这对你有帮助的话，你可以在一个 service/bean或监听器中使用身份服务来查询你的用户库。
 
-You can query for users with the help of the identity service. See the following example:
+你可以在身份服务的帮助下查询用户。请看下面的例子。
 
 ```java
 ProcessEngine processEngine = delegateTask.getProcessEngine();
@@ -278,38 +278,38 @@ User kermit = identityService.createUserQuery()
     .singleResult();
 ```
 
-# Reporting Bpmn Error
+# 报告BPMN错误
 
-See the documentation for [Error Boundary Events]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}}).
+查看[错误边界事件(boundary event)]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}})的文档。
 
-To report a business error during user task operation, use `TaskService#handleBpmnError`. It can be invoked only when the task is active.
-The `#handleBpmnError` method requires a mandatory argument: `errorCode`.
-The error code identifies a predefined error. If the given `errorCode` does not exist or there is no boundary event defined,
-the current activity instance simply ends and the error is not handled.
+要报告用户任务操作期间的业务错误，请使用`TaskService#handleBpmnError`。它只能在任务处于活动状态时被调用。
+`#handleBpmnError`方法需要一个强制参数：`errorCode`。
+`errorCode` 确定了一个预定义的错误。如果给定的`errorCode`不存在或者没有定义边界事件(boundary event)。
+当前的活动实例就会结束，错误不会被处理。
 
-See the following example:
+请看下面的例子：
 
 ```java
 
 Task task = taskService.createTaskQuery().taskName("Perform check").singleResult();
 
-// ... business error appears
+// ... 出现业务错误
 
 taskService.handleBpmnError(
   task.getId(),
   "bpmn-error-543", // errorCode
-  "Thrown BPMN Error during...", // errorMessage
+  "Thrown BPMN Error during...", // 错误信息
   variables);
 ```
 
-A BPMN error with the error code `bpmn-error-543` is propagated. If a boundary event with this error code exists, the BPMN error will be caught and handled.
-The error message and variables are optional. They can provide additional information for the error. The variables will be passed to the execution if the BPMN error is caught.
+一个错误代码为`bpmn-error-543`的BPMN错误将被传播。如果存在处理该错误代码的边界事件，BPMN错误将被捕获和处理。
+错误信息和变量是可选的。它们可以为错误提供额外的信息。如果BPMN错误被捕获，这些变量将被传递给执行。
 
-# Reporting Bpmn Escalation
+# 报告BPMN升级
 
-See the documentation for [Catching Escalation Events]({{< ref "/reference/bpmn20/events/escalation-events.md#catching-escalation-events" >}}).
+查看[捕获升级事件]({{< ref "/reference/bpmn20/events/escalation-events.md#catching-escalation-events" >}})的文档。
 
-Reporting an escalation during user task execution can be achieved via `TaskService#handleEscalation`. The user task should be active to do so. The `escalationCode` is compulsory to invoke the escalation, this code identifies a predefined escalation. If the given `escalationCode` does not exist an Process Engine Exception will be thrown. See the following example:
+在用户任务执行过程中报告升级可以通过`TaskService#handleEscalation`实现。调用时用户任务应处于活动状态，`escalationCode`是调用升级的必要参数，这个代码标识了一个预定义的升级。如果给定的`escalationCode`不存在，将抛出进程引擎异常。请看下面的例子：
 
 ```java
 taskService.handleEscalation(
@@ -318,25 +318,25 @@ taskService.handleEscalation(
   variables);
 ```
 
-Here an escalation is propagated with escalation code `escalation-432`. If a boundary event with this escalation code exists, the escalation will be caught and handled.
-The variables are optional. They will be passed to the execution if the escalation is caught.
+这样，升级将被传播，升级代码为`escalation-432`。如果存在处理该升级代码的边界事件，升级将被捕捉和处理。
+这些变量是可选的。如果升级被捕获，它们将被传递给执行。
 
-# Completion
+# 完成任务
 
-Complete is part of the [task lifecycle]({{< ref "/webapps/tasklist/task-lifecycle.md" >}}) operation along with create, set candidate, assign, etc. (allow available via Java API). Complete a task by passing variables, optionally the process variables can be retrieved::
+完成状态是[任务生命周期]({{< ref "/webapps/tasklist/task-lifecycle.md" >}})的一部分。 通过传递变量来完成一个任务，同时也能查询流程变量：
 
 ```java
 taskService.complete(taskId, variables);
 
-// or complete and retrieve the process variables
+// 或完成任务并查询流程变量
 VariableMap processVariables = taskService
   .completeWithVariablesInReturn(taskId, variables, shouldDeserializeValues);
 ```
 
-# Forms
+# 表单（Forms）
 
-It is possible to provide information to render a User Task form by using the `camunda:formKey`
-attribute:
+可以通过使用`camunda:formKey`来渲染用户任务表单。
+参考：
 
 ```xml
 <userTask id="someTask" camunda:formKey="someForm.html">
@@ -344,30 +344,27 @@ attribute:
 </userTask>
 ```
 
-The form key is a symbolic value which can be set in the BPMN XML file by using the extension attribute
-`formKey` and retrieved at runtime using the process engine API.
+这里的 form key 是一个在 BPMN XML 文件中定义的符号值， 在运行时会被流程引擎用于查询
 
-If the User Task form is displayed inside the Camunda Tasklist, the format of the formKey must follow
-special rules. [See the corresponding section in the user guide for details]({{< ref "/user-guide/task-forms/_index.md" >}}).
+如果用户任务表单显示在Camunda任务列表内，formKey的格式必须遵循规则。 [有关详细信息，请参阅“用户指南”中的相应部分]({{< ref "/user-guide/task-forms/_index.md" >}}).
 
-In custom applications, the value of the form key attribute can be interpreted freely. Based on the specific UI technology used,
-it can reference the name of an HTML file, a JSF / Facelets template, a Vaadin / GWT view, ...
+在自定义应用程序中，form key 属性的值可以自由设置。根据选择的特定UI技术不同，可以是一个 HTML 文件或者 JSF / Facelets 模板，Vaadin / GWT 视图，..
 
-## Retrieving the Form Key using the Form Service.
+## 使用表单服务（formService）检索form key。
 
 ```java
 String formKey = formService.getTaskFormData(someTaskId).getFormKey();
 ```
 
-## Retrieving the Form using the Task Service
+## 使用任务服务（TaskService）检索表单
 
-When performing a task query, it is possible to retrieve the form key as well. This is most useful
-if the form keys need to be retrieved for a complete list of tasks:
+执行任务查询时，也可以检索form key。这是很有用的
+如果需要检索form key以获取完整的任务列表：
 
 ```java
 List<Task> tasks = TaskService.createTaskQuery()
   .assignee("jonny")
-  .initializeFormKeys() // must be invoked
+  .initializeFormKeys() // 这句必须被调用
   .list();
 
 for(Task task : tasks) {
@@ -375,12 +372,11 @@ for(Task task : tasks) {
 }
 ```
 
-Note that it is required to call the `.initializeFormKeys()` method on the `TaskQuery` object to
-make sure the form keys are initialized.
+请注意，需要调用`initializeFormKeys()`在查询方法之前，确保初始化form key。
 
-## Form submission
+## 表格提交
 
-When a form is submitted, it is possible to fetch the process variables in return:
+提交表单时，可以获取进程变量以返回：
 
 ```java
 VariableMap processVariables = formService
@@ -390,11 +386,11 @@ VariableMap processVariables = formService
 formService.submitTaskForm(taskId, properties);
 ```
 
-# Camunda Extensions
+# Camunda 扩展
 
 <table class="table table-striped">
   <tr>
-    <th>Attributes</th>
+    <th>属性</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#assignee" >}}">camunda:assignee</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncbefore" >}}">camunda:asyncBefore</a>,
@@ -410,7 +406,7 @@ formService.submitTaskForm(taskId, properties);
     </td>
   </tr>
   <tr>
-    <th>Extension Elements</th>
+    <th>扩展元素</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#formdata" >}}">camunda:formData</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#formproperty" >}}">camunda:formProperty</a>,
@@ -420,7 +416,7 @@ formService.submitTaskForm(taskId, properties);
     </td>
   </tr>
   <tr>
-    <th>Constraints</th>
+    <th>约束</th>
     <td>
       The attribute <code>camunda:assignee</code> cannot be used simultaneously with the <code>humanPerformer</code>
       element
