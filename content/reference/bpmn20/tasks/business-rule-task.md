@@ -1,6 +1,6 @@
 ---
 
-title: 'Business Rule Task'
+title: 'Business Rule Task （业务规则任务）'
 weight: 40
 
 menu:
@@ -11,23 +11,22 @@ menu:
 
 ---
 
-A Business Rule Task is used to synchronously execute one or more rules. It is also possible to call Java code or providing a work item for an external worker to complete asynchronously or invoking a logic which is implemented in form of webservices.
+一个业务规则任务可以同步执行一个或多个规则，可以调用Java代码或外部工作者（external worker）来实现，或者以异步方式调用以Web服务形式实现的逻辑。
 
 {{< bpmn-symbol type="business-rule-task" >}}
 
 
-# Using Camunda DMN Engine
+# 使用 Camunda DMN 引擎
 
-You can use the Camunda DMN engine integration to evaluate a DMN decision. You have
-to specify the decision key to evaluate as the `camunda:decisionRef` attribute. Additionally, 
-the `camunda:decisionRefBinding` specifies which version of the decision should be evaluated.
-Valid values are:
+你可以使用Camunda DMN引擎集成来进行一个DMN决策。你必须使用`camunda:decisionRef`属性
+指定要评估的决策键。此外。
+`camunda:decisionRefBinding`指定哪一个版本的决策应该被评估。
+`camunda:decisionRefBinding`的有效值是：
 
-* `deployment`, which evaluates the decision version which was deployed with the process
-version,
-* `latest` which will always evaluate the latest decision version,
-* `version` which allows you to specify a specific version to execute with the `camunda:decisionRefVersion` attribute, and
-* `versionTag` which allows you to specify a specific version tag to execute with the `camunda:decisionRefVersionTag` attribute.
+* `deployment`, 这会评估deployment部署的决策版本，
+* `latest` 这将始终评估最新的决策版本，
+* `version` 这允许你通过使用`camunda:decisionRefVersion`属性指定执行的特定版本，
+* `versionTag` 这允许你用`camunda:decisionRefVersionTag`属性指定一个特定的版本标签来执行。
 
 ```xml
 <businessRuleTask id="businessRuleTask"
@@ -36,15 +35,15 @@ version,
     camunda:decisionRefVersion="12" />
 ```
 
-The `camunda:decisionRefBinding` attribute defaults to `latest`.
+`camunda:decisionRefBinding`属性默认为`latest`。
 
 ```xml
 <businessRuleTask id="businessRuleTask"
     camunda:decisionRef="myDecision" />
 ```
 
-The attributes `camunda:decisionRef`, `camunda:decisionRefVersion`, and `camunda:decisionRefVersionTag` can be specified as
-an expression which will be evaluated on execution of the task.
+属性`camunda:decisionRef`、`camunda:decisionRefVersion`和`camunda:decisionRefVersionTag`可以被指定为
+一个表达式，它将在任务的执行中被计算。
 
 ```xml
 <businessRuleTask id="businessRuleTask"
@@ -53,9 +52,9 @@ an expression which will be evaluated on execution of the task.
     camunda:decisionRefVersion="${decisionVersion}" />
 ```
 
-The output of the decision, also called decision result, is not saved as process variable automatically. It has to pass into a process variable by using a [predefined]({{< ref "/user-guide/process-engine/decisions/bpmn-cmmn.md#predefined-mapping-of-the-decision-result" >}}) or a [custom]({{< ref "/user-guide/process-engine/decisions/bpmn-cmmn.md#custom-mapping-into-process-variables" >}}) mapping of the decision result.
+决策的输出，也称为决策结果，不会自动保存为流程变量。它必须通过使用[预定义]({{< ref "/user-guide/process-engine/decisions/bpmn-cmmn.md#predefined-mapping-of-the-decision-result" >}})或者[定制]({{< ref "/user-guide/process-engine/decisions/bpmn-cmmn.md#custom-mapping-into-process-variables" >}})的方式传递到一个流程变量中。
 
-In case of a predefined mapping, the `camunda:mapDecisionResult` attribute references the mapper to use. The result of the mapping is saved in the variable which is specified by the `camunda:resultVariable` attribute. If no predefined mapper is set then the `resultList` mapper is used by default.
+如果是预定义的映射，`camunda:mapDecisionResult`属性会引用要使用的映射器。映射的结果被保存在由`camunda:resultVariable`属性指定的变量中。如果没有设置预定义的映射器，那么默认使用 `resultList` 映射器。
 
 ```xml
 <businessRuleTask id="businessRuleTask"
@@ -64,28 +63,28 @@ In case of a predefined mapping, the `camunda:mapDecisionResult` attribute refer
     camunda:resultVariable="result" />
 ```
 
-See the [User Guide]({{< ref "/user-guide/process-engine/decisions/bpmn-cmmn.md#the-decision-result" >}}) for details about the mapping.
+参见 [用户指南]({{< ref "/user-guide/process-engine/decisions/bpmn-cmmn.md#the-decision-result" >}}) 有关映射的详细信息。
 
-{{< note title="Name of the Result Variable" class="warning" >}}
-The result variable should not have the name `decisionResult`, as the decision result itself is saved in a variable with this name. Otherwise, an exception is thrown while saving the result variable.
+{{< note title="结果变量的名称" class="warning" >}}
+结果变量不应该使用 `decisionResult`这个名字，因为决策结果本身是保存在一个这个变量中。否则，在保存结果变量时就会出现异常。
 {{< /note >}}
 
-# DecisionRef Tenant Id
+# 决策参考中的租户Id （Tenant Id）
 
-When the Business Rule Task resolves the decision definition to be evaluated it must take multi tenancy into account.
+当业务规则任务（Business Rule Task）解析要进行评估的决策定义时，必须考虑多租户的情况。
 
-## Default Tenant Resolution
-By default, the tenant id of the calling process definition is used to evaluate the decision definition.
-That is, if the calling process definition has no tenant id, then the Business Rule Task evaluates a decision definition using the provided key, binding and without a tenant id (tenant id = null).
-If the calling process definition has a tenant id, a decision definition with the provided key and the same tenant id is evaluated.
+## 默认租户（Tenant）决定
+默认情况下，调用流程定义的租户id 被用来评估决策定义。
+也就是说，如果调用的流程定义没有租户 ID，那么业务规则任务将使用所提供的key和没有 租户ID 的决策定义绑定进行评估（租户 ID = null）。
+如果调用的流程定义有租户ID，那么将评估具有所提供的key和相同租户ID 的决策定义。
 
-Note that the tenant id of the calling process instance is not taken into account in the default behavior.
+注意，调用进程实例的租户ID在默认情况下是不被考虑的。
 
-## Explicit Tenant Resolution
+## 额外的租户（Tenant）决定
 
-In some situations it may be useful to override this default behavior and specify the tenant id explicitly.
+在某些情况下，覆盖默认行为并明确指定租户ID是有用的。
 
-The `camunda:decisionRefTenantId` attribute allows to explicitly specify a tenant id:
+`camunda:decisionRefTenantId`属性允许明确指定租户ID。
 
 ```xml
 <businessRuleTask id="businessRuleTask" decisionRef="myDecision"
@@ -93,7 +92,7 @@ The `camunda:decisionRefTenantId` attribute allows to explicitly specify a tenan
 </businessRuleTask>
 ```
 
-If the tenant id is not known at design time, an expression can be used as well:
+如果在设计流程时不知道租户ID，也可以使用一个表达式：
 
 ```xml
 <businessRuleTask id="businessRuleTask" decisionRef="myDecision"
@@ -101,7 +100,7 @@ If the tenant id is not known at design time, an expression can be used as well:
 </businessRuleTask>
 ```
 
-An expression also allows using the tenant id of the calling process instance instead of the calling process definition:
+表达式也允许使用调用流程实例的租户ID，而不是调用流程定义的：
 
 ```xml
 <businessRuleTask id="businessRuleTask" decisionRef="myDecision"
@@ -109,10 +108,9 @@ An expression also allows using the tenant id of the calling process instance in
 </businessRuleTask>
 ```
 
-# Using a Custom Rule Engine
+# 使用自定义规则引擎
 
-You can integrate with other rule engines. To do so, you have to plug in your
-implementation of the rule task the same way as in a Service Task.
+你可以与其他规则引擎整合。要做到这一点，你必须实现你的规则任务（rule task），规则任务与服务任务（Service Task）实现的方式是相同的。
 
 ```xml
 <businessRuleTask id="businessRuleTask"
@@ -120,22 +118,24 @@ implementation of the rule task the same way as in a Service Task.
 ```
 
 
-# Using Delegate Code
+# 使用委托代码
 
-Alternatively, a Business Rule Task can be implemented using Java Delegation just as a Service Task. For more
-information on this please see the [Service Tasks]({{< relref "service-task.md" >}}) documentation.
-
-
-# Implementing as an External Task
-
-In addition to the above, a Business Rule Task can be implemented via the [External Task]({{< ref "/user-guide/process-engine/external-tasks.md" >}}) mechanism where an external system polls the process engine for work to do. See the section on [Service Tasks]({{< relref "service-task.md#external-tasks" >}}) for more information about how to configure an external task.
+另外，业务规则任务也可以像服务任务一样使用Java委托来实现。要了解更多相关信息，
+请参见 [服务任务]({{< relref "service-task.md" >}}) 章节.
 
 
-# Camunda Extensions
+# 实现为外部任务
+
+除上述内容外，还可以通过[外部任务]({{< ref "/user-guide/process-engine/external-tasks.md" >}})机制实现业务规则任务，
+外部系统会轮询流程引擎的工作。参见[服务任务]({{< relref "service-task.md#external-tasks" >}})一节，
+了解更多关于如何配置外部任务的信息。
+
+
+# Chamunda 扩展
 
 <table class="table table-striped">
   <tr>
-    <th>Attributes</th>
+    <th>属性</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncbefore" >}}">camunda:asyncBefore</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncafter" >}}">camunda:asyncAfter</a>,
@@ -157,7 +157,7 @@ In addition to the above, a Business Rule Task can be implemented via the [Exter
     </td>
   </tr>
   <tr>
-    <th>Extension Elements</th>
+    <th>扩展元素</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#failedjobretrytimecycle" >}}">camunda:failedJobRetryTimeCycle</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#field" >}}">camunda:field</a>,
@@ -166,7 +166,7 @@ In addition to the above, a Business Rule Task can be implemented via the [Exter
     </td>
   </tr>
   <tr>
-    <th>Constraints</th>
+    <th>约束</th>
     <td>
       One of the attributes <code>camunda:class</code>, <code>camunda:delegateExpression</code>, <code>camunda:decisionRef</code>,
       <code>camunda:type</code> or <code>camunda:expression</code> is mandatory
@@ -201,9 +201,9 @@ In addition to the above, a Business Rule Task can be implemented via the [Exter
 </table>
 
 
-# Additional Resources
+# 额外资料
 
-* [Decisions]({{< ref "/user-guide/process-engine/decisions/_index.md" >}})
-* [Service Tasks]({{< ref "/reference/bpmn20/tasks/service-task.md" >}})
+* [决策]({{< ref "/user-guide/process-engine/decisions/_index.md" >}})
+* [服务任务]({{< ref "/reference/bpmn20/tasks/service-task.md" >}})
 * [Tasks](http://camunda.org/bpmn/reference.html#activities-task) in the [BPMN 2.0 Modeling Reference](http://camunda.org/bpmn/reference.html)
 * [Demo using Drools on the Business Rule Task](https://github.com/camunda/camunda-consulting/tree/master/one-time-examples/order-confirmation-rules)
