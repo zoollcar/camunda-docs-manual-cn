@@ -1,6 +1,6 @@
 ---
 
-title: 'Business Rule Task （业务规则任务）'
+title: 'Business Rule Task 业务规则任务'
 weight: 40
 
 menu:

@@ -1,6 +1,6 @@
 ---
 
-title: 'User Task （人工任务）'
+title: 'User Task 人工任务'
 weight: 30
 
 menu:

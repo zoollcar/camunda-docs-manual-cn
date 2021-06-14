@@ -1,6 +1,6 @@
 ---
 
-title: 'Send Task （发送消息任务）'
+title: 'Send Task 发送消息任务'
 weight: 20
 
 menu:

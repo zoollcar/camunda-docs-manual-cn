@@ -1,6 +1,6 @@
 ---
 
-title: 'Script Task（脚本任务）'
+title: 'Script Task 脚本任务'
 weight: 50
 
 menu:
