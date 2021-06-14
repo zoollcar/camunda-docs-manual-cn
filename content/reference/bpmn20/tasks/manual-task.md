@@ -1,6 +1,6 @@
 ---
 
-title: 'Manual Task'
+title: 'Manual Task 手动任务'
 weight: 70
 
 menu:
@@ -11,7 +11,7 @@ menu:
 
 ---
 
-A Manual Task defines a task that is external to the BPM engine. It is used to model work that is done by somebody who the engine does not need to know of and is there no known system or UI interface. For the engine, a manual task is handled as a pass-through activity, automatically continuing the process at the moment the process execution arrives at it.
+手动任务定义了一个对BPM引擎来说是外部的任务。它被用来模拟由引擎不需要知道的人所做的工作，而且没有已知的系统或UI接口。对于引擎来说，手工任务被当作一个传递节点来处理，在流程执行到达的那一刻将自动继续流程。
 
 {{< bpmn-symbol type="manual-task" >}}
 
@@ -20,11 +20,11 @@ A Manual Task defines a task that is external to the BPM engine. It is used to m
 ```
 
 
-# Camunda Extensions
+# Camunda 扩展
 
 <table class="table table-striped">
   <tr>
-    <th>Attributes</th>
+    <th>属性</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncbefore" >}}">camunda:asyncBefore</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#asyncafter" >}}">camunda:asyncAfter</a>,
@@ -33,14 +33,14 @@ A Manual Task defines a task that is external to the BPM engine. It is used to m
     </td>
   </tr>
   <tr>
-    <th>Extension Elements</th>
+    <th>扩展元素</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#failedjobretrytimecycle" >}}">camunda:failedJobRetryTimeCycle</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#inputoutput" >}}">camunda:inputOutput</a>
     </td>
   </tr>
   <tr>
-    <th>Constraints</th>
+    <th>约束</th>
     <td>
       The <code>camunda:exclusive</code> attribute is only evaluated if the attribute
       <code>camunda:asyncBefore</code> or <code>camunda:asyncAfter</code> is set to <code>true</code>

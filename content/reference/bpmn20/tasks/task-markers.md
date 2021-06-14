@@ -1,6 +1,6 @@
 ---
 
-title: 'Task Markers'
+title: 'Task Markers 任务标记'
 weight: 80
 
 menu:
@@ -11,45 +11,45 @@ menu:
 
 ---
 
-In addition to the various types of tasks, we can mark tasks as loops, multiple instances or compensations. Markers can be combined with task types.
+除了各种类型的任务外，我们还可以将任务标记为循环（loops）、多实例（Multiple Instance）或补偿（compensations）。标记可以与任务类型相结合使用。
 
 
-# Multiple Instance
+# 多实例（Multiple Instance）
 
-A multi-instance activity is a way of defining repetition for a certain step in a business process. In programming concepts, a multi-instance matches the `for each` construct: it allows execution of a certain step or even a complete subprocess for each item in a given collection, sequentially or in parallel.
+多实例活动是为业务流程中的某个步骤定义重复的一种方式。在编程概念中，多实例与 `for each ` 结构相匹配：它允许对给定集合中的每个项目按顺序或并行地执行某个步骤或甚至一个完整的子流程。
 
-A multi-instance is a regular activity that has extra properties defined (so-called `multi-instance characteristics`) which will cause the activity to be executed multiple times at runtime. Following activities can become multi-instance activities:
+多实例是一个有额外属性（所谓的 "多实例特性"）的常规活动，它将导致该活动在运行时被多次执行。以下活动可以成为多实例活动。
 
-* Service Task
-* Send Task
-* User Task
-* Business Rule Task
-* Script Task
-* Receive Task
-* Manual Task
-* (Embedded) Sub-Process
-* Call Activity
-* Transaction Subprocess
+* Service Task 服务任务
+* Send Task 发送任务
+* User Task 用户任务
+* Business Rule Task 业务规则任务
+* Script Task 脚本任务
+* Receive Task 接收任务
+* Manual Task 手动任务
+* (Embedded) Sub-Process （嵌入）子流程
+* Call Activity 发起活动
+* Transaction Subprocess 事务子流程
 
-A Gateway or Event can not become multi-instance.
+网关或事件不能成为多实例。
 
-If an activity is multi-instance, this is indicated by three short lines at the bottom of the activity. Three vertical lines indicate that the instances will be executed in <strong>parallel</strong>, while three horizontal lines indicate **sequential** execution.
+如果一个活动是多实例的，这将由活动底部的三条短线表示。三条垂直线表示实例将以<strong>并行</strong>方式执行，而三条水平线表示**顺序**执行。
 
 <div data-bpmn-diagram="../bpmn//multiple-instance"></div>
 
-As required by the specification, each parent execution of the created executions for each instance will have the following variables:
+按照规范的要求，每个实例所创建的执行的每个父执行将有以下变量：
 
-* **nrOfInstances**: the total number of instances
-* **nrOfActiveInstances**: the number of currently active, i.e., not yet finished, instances. For a sequential multi-instance, this will always be 1
-* **nrOfCompletedInstances**: the number of already completed instances
+* **nrOfInstances**: 实例的总数量
+* **nrOfActiveInstances**: 当前活动的，即尚未完成的实例的数量。对于一个连续的多实例，这将永远是1。
+* **nrOfCompletedInstances**: 已经完成的实例的数量。
 
-These values can be retrieved by calling the `execution.getVariable(x)` method.
+这些值可以通过调用 "execution.getVariable(x) "方法检索。
 
-Additionally, each of the created executions will have an execution-local variable (i.e., not visible for the other executions and not stored on process instance level) :
+此外，每个创建的执行将有一个执行本地变量（即对其他执行不可见，也不存储在进程实例级别）。
 
-* **loopCounter**: indicates the index in the `for each` loop of that particular instance
+* **loopCounter**: 表示该特定实例的`for each`循环中的索引
 
-To make an activity multi-instance, the activity xml element must have a `multiInstanceLoopCharacteristics` child element.
+为了使一个活动成为多实例，活动xml元素必须有一个`multiInstanceLoopCharacteristics`子元素。
 
 ```xml
 <multiInstanceLoopCharacteristics isSequential="false|true">
@@ -57,10 +57,9 @@ To make an activity multi-instance, the activity xml element must have a `multiI
 </multiInstanceLoopCharacteristics>
 ```
 
-The isSequential attribute indicates if the instances of that activity are executed sequentially or in parallel.
+isSequential属性表示该活动的实例是按顺序执行还是并行执行。
 
-
-The number of instances are calculated once, when entering the activity. There are a few ways of configuring this. One way is directly specifying a number by using the `loopCardinality` child element.
+实例的数量在进入活动时被计算一次。有几种方法可以配置这个。一种方法是通过使用`loopCardinality`子元素直接指定一个数字。
 
 ```xml
 <multiInstanceLoopCharacteristics isSequential="false|true">
@@ -68,7 +67,7 @@ The number of instances are calculated once, when entering the activity. There a
 </multiInstanceLoopCharacteristics>
 ```
 
-Expressions that resolve to a positive number are also possible:
+值为正数的表达式也是可以的。
 
 ```xml
 <multiInstanceLoopCharacteristics isSequential="false|true">
@@ -76,7 +75,7 @@ Expressions that resolve to a positive number are also possible:
 </multiInstanceLoopCharacteristics>
 ```
 
-Another way to define the number of instances is to specify the name of a process variable which is a collection using the `loopDataInputRef` child element. For each item in the collection, an instance will be created. Optionally, it is possible to set that specific item of the collection for the instance using the inputDataItem child element. This is shown in the following XML example:
+另一种定义实例数量的方法是指定一个过程变量的名称，该变量是一个使用`loopDataInputRef`子元素的集合。对于集合中的每个项目，将创建一个实例。可以选择使用inputDataItem子元素为实例设置集合中的那个特定项目。这在下面的XML例子中显示。
 
 ```xml
 <userTask id="miTasks" name="My Task ${loopCounter}" camunda:assignee="${assignee}">
@@ -87,9 +86,9 @@ Another way to define the number of instances is to specify the name of a proces
 </userTask>
 ```
 
-Suppose the variable assigneeList contains the values [kermit, gonzo, foziee]. In the snippet above, three user tasks will be created in parallel. Each of the executions will have a process variable named assignee containing one value of the collection, which is used to assign the user task in this example.
+假设变量assigneeList包含值[kermit, gonzo, foziee]。在上面的代码片段中，三个用户任务将被并行创建。每个执行都将有一个名为assignee的进程变量，包含集合的一个值，在这个例子中，它被用来分配用户任务。
 
-The downside of the `loopDataInputRef` and `inputDataItem` is that 1) the names are pretty hard to remember and 2) due to the BPMN 2.0 schema restrictions they can't contain expressions. We solve this by offering the collection and elementVariable attributes on the multiInstanceCharacteristics:
+`loopDataInputRef`和`inputDataItem`的缺点是：1）名字相当难记；2）由于BPMN 2.0模式的限制，它们不能包含表达式。我们通过在multiInstanceCharacteristics上提供collection和 elementVariable属性来解决这个问题。
 
 ```xml
 <userTask id="miTasks" name="My Task" camunda:assignee="${assignee}">
@@ -99,7 +98,7 @@ The downside of the `loopDataInputRef` and `inputDataItem` is that 1) the names 
 </userTask>
 ```
 
-A multi-instance activity ends when all instances are finished. However, it is possible to specify an expression that is evaluated every time one instance ends. When this expression evaluates to true, all remaining instances are destroyed and the multi-instance activity ends, continuing the process. Such an expression must be defined in the completionCondition child element.
+多实例活动在所有实例都结束时结束。然而，我们可以指定一个表达式，它在每次一个实例结束时被计算。当这个表达式计算为真时，所有剩余的实例被销毁，多实例活动结束，继续这个过程。这样的表达式必须被定义在 completionCondition 子元素中。
 
 ```xml
 <userTask id="miTasks" name="My Task" camunda:assignee="${assignee}">
@@ -110,14 +109,14 @@ A multi-instance activity ends when all instances are finished. However, it is p
 </userTask>
 ```
 
-In this example, parallel instances will be created for each element of the assigneeList collection. However, when 60% of the tasks are completed, the other tasks are deleted and the process continues.
+在这个例子中，将为assigneeList集合的每个元素创建并行实例。然而，当60%的任务完成后，其他的任务被删除，这个过程继续进行
 
 
-## Camunda Extensions
+## Camunda 扩展
 
 <table class="table table-striped">
   <tr>
-    <th>Attributes</th>
+    <th>属性</th>
     <td>
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#collection" >}}">camunda:collection</a>,
       <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#elementvariable" >}}">camunda:elementVariable</a>,
@@ -128,11 +127,11 @@ In this example, parallel instances will be created for each element of the assi
     </td>
   </tr>
   <tr>
-    <th>Extension Elements</th>
+    <th>扩展元素</th>
     <td>&ndash;</td>
   </tr>
   <tr>
-    <th>Constraints</th>
+    <th>约束</th>
     <td>
       The <code>camunda:exclusive</code> attribute is only evaluated if the attribute
       <code>camunda:asyncBefore</code> or <code>camunda:asyncAfter</code> is set to <code>true</code>
@@ -141,38 +140,38 @@ In this example, parallel instances will be created for each element of the assi
 </table>
 
 
-## Boundary Events and Multi-Instance
+## 边界事件和多实例
 
-Since a multi-instance is a regular activity, it is possible to define a boundary event on its boundary. In case of an interrupting boundary event, when the event is caught, all instances that are still active will be destroyed. For example, take the following multi-instance subprocess:
+由于多实例是一个常规的活动，所以有可能在其边界上定义一个边界事件。如果有一个中断的边界事件，当事件被捕获时，所有仍在活动的实例将被销毁。以下面这个多实进程为例：
 
 <div data-bpmn-diagram="../bpmn/multiple-instance-boundary"></div>
 
-Here all instances of the subprocess will be destroyed when the timer fires, regardless of how many instances there are or which inner activities are currently not completed yet.
+在这里，子进程的所有实例将在定时器启动时被销毁，不管有多少实例，也不管哪些内部活动目前还没有完成。
 
 
-## Loops
+## 循环（loops）
 
-The loop marker is not natively supported yet by the engine. For Multiple Instance, the number of repetitions is known in advance - which makes it a bad candidate for loops anyway, as it defines a completion condition that may already be sufficient in some cases.
+循环标记还没有被引擎原生支持。对于多实例来说，重复的次数是事先知道的--这使得它无论如何都不是循环的候选者，因为它定义了一个完成条件，在某些情况下这可能已经足够了。
 
-To get around this limitation, the solution is to explicitly model the loop in your BPMN process:
+为了绕过这个限制，解决方案是在你的BPMN流程中明确地模拟循环。
 
 <div data-bpmn-diagram="../bpmn/loop-alternative"></div>
 
-Be assured that we have the loop marker in our backlog to be added to the engine.
+请放心，我们的代办事项中已经有了循环标记，以后将被添加到引擎中。
 
-## JSON Collections with Multi-Instance Collections
+## JSON集合具有多实例集合
 
-JSON Arrays created with [Camunda SPIN]({{< ref "/reference/spin/_index.md">}}) can be used as a collection for multi-instance activities. 
-Consider the following JavaScript example that initializes execution variable `collection`:
+用[Camunda SPIN]({{< ref "/reference/spin/_index.md">}})创建的JSON数组可以作为多实例活动的集合。
+参见下面这个初始化执行变量`collection`的JavaScript例子：
 
 ```javascript
 var collection = S('{ "collection" : ["System 1", "System 3"] }');
 execution.setVariable("collection", collection);
 ```
 
-This script can be injected in the model in several ways, e.g. using [Script task] ({{< ref "/reference/bpmn20/tasks/script-task.md">}}). 
+这个脚本可以通过几种方式注入模型中，例如使用[脚本任务]({{< ref "/reference/bpmn20/tasks/script-task.md">}}). 
 
-We can now use `collection` variable in multi-instance activity's `camunda:collection` extension element.
+我们现在可以在多实例活动的`camunda:collection`扩展元素中使用`collection`变量:
 
 ```xml
 <multiInstanceLoopCharacteristics 
@@ -180,29 +179,29 @@ We can now use `collection` variable in multi-instance activity's `camunda:colle
   camunda:elementVariable="collectionElem" />
 ```
 
-This uses the SPIN's JSON `.prop()` and `.elements()` to return the JSON array.  Set the multi-instance activity's `elementVariable` to a variable name that 
-will contain the array item. To access the value of the element, you can use `.value()` in your element variable.
+这使用SPIN的JSON`.prop()`和`.elements()`来返回JSON数组。 将多实例活动的`elementVariable`设置为一个变量名，该变量将包含数组项目。
+将包含数组项目。为了访问元素的值，你可以在你的元素变量中使用`.value()`。
 
-# Compensation
+# 补偿（compensations）
 
-If an activity is used for compensating the effects of another activity, it can be declared to be a compensation handler. Compensation handlers are not contained in the regular flow and are only executed when a compensation event is thrown.
+如果一个活动被用来补偿另一个活动的影响，它可以被声明为补偿处理程序。补偿处理程序不包含在常规流程中，并且只在抛出补偿事件时被执行。
 
 <div data-bpmn-diagram="../bpmn/compensation-marker"></div>
 
-Notice the compensation handler icon in the bottom center area of the "cancel hotel reservation" service task.
+注意在 "cancel hotel reservation" 服务任务的底部中心区域的补偿处理程序图标。
 
-Compensation handlers may not have incoming or outgoing sequence flows.
+补偿处理程序可能没有传入或传出的序列流。
 
-A compensation handler must be associated with a compensation boundary event using a directed association.
+补偿处理程序必须使用定向关联与补偿边界事件相关联。
 
-To declare an activity to be a compensation handler, we need to set the attribute isForCompensation to true:
+为了声明一个活动是一个补偿处理程序，我们需要将属性isForCompensation设置为真：
 
 ```xml
 <serviceTask id="undoBookHotel" isForCompensation="true" camunda:class="..." />
 ```
 
 
-# Additional Resources
+# 额外资料
 
 * [Tasks](http://camunda.org/bpmn/reference.html#activities-task) in the [BPMN 2.0 Modeling Reference](http://camunda.org/bpmn/reference.html)
 * [Transaction Subprocess]({{< ref "/reference/bpmn20/subprocesses/transaction-subprocess.md" >}})
