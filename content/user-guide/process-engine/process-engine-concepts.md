@@ -1,6 +1,6 @@
 ---
 
-title: 'Process Engine Concepts'
+title: '流程引擎概念'
 weight: 30
 
 menu:
@@ -11,27 +11,25 @@ menu:
 ---
 
 
-This section explains some core process engine concepts that are used in both the process engine API and the internal process engine implementation. Understanding these fundamentals makes it easier to use the process engine API.
+本节介绍了一些核心过程引擎概念，用于流程引擎API和内部流程引擎实现。了解这些基础知识可以更容易的额使用流程引擎API。
 
 
-# Process Definitions
+# 流程定义
 
-A process definition defines the structure of a process. You could say that the process definition *is* the process. Camunda Platform uses [BPMN 2.0](http://camunda.org/bpmn/tutorial.html) as its primary modeling language for modeling process definitions.
+流程定义定义了一个流程的结构。你可以说，流程定义**就是**流程。Camunda平台使用 [BPMN 2.0](http://camunda.org/bpmn/tutorial.html) 作为其主要的流程建模语言，用于建模过程的定义。
 
-{{< note title="BPMN 2.0 Reference" class="info" >}}
-  Camunda Platform comes with two BPMN 2.0 References:
+{{< note title="BPMN 2.0 参考" class="info" >}}
+  Camunda平台配有两个BPMN 2.0参考资料：
 
-* The [BPMN 2.0 Modeling Reference](http://camunda.org/bpmn/reference.html#!/reference) introduces the fundamentals of BPMN 2.0 and helps you to get started modeling processes. (Make sure to read the [Tutorial](http://camunda.org/bpmn/tutorial.html) as well.)
-* The [BPMN 2.0 Implementation Reference]({{< ref "/reference/bpmn20/_index.md" >}}) covers the implementation of the individual BPMN 2.0 constructs in Camunda Platform. You should consult this reference if you want to implement and execute BPMN processes.
+* [BPMN 2.0 建模参考](http://camunda.org/bpmn/reference.html#!/reference) 介绍了BPMN 2.0的基本原理，帮助你开始对流程进行建模。(请确保同时阅读[教程](http://camunda.org/bpmn/tutorial.html)。)
+* [BPMN 2.0 实现参考]({{< ref "/reference/bpmn20/_index.md" >}}) 涵盖了Camunda平台中各个BPMN 2.0构造的实现。如果你想实现和执行BPMN流程，你应该阅读这个参考资料。
 {{< /note >}}
 
+在Camunda平台中，您可以将流程以BPMN 2.0 XML格式部署到流程引擎中。XML文件被解析并转化为一个流程定义图结构。该图结构由流程引擎执行。
 
-In Camunda Platform you can deploy processes to the process engine in BPMN 2.0 XML format. The XML files are parsed and transformed into a process definition graph structure. This graph structure is executed by the process engine.
+## 流程定义的查询
 
-
-## Query for Process Definitions
-
-You can query for all deployed process definitions using the Java API and the `ProcessDefinitionQuery` made available through the `RepositoryService`. Example:
+你可以使用Java API和通过`RepositoryService`提供的`ProcessDefinitionQuery`来查询所有部署的流程定义。例如：
 
 ```java
 List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefinitionQuery()
@@ -41,14 +39,14 @@ List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefi
     .list();
 ```
 
-The above query returns all deployed process definitions for the key `invoice` ordered by their `version` property.
+上面的查询返回所有已部署的流程定义，关键是`invoice`，按其`version`属性排序。
 
-You can also [query for process definitions using the REST API]({{< ref "/reference/rest/process-definition/get-query.md" >}}).
+你也可以[使用REST API查询流程定义]({{< ref "/reference/rest/process-definition/get-query.md" >}}).
 
 
-## Keys and Versions
+## Key和版本
 
-The *key* of a process definition (`invoice` in the example above) is the logical identifier of the process. It is used throughout the API, most prominently for starting process instances ([see section on process instances]({{< relref "#process-instances" >}})). The key of a process definition is defined using the `id` property of the corresponding `<process ... >` element in the BPMN 2.0 XML file:
+流程定义的**key**（上面例子中的 "invoice"）是流程的逻辑标识符。它在整个API中被使用，最典型的是用于启动流程实例，（见[流程实例部分]({{< relref "#process-instances" >}})）。流程定义的关键是使用BPMN2.0 XML文件中相应的`<process ... >`元素的`id`属性来定义的。
 
 ```xml
 <process id="invoice" name="invoice receipt" isExecutable="true">
@@ -56,76 +54,73 @@ The *key* of a process definition (`invoice` in the example above) is the logica
 </process>
 ```
 
-If you deploy multiple processes with the same key, they are treated as individual versions of the same process definition by the process engine. Please refer to [Process Versioning]({{< ref "/user-guide/process-engine/process-versioning.md" >}}) for details.
+如果你用同一个key部署了多个流程，流程引擎会将它们视为同一流程定义的不同版本。请参考[流程版本管理]({{< ref "/user-guide/process-engine/process-versioning.md" >}})了解详情。
 
 
-## Suspend Process Definitions
+## 禁用流程定义
 
-Suspending a process definition disables it temporarily, i.e., it cannot be instantiated while it is suspended. The `RuntimeService` Java API can be used to suspend a process definition. Similarly, you can activate a process definition to undo this effect.
-
-
-# Process Instances
-
-A process instance is an individual execution of a process definition. The relation of the process instance to the process definition is the same as the relation between *Object* and *Class* in Object Oriented Programming (the process instance playing the role of the object and the process definition playing the role of the class in this analogy).
-
-The process engine is responsible for creating process instances and managing their state. If you start a process instance which contains a wait state, for example a [user task]({{< ref "/reference/bpmn20/tasks/user-task.md" >}}), the process engine must make sure that the state of the process instance is captured and stored inside a database until the wait state is left (the user task is completed).
+禁用一个流程定义会使其暂时禁止实例化。`RuntimeService` Java API可以暂停一个流程定义。同样地，你可以激活一个流程定义来撤销这个效果。
 
 
-## Start a Process Instance
+# 流程实例
 
-The simplest way to start a process instance is by using the `startProcessInstanceByKey(...)` method offered by the RuntimeService:
+流程实例是一个流程定义的单独执行。流程实例与流程定义的关系与面向对象编程中**对象**和**类**的关系类似（流程实例扮演对象的角色，流程定义扮演类的角色）。
+
+流程引擎负责创建流程实例并管理其状态。如果你启动一个包含等待状态的流程实例，例如一个[用户任务]({{< ref "/reference/bpmn20/tasks/user-task.md" >}})，流程引擎必须确保流程实例的状态被捕获并存储在数据库内，直到离开等待状态（用户任务被完成）。
+
+## 启动流程实例
+
+启动一个流程实例的最简单方法是使用RuntimeService提供的`startProcessInstanceByKey(..)`方法。
 
     ProcessInstance instance = runtimeService.startProcessInstanceByKey("invoice");
 
-You may optionally pass in a couple of variables:
+你可以选择性地传入几个变量：
 
     Map<String, Object> variables = new HashMap<String,Object>();
     variables.put("creditor", "Nice Pizza Inc.");
     ProcessInstance instance = runtimeService.startProcessInstanceByKey("invoice", variables);
 
-Process variables are available to all tasks in a process instance and are automatically persisted to the database in case the process instance reaches a wait state.
+流程变量对流程实例中的所有任务来说都是可用的，并且在流程实例到达等待状态时自动持久化到数据库。
 
-It is also possible to [start a process instance using the REST API]({{< ref "/reference/rest/process-definition/post-start-process-instance.md" >}}).
+也可以[使用REST API启动一个流程实例]({{< ref "/reference/rest/process-definition/post-start-process-instance.md" >}}).
 
-### Start Process Instances via Tasklist
+### 通过 Tasklist 创建流程实例
 
-In case you use [Tasklist]({{< ref "/webapps/tasklist/working-with-tasklist.md#start-a-process" >}}) to start process instances, 
-the [`startableInTasklist`]({{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#isstartableintasklist" >}}) option 
-exists to specify which processes are visible for being started by the user. 
+你可以使用 [Tasklist]({{< ref "/webapps/tasklist/working-with-tasklist.md#start-a-process" >}}) 创建流程实例，
+[`startableInTasklist`]({{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#isstartableintasklist" >}}) 选项的存在是为了指定哪些流程是可以被用户启动的。
 
-For instance, this could be sensible for a subprocess: if it should only be possible to start the super process but not
-the subprocess, adjust the process xml file (*.bpmn) as follows:
+例如，如果只应启动父流程而不启动子流程，请按以下方式调整子流程xml文件是明智的（*.bpmn）。
 
 ```xml
 <process id="subProcess"
-         name="Process called from Super Process"
+         name="请直接发起父流程"
          isExecutable="true"
          camunda:isStartableInTasklist="false">
 ...
 </process>
 ```
 
-## Start a Process Instance at Any Set of Activities
+## 在任何一组活动中启动一个过程实例
 
-The `startProcessInstanceByKey` and `startProcessInstanceById` methods start the process instance at their default initial activity, which is typically the single blank start event of the process definition. It is also possible to start anywhere in a process instance by using the *fluent builder* for process instances. The fluent builder can be accessed via the RuntimeService methods `createProcessInstanceByKey` and `createProcessInstanceById`.
+`startProcessInstanceByKey`和`startProcessInstanceById`方法在其默认的初始活动处启动流程实例，这通常是流程定义的单一空白启动事件。通过使用流程实例的**fluent builder**，也可以在流程实例的任何地方启动。可以通过RuntimeService的方法`createProcessInstanceByKey`和`createProcessInstanceById`来访问fluent builder。
 
-The following starts a process instance before the activity `SendInvoiceReceiptTask` and the embedded sub process `DeliverPizzaSubProcess`:
+下面是在活动 "SendInvoiceReceiptTask "和嵌入式子流程 "DeliverPizzaSubProcess "之前启动一个流程实例。
 
 ```java
 ProcessInstance instance = runtimeService.createProcessInstanceByKey("invoice")
-  .startBeforeActivity("SendInvoiceReceiptTask")
+  .startBeforeActivity("SendInvoiceReceiptTask") // 发送发票收据任务
   .setVariable("creditor", "Nice Pizza Inc.")
-  .startBeforeActivity("DeliverPizzaSubProcess")
+  .startBeforeActivity("DeliverPizzaSubProcess") // 提供披萨子流程
   .setVariableLocal("destination", "12 High Street")
   .execute();
 ```
 
-The fluent builder allows to submit any number of so-called instantiation instructions. When calling `execute`, the process engine performs these instructions in the order they are specified. In the above example, the engine first starts the task *SendInvoiceReceiptTask* and executes the process until it reaches a wait state and then starts *DeliverPizzaTask* and does the same. After these two instructions, the `execute` call returns.
+fluent builder 允许提交任何数量的实例化指令。当调用`执行'时，流程引擎按照指定的顺序执行这些指令。在上面的例子中，引擎首先启动任务*SendInvoiceReceiptTask*并执行该流程，直到它达到等待状态，然后启动*DeliverPizzaTask*并做同样的事情。在这两条指令之后，"执行 "调用返回。
 
-### Variables in Return
+### 启动时返回的变量
 
-To access the latest variables which was used by the process instance during execution the `executeWithVariablesInReturn` can be used, instead of the `execute` method. 
-See the following example:
+要访问流程实例在执行过程中使用的最新变量，可以使用 "executeWithVariablesInReturn"，而不是 "execute "方法。
+请看下面的例子：
 
 ```java
 ProcessInstanceWithVariables instance = runtimeService.createProcessInstanceByKey("invoice")
@@ -136,64 +131,64 @@ ProcessInstanceWithVariables instance = runtimeService.createProcessInstanceByKe
   .executeWithVariablesInReturn();
 ```
 
-The `executeWithVariablesInReturn` returns if the process instance ends or reaches a wait state. The returned `ProcessInstanceWithVariables` object contains the informations of the process instance and the latest variables.
+如果流程实例结束或达到等待状态， `executeWithVariablesInReturn` 会返回。返回的`ProcessInstanceWithVariables`对象包含流程实例的信息和最新的变量。
 
-## Query for Process Instances
+## 查询流程实例
 
-You can query for all currently running process instances using the `ProcessInstanceQuery` offered by the `RuntimeService`:
+你可以使用`RuntimeService`提供的`ProcessInstanceQuery`查询所有当前运行的流程实例：
 
     runtimeService.createProcessInstanceQuery()
         .processDefinitionKey("invoice")
         .variableValueEquals("creditor", "Nice Pizza Inc.")
         .list();
 
-The above query would select all process instances for the `invoice` process where the `creditor` is `Nice Pizza Inc.`.
+上面的查询将选择 `invoice` 流程的所有流程实例，其中 `creditor` 是 `Nice Pizza Inc.`。
 
-You can also [query for process instances using the REST API]({{< ref "/reference/rest/process-instance/get-query.md" >}}).
-
-
-## Interact With a Process Instance
-
-Once you have performed a query for a particular process instance (or a list of process instances), you may want to interact with it. There are multiple possibilities to interact with a process instance, most prominently:
-
-  * Triggering it (make it continue execution):
-      * Through a [Message Event]({{< ref "/reference/bpmn20/events/message-events.md" >}})
-      * Through a [Signal Event]({{< ref "/reference/bpmn20/events/signal-events.md" >}})
-  * Canceling it:
-      * Using the `RuntimeService.deleteProcessInstance(...)` method.
-  * Starting/Canceling any activity:
-      * Using the [process instance modification feature]({{< ref "/user-guide/process-engine/process-instance-modification.md" >}})
-
-If your process uses at least one User Task, you can also interact with the process instance using the TaskService API.
+您还可以[使用REST API查询流程实例]({{< ref "/reference/rest/process-instance/get-query.md" >}}).
 
 
-## Suspend Process Instances
+## 流程变量的交互
 
-Suspending a process instance is helpful, if you want ensure that it is not executed any further. For example, if process variables are in an undesired state, you can suspend the instance and change the variables *safely*.
+一旦你对一个特定的过程实例（或过程实例的列表）进行了查询，你可能想与它进行交互。有多种可能性与一个流程实例进行交互，最典型的是：
 
-In detail, suspension means to disallow all actions that change *token* state (i.e., the activities that are currently executed) of the instance. For example, it is not possible to signal an event or complete a user task for a suspended process instance, as these actions will continue the process instance execution subsequently. Nevertheless, actions like setting or removing variables are still allowed, as they do not change the token state.
+  * 触发它（使其继续执行）：
+      * 通过 [消息事件]({{< ref "/reference/bpmn20/events/message-events.md" >}})
+      * 通过 [信号事件]({{< ref "/reference/bpmn20/events/signal-events.md" >}})
+  * 取消它：
+      * 使用 `RuntimeService.deleteProcessInstance(...)` 方法.
+  * 启动/取消任何活动：
+      * 使用 [process instance modification feature]({{< ref "/user-guide/process-engine/process-instance-modification.md" >}})
 
-Also, when suspending a process instance, all tasks belonging to it will be suspended. Therefore, it will no longer be possible to invoke actions that have effects on the task's *lifecycle* (i.e., user assignment, task delegation, task completion, ...). However, any actions not touching the lifecycle like setting variables or adding comments will still be allowed.
+如果你的流程包含用户任务，你也可以使用TaskService API与流程实例交互。
 
-A process instance can be suspended by using the `suspendProcessInstanceById(...)` method of the `RuntimeService`. Similarly it can be reactivated again.
+## 禁用流程实例
 
-If you would like to suspend all process instances of a given process definition, you can use the method `suspendProcessDefinitionById(...)` of the`RepositoryService` and specify the `suspendProcessInstances` option.
+禁用流程实例是有帮助的，如果你想确保它不被进一步执行。例如，如果流程变量处于不合理的状态，你可以暂停该实例并“安全”地改变变量。
 
+详细来说，暂停意味着不允许所有改变实例的“token”状态（即当前执行的活动）的行动。例如，不可能为暂停的流程实例发出事件信号或完成用户任务，因为这些操作随后会继续执行流程实例。尽管如此，像设置或删除变量这样的操作仍然是允许的，因为它们不会改变token状态。
 
-# Executions
+另外，当暂停一个流程实例时，属于它的所有任务将被暂停。因此，将不再可能调用对任务的生命周期有影响的操作（即用户分配、任务委托、任务完成...）。然而，任何不涉及生命周期的操作，如设置变量或添加注释，仍是可以执行的。
 
-If your process instance contains multiple execution paths (like for instance after a [parallel gateway]({{< ref "/reference/bpmn20/gateways/parallel-gateway.md" >}}), you must be able to differentiate the currently active paths inside the process instance. In the following example, two user tasks *receive payment* and *ship order* can be active at the same time.
+一个流程实例可以通过使用`RuntimeService`的`suspendProcessInstanceById(...)`方法来禁用。同样，它也可以被重新激活。
 
-{{< img src="../img/parallel-gw.png" title="Parallel Gateway" >}}
-
-Internally, the process engine creates two concurrent executions inside the process instance, one for each concurrent path of execution. Executions are also created for scopes, for example if the process engine reaches a [Embedded Sub Process]({{< ref "/reference/bpmn20/subprocesses/embedded-subprocess.md" >}}) or in case of [Multi Instance]({{< ref "/reference/bpmn20/tasks/task-markers.md" >}}).
-
-Executions are hierarchical and all executions inside a process instance span a tree, the process instance being the root-node in the tree. Note: the process instance itself is an execution. Executions are [variable scopes]({{< ref "/user-guide/process-engine/variables.md" >}}), meaning that dynamic data can be associated with them.
+如果你想禁用某个流程定义的所有流程实例，你可以使用`RepositoryService`的`suspendProcessDefinitionById(...)`方法并指定`suspendProcessInstances`选项。
 
 
-## Query for Executions
+# 执行（Executions）
 
-You can query for executions using the `ExecutionQuery` offered by the `RuntimeService`:
+如果你的流程实例包含多个执行路径（例如[并行网关]({{< ref "/reference/bpmn20/gateways/parallel-gateway.md" >}})），你必须能够区分流程实例内当前的活动路径。在下面的例子中，两个用户任务“receive payment”和“ship order”可以同时执行。
+
+{{< img src="../img/parallel-gw.png" title="并行网关" >}}
+
+在内部实现中，流程引擎在流程实例遇到并行网关时会创建两个并发的执行，每个并发的执行都有一个执行路径。
+或者“范围”也会创建新的执行，例如，如果流程引擎到达一个[嵌入式子流程]({{< ref "/reference/bpmn20/subprocesses/embedded-subprocess.md" >}})，就会创建执行。
+或者[多实例]({{< ref "/reference/bpmn20/tasks/task-markers.md" >}})也会创建新的执行。
+
+执行是分层次的，一个流程实例内的所有执行组成一棵树，流程实例是树上的根节点。注意：流程实例本身就是一个执行。执行属于[变量范围]({{< ref "/user-guide/process-engine/variables.md" >}}), 意味着动态数据可以与之关联。
+
+## 执行的查询
+
+你可以使用`RuntimeService`提供的`ExecutionQuery`来查询执行情况。
 
 ```java
 runtimeService.createExecutionQuery()
@@ -201,22 +196,22 @@ runtimeService.createExecutionQuery()
     .list();
 ```
 
-The above query returns all executions for a given process instance.
+上述查询返回一个给定进程实例的所有执行情况。
 
-You can also [query for executions using the REST API]({{< ref "/reference/rest/execution/get.md" >}}).
+你也可以[使用REST API查询执行情况]({{< ref "/reference/rest/execution/get.md" >}}).
 
 
-# Activity Instances
+# 活动实例（Activity Instances）
 
-The activity instance concept is similar to the execution concept but takes a different perspective. While an execution can be imagined as a *token* moving through the process, an activity instance represents an individual instance of an activity (task, subprocess, ...). The concept of the activity instance is thus more *state-oriented*.
+活动实例的概念与执行的概念相似，但采取了不同的视角。执行可以被想象成在流程中移动的 “token”，而活动实例则代表一个活动（任务、子流程...）的单个实例。因此，活动实例的概念更加倾向“面向状态（state-oriented）”。
 
-Activity instances also span a tree, following the scope structure provided by BPMN 2.0. Activities that are "on the same level of subprocess" (i.e., part of the same scope, contained in the same subprocess) will have their activity instances at the same level in the tree.
+活动实例也构成一棵树，遵循 BPMN 2.0 所提供的范围标准。处于 "同一层次的子流程"（即，同一范围的一部分，包含在同一子流程中）的活动，其活动实例会处于树的同一层次。
 
-For example, Activity Instances are used for [Process Instance Modification]({{< ref "/user-guide/process-engine/process-instance-modification.md" >}}) and the [Activity Instance Tree in Cockpit]({{< ref "/webapps/cockpit/bpmn/process-instance-view.md#activity-instance-tree" >}}).
+例如，活动实例被用来进行[流程实例的修改]({{< ref "/user-guide/process-engine/process-instance-modification.md" >}}) 和查看 [Cockpit中的活动实例树]({{< ref "/webapps/cockpit/bpmn/process-instance-view.md#activity-instance-tree" >}}).
 
-Examples:
+例如:
 
-* Process with two parallel user tasks after parallel Gateway:
+* 并行网关后有两个并行用户任务的进程：
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/parallelGateway_two_userTasks"></div>
 
@@ -226,7 +221,7 @@ ProcessInstance
   ship order
 ```
 
-* Process with two parallel Multi-Instance user tasks after parallel Gateway:
+* 在并行网关后有两个并行的多实例用户任务的进程：
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/parallelGateway_two_multiInstance_userTasks"></div>
 
@@ -239,9 +234,9 @@ ProcessInstance
     ship order
 ```
 
-Note: a multi-instance activity consists of a multi-instance body and an inner activity. The multi-instance body is a scope around the inner activity and collects the activity instances of the inner activity.
+注意：多实例活动由多实例主体和内部活动组成。多实例主体包含所有内部活动，并收集内部活动的活动实例。
 
-* User Task inside an embedded subprocess:
+* 嵌入子进程内的用户任务：
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/userTask_inside_embeddedSubprocess"></div>
 
@@ -251,7 +246,7 @@ ProcessInstance
     receive payment
 ```
 
-* Process with thrown compensation event after user task:
+* 在用户任务之后，用抛出的补偿事件进行处理。
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/compensation_userTask"></div>
 
@@ -261,39 +256,38 @@ ProcessInstance
   cancel shipping
 ```
 
-## Retrieve an Activity Instance
+## 查询活动实例
 
-Currently, activity instances can only be retrieved for a process instance:
+目前，活动实例只能通过流程实例检索。
 
 ```java
 ActivityInstance rootActivityInstance = runtimeService.getActivityInstance(processInstance.getProcessInstanceId());
 ```
 
-You can [retrieve the activity instance tree using the REST API]({{< ref "/reference/rest/process-instance/get-activity-instances.md" >}}) as well.
+你也可以[使用REST API检索活动实例树]({{< ref "/reference/rest/process-instance/get-activity-instances.md" >}})。
 
 
-## Identity & Uniqueness
+## 身份 与 唯一性
 
-Each activity instance is assigned a unique ID. The ID is persistent, if you invoke this method multiple times, the same activity instance IDs will be returned for the same activity instances. (However, there might be different executions assigned, see below)
+每个活动实例被分配一个唯一的ID。这个ID是确定的，如果你多次调用这个方法，相同的活动实例ID将被返回相同的活动实例。然而，可能会分配不同的执行，见下文：
 
+## 与执行相关的内容
 
-## Relation to Executions
+流程引擎中的执行概念与活动实例概念并不完全一致，因为执行树通常与BPMN中的活动/范围概念不一致。一般来说，执行和活动实例之间是n对1的关系，也就是说，在一个给定的时间点上，一个活动实例可以与多个执行相关联。此外，不能保证启动某个活动实例的执行也能结束它。流程引擎为了对执行树压缩进行了一些内部优化，这可能导致执行被重新排序和裁剪。这可能会导致这样的情况：一个给定的执行启动了一个活动实例，但另一个执行却结束了它。另一种特殊情况是：如果流程实例正在执行流程定义范围下面的非范围活动（例如用户任务），它将被root活动实例和用户任务活动实例所引用。
 
-The Execution concept in the process engine is not completely aligned with the activity instance concept because the execution tree is generally not aligned with the activity / scope concept in BPMN. In general, there is a n-1 relationship between Executions and ActivityInstances, i.e., at a given point in time, an activity instance can be linked to multiple executions. In addition, it is not guaranteed that the same execution that started a given activity instance will also end it. The process engine performs several internal optimizations concerning the compacting of the execution tree which might lead to executions being reordered and pruned. This can lead to situations where a given execution starts an activity instance but another execution ends it. Another special case is the process instance: if the process instance is executing a non-scope activity (for example a user task) below the process definition scope, it will be referenced by both the root activity instance and the user task activity instance.
-
-Note: If you need to interpret the state of a process instance in terms of a BPMN process model, it is usually easier to use the activity instance tree as opposed to the execution tree.
-
-
-# Jobs and Job Definitions
-
-The Camunda process engine includes a component named the *Job Executor*. The Job Executor is a scheduling component, responsible for performing asynchronous background work. Consider the example of a Timer Event: whenever the process engine reaches the timer event, it will stop execution, persist the current state to the database and create a job to resume execution in the future. A job has a due date which is calculated using the timer expression provided in the BPMN XML.
-
-When a process is deployed, the process engine creates a Job Definition for each activity in the process which will create jobs at runtime. This allows you to query information about timers and asynchronous continuations in your processes.
+注意：如果你需要用 BPMN 流程模型来解释流程实例的状态，通常，使用活动实例树将比执行树更容易。
 
 
-## Query for jobs
+# jobs 和 job 的定义
 
-Using the management service, you can query for jobs. The following selects all jobs which are due after a certain date:
+Camunda流程引擎包括一个名为“Job执行器（Job Executor）”的组件。Job执行器是一个调度组件，负责执行异步的后台Job。用定时器事件的例子：每当流程引擎到达定时器事件时，它将停止执行，将当前状态持久化到数据库，并创建一个Job以在未来恢复执行。一个Job有一个到期时间，这个到期时间是使用BPMN XML中提供的定时器表达式计算的。
+
+当一个流程被部署时，流程引擎为流程中的每个活动创建一个Job定义，该定义将在运行时创建Job。这允许你在流程中查询关于计时器和异步继续的信息。
+
+
+## 查询jobs
+
+使用managementService，你可以查询Job。以下是选择所有在某一日期后到期的Job。
 
 ```java
 managementService.createJobQuery()
@@ -301,33 +295,34 @@ managementService.createJobQuery()
   .list()
 ```
 
-It is possible to query for jobs using the REST API.
+也可以使用REST API查询Job。
 
 
-## Query for Job Definitions
+## 查询 Job 定义
 
-Using the management service, you can also query for job definitions. The following selects all job definitions from a specific process definition:
+使用managementService，你也可以查询Job的定义。以下是选择特定流程中所有Job的定义：
 
 ```java
 managementService.createJobDefinitionQuery()
   .processDefinitionKey("orderProcess")
   .list()
 ```
-The result will contain information about all timers and asynchronous continuations in the order process.
 
-It is also possible to query for job definitions using the REST API.
+返回结果中将包含目标流程中所有定时器和异步继续的信息。
+
+也可以使用REST API查询Job定义。
 
 
-## Suspend and Activate Job Execution
+## 禁用和启用Job执行器
 
-Job suspension prevents jobs from being executed. Suspension of job execution can be controlled on different levels:
+禁用Job可以防止Job被执行。暂停Job的执行可以在不同的层面上进行控制。
 
-* Job Instance Level: individual Jobs can be suspended either directly through the `managementService.suspendJob(...)` API or transitively when suspending a Process Instance or a Job Definition.
-* Job Definition Level: all instances of a certain Timer or Activity can be suspended.
+* Job实例级别：单个Job可以通过`managementService.suspendJob(..)` API直接暂停，或者在暂停一个进程实例或Job定义时过渡性地暂停。
+* Job定义级别：某个定时器或活动的所有实例可以被暂停。
 
-Job suspension by Job Definition allows you to suspend all instances of a certain timer or an asynchronous continuation. Intuitively, this allows you to suspend a certain activity in a process in a way that all process instances will advance until they have reached this activity and then not continue since the activity is suspended.
+通过对Job定义的暂停Job允许你暂停某个定时器或异步继续的所有实例。直观地说，这允许你暂停进程中的某个活动，其方式是所有的进程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
 
-Let's assume there is a process deployed with key `orderProcess`, which contains a service task named `processPayment`. The service task has an asynchronous continuation configured which causes it to be executed by the job executor. The following example shows how you can prevent the `processPayment` service from being executed:
+让我们假设有一个以 "orderProcess" 为关键字部署的进程，它包含一个名为 "processPayment" 的服务任务。该服务任务配置了一个异步继续，导致它被Job执行器执行。下面的例子显示了如何防止 "processPayment"服务被执行：
 
 ```java
 List<JobDefinition> jobDefinitions = managementService.createJobDefinitionQuery()
