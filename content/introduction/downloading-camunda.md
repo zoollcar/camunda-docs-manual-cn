@@ -1,6 +1,6 @@
 ---
 
-title: 'Download'
+title: '下载'
 weight: 10
 
 menu:
@@ -11,82 +11,73 @@ menu:
 ---
 
 
-# Prerequisites
+# 先决条件
 
-Before downloading Camunda, make sure you have a JRE (Java Runtime Environment), or better, a JDK
-(Java Development Kit) installed. Please check the supported [Java versions]({{< ref "/introduction/supported-environments.md#java" >}}).
+在下载 Camunda 之前，首先你需要安装 JRE (Java Runtime Environment) 或者 JDK
+(Java Development Kit)（JDK是更好的选择）。 检查你的Java版本是否是 [支持的 Java 版本]({{< ref "/introduction/supported-environments.md#java" >}}).
 
-[Download JDK][get-jdk]
-
-
-# Download the Runtime
-
-Camunda is a flexible framework which can be used in different contexts. See [Architecture Overview]
-({{< ref "/introduction/architecture.md" >}}) for more details. Based on how you want
-to use Camunda, you can choose a different distribution.
+[JDK 下载地址][get-jdk]
 
 
-## Community vs. Enterprise Edition
+# 下载运行时
 
-Camunda provides separate runtime downloads for community users and enterprise subscription
-customers:
-
-* [Community download page][community-download-page]
-* [Enterprise download page][enterprise-download-page]
-
-It is also possible to run Camunda Platform with [Spring Boot][run-with-spring-boot] and [Docker][run-with-docker].
+Camunda是一个灵活的框架，可以用在不同的环境中运行。详情参见[架构概述]
+({{< ref "/introduction/architecture.md" >}})。 根据你想使用Camunda的方式，你可以选择不同的运行方式。
 
 
-## Full Distribution
+## 社区版 vs. 企业版
 
-Download the full distribution if you want to use a [shared process engine][shared-engine] or if you
-want to get to know Camunda quickly, without any additional setup or installation steps required.
+Camunda为社区用户和企业订阅客户提供不同的运行时下载：
 
-The full distribution bundles
+* [社区版下载地址][community-download-page]
+* [企业版下载地址][enterprise-download-page]
 
-* Process Engine configured as [shared process engine][shared-engine],
-* Runtime Web Applications (Tasklist, Cockpit, Admin),
-* Rest Api,
-* Container / Application Server itself.
+也可以通过[Spring Boot][run-with-spring-boot] 和 [Docker][run-with-docker]的方式运行Camunda平台。
 
-{{< note title="Server/Container" class="info" >}}
-  If you download the full distribution for an open source application
-  server/container, the container itself is included. For example, if you download the tomcat
-  distribution, tomcat itself is included and the Camunda binaries (process engine and
-  webapplications) are pre-installed into the container. This is not true for the the Oracle WebLogic
-  and IBM WebSphere downloads. These downloads do not include the application servers themselves.
+
+## 整合包
+
+如果你想使用 [分布式流程引擎][shared-engine] 或者想快速了解Camunda，不想做任何额外的设置或安装步骤，可以下载整合包。
+
+整合包捆绑包括了：
+
+* 配置好的 [分布式流程引擎][shared-engine],
+* 网络应用程序 (Tasklist, Cockpit, Admin),
+* Rest Api 接口,
+* 容器/应用服务器本身.
+
+{{< note title="服务器/容器" class="info" >}}
+  如果你下载了开源应用服务器/容器的整合包，那么容器本身也会包括在内。例如，如果你下载tomcat发行版，tomcat本身就包括在内，Camunda二进制文件（流程引擎和网络应用程序）也会预先安装在容器中。而Oracle WebLogic和IBM WebSphere的下载则不会这样的。这些包是不包括应用服务器本身。
 {{< /note >}}
 
-{{< note title="Wildfly Application Server" class="info" >}}
-  Wildfly Application Server is provided as part of the archives as a convenience. For a copy of the source code, the full set of attribution notices, and other relevant information please see https://github.com/wildfly/wildfly. We will also provide you with a copy of the source code if you [contact our Open-Source Compliance Team](https://docs.camunda.org/manual/latest/introduction/licenses/#contact) at any time within three years of you downloading an archive (for which we may charge a nominal sum). Wildfly Application Server is copyright © JBoss, Home of Professional Open Source, 2010, Red Hat Middleware LLC [..and contributors].
+{{< note title="Wildfly应用程序服务器" class="info" >}}
+  Wildfly应用服务器是作为档案的一部分提供的，作为一种方便。 关于源代码的副本、版权声明以及其他相关信息，请参见https://github.com/wildfly/wildfly。如果你[联系我们的开源合规团队](https://docs.camunda.org/manual/latest/introduction/licenses/#contact)，我们也会向你提供一份源代码的副本。 在您下载存档后三年内的任何时候（我们可能会对此收取象征性的费用）。Wildfly应用服务器的版权属于 copyright © JBoss, Home of Professional Open Source, 2010, Red Hat Middleware LLC [..and contributors].
 {{< /note >}}
 
-See the [Installation Guide][installation-guide-full] for additional details.
+详情参见 [安装教程]][installation-guide-full] 。
 
 
-## Standalone Web Application Distribution
+## 独立的网络应用程序发布
 
-Download the standalone web application distribution if you want to use Cockpit, Tasklist, Admin
-applications as a **self-contained WAR file** with an [embedded process engine][embedded-engine].
+如果你想独立使用 Cockpit, Tasklist, Admin ，可以在[嵌入式流程引擎][embedded-engine]页面下载**可执行 WAR 包**运行网络应用程序
 
-The standalone web application distribution bundles
+独立的网络应用程序包，包括下列内容：
 
-* Process engine configured as [embedded process engine][embedded-engine],
-* Runtime Web Applications (Tasklist, Cockpit, Admin),
-* Rest Api,
+* [嵌入式流程引擎][embedded-engine]配置,
+* 网络应用程序 (Tasklist, Cockpit, Admin),
+* Rest Api 接口,
 
-The standalone web application can be deployed to any of the supported application servers.
+独立的网络应用程序可以被部署到任何支持的应用服务器上。
 
-The process engine configuration is based on the Spring Framework. If you want to change the
-database configuration, edit the `WEB_INF/applicationContext.xml` file inside the WAR file.
+流程引擎的配置是基于Spring框架的。如果你想改变数据库配置，请编辑WAR文件中的`WEB_INF/applicationContext.xml`文件。
 
-See the [Installation Guide][installation-guide-standalone] for additional details.
+有关其他细节，请参见[安装指南][installation-guide-standalone]。
 
 
-# Download Camunda Modeler
+# 下载 Camunda Modeler
 
-Camunda Modeler is a modeling Tool for BPMN 2.0 and DMN 1.3. Camunda Modeler can be downloaded
-from the [community download page][community-download-page].
+Camunda Modeler是一款用于BPMN 2.0和DMN 1.3的建模工具。Camunda Modeler可以从
+从[社区下载页面][community-download-page]下载.
 
 
 
