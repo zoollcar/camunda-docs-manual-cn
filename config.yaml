@@ -1,6 +1,6 @@
 ---
-baseURL: "/manual/develop/"
-languageCode: "en-us"
+baseURL: "http://shaochenfeng.com/camunda-cn/"
+languageCode: "zh-cn"
 title: "Camunda 中文站"
 theme: "camunda"
 
@@ -10,23 +10,14 @@ blackfriday:
 params:
   sections:
     - id: "get-started"
-      name: "Get Started"
-      url: "/get-started"
+      name: "入门教程"
+      url: "https://docs.camunda.org/get-started/"
+    - id: "get-started"
+      name: "译者的入门教程"
+      url: "http://shaochenfeng.com/camunda/"
     - id: "manual"
-      name: "Camunda Platform"
-      url: "/manual"
-    - id: "optimize"
-      name: "Optimize"
-      url: "/optimize"
-    - id: 'cawemo'
-      name: 'Cawemo'
-      url: '/cawemo'
-    - id: "enterprise"
-      name: "Enterprise"
-      url: "/enterprise"
-    - id: "security"
-      name: "Security"
-      url: "/security"
+      name: "Camunda 平台"
+      url: "/camunda-cn"
   section:
     id: "manual"
     version: "develop"
