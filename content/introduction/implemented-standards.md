@@ -1,6 +1,6 @@
 ---
 
-title: 'Implemented Standards'
+title: '遵循的标准'
 weight: 20
 
 menu:
@@ -10,42 +10,45 @@ menu:
 
 ---
 
-Camunda implements three different standards in the Business Process Management scope: BPMN 2.0, CMMN 1.1 and DMN 1.3.
-These three standards are defined by the [Object Management Group][OMG] with active collaboration of Camunda.
+Camunda在业务流程方面实现了三种不同的标准：BPMN 2.0、CMMN 1.1和DMN 1.3。
+这三个标准是由[Object Management Group][OMG]在Camunda的积极合作下定义的。
 
-Camunda Platform provides open source implementations of execution and [modeling tools][modelers].
+Camunda平台提供执行和[建模工具][modelers]的开源实现。
 
 # BPMN
 
-Business Process Model and Notation (BPMN) is a standard for Workflow and Process Automation.
-Camunda supports the 2.0 version of BPMN.
+Business Process Model and Notation (BPMN) 是一个工作流和流程自动化标准。
 
-* Getting started implementing BPMN Processes: [Quick Start (Java / JS)]
-* Getting to Know BPMN as a Modeling Language: [BPMN Modeling Tutorial]
-* Modeling BPMN: [BPMN Modeling Reference]
-* Tool for modeling BPMN: [BPMN Modeler][modelers]
-* Implementing BPMN Processes: [BPMN Implementation Reference]
-* Executing BPMN: [Process Engine]
+Camunda 支持 BPMN 的 2.0 版本
+
+* 快速入门实现BPMN流程: [Quick Start (Java / JS)]
+* 快速了解BPMN建模语言: [BPMN Modeling Tutorial]
+* BPMN建模相关信息: [BPMN Modeling Reference]
+* BPMN建模工具: [BPMN Modeler][modelers]
+* 实现BPMN 流程: [BPMN Implementation Reference]
+* 执行BPMN: [Process Engine]
 
 # CMMN
 
-Case Management Model and Notation (CMMN) is a standard for Case Management.
-Camunda supports the 1.1 version of CMMN.
+Case Management Model and Notation (CMMN) 是一个案例管理标准
 
-* Getting started implementing CMMN Cases: [CMMN Getting Started]
-* Implementing CMMN Cases: [CMMN Implementation Reference]
-* Executing CMMN: [Process Engine]
+Camunda 支持 CMMN 的 1.1 版本。
+
+* 快速入门实现CMMN案件: [CMMN Getting Started]
+* 实现CMMN案例: [CMMN Implementation Reference]
+* 执行CMMN: [Process Engine]
 
 # DMN
 
-Decision Model and Notation (DMN) is a standard for Business Decision Management.
-Camunda supports the 1.1 version of DMN.
+Decision Model and Notation (DMN) 是一个业务决策标准。
 
-* Getting started implementing DMN decision tables: [DMN Getting Started]
-* Getting to Know DMN: [DMN Modeling Tutorial]
-* Tool for editing DMN: [DMN Editor][modelers]
-* Implementing DMN Decisions: [DMN Implementation Reference]
-* Executing DMN: [DMN Engine]
+Camunda 支持 DMN 的 1.1 版本。
+
+* 快速入门实现 DMN 决策表: [DMN Getting Started]
+* 了解 DMN: [DMN Modeling Tutorial]
+* 学习用于编辑 DMN 的工具: [DMN Editor][modelers]
+* 实现DMN 决策: [DMN Implementation Reference]
+* 执行DMN: [DMN Engine]
 
 
 [OMG]: http://www.omg.org/

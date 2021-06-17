@@ -1,6 +1,6 @@
 ---
 
-title: 'Licenses'
+title: '许可协议'
 weight: 15
 
 menu:
@@ -11,19 +11,19 @@ menu:
 ---
 
 
-# Camunda Platform
+# Camunda平台
 
-The Camunda Platform is a Java-based framework.
+Camunda平台是一个基于Java的框架。
 
-## Community Edition
+## 社区版
 
 If you are using the community edition, the software is provided under various open source licenses (mainly Apache 2.0 and MIT). Which components are published under an open source license is clearly stated in the licensing header of a source file or a LICENSE file present in the root directory of the software source code repository.
 
-## Enterprise Edition
+## 企业版
 
 If you are using the Enterprise Platform, the software is provided under a license agreement containing restrictions on use and disclosure and is protected by intellectual property laws. Except as expressly permitted in your license agreement or allowed by law, you may not use, copy, reproduce, translate, broadcast, modify, license, transmit, distribute, exhibit, perform, publish, or display any part, in any form, or by any means. Reverse engineering, disassembly, or decompilation of this software, unless required by law for interoperability, is prohibited.
 
-## Third-Party Libraries
+## 第三方库
 
 The Camunda Platform (Community and Enterprise Edition) includes third-party libraries developed by third parties (please see the documentation section [Third-Party Libraries][third-party-libraries]). See the following resources:
 
@@ -35,21 +35,21 @@ The Camunda Platform (Community and Enterprise Edition) includes third-party lib
 [license-book]: https://app.camunda.com/nexus/content/repositories/camunda-bpm/org/camunda/bpm/license-book/{{< minor-version >}}.0/license-book-{{< minor-version >}}.0.txt
 
 
-# Camunda Modeler
+# Camunda模型编辑器（Camunda Modeler）
 
-The Camunda Modeler is a desktop modeling application.
+Camunda模型编辑器是一个建模桌面程序。
 
-## License 
+## 许可协议 
 
 The source code of the Camunda Modeler is licensed under the MIT license as stated in the [`LICENSE` file](https://github.com/camunda/camunda-modeler/blob/master/LICENSE) in the root of the source code repository. This file is also shipped as `LICENSE.camunda-modeler.txt` with each modeler distribution.
 
-## Third-Party Libraries
+## 第三方库
 
 The application builds upon a number of third party libraries. You find an up-to-date list of third party libraries used and their license terms in the [`THIRD_PARTY_NOTICES` file](https://github.com/camunda/camunda-modeler/blob/master/THIRD_PARTY_NOTICES), located in the root of the source code repository. This file is also shipped with the application distribution as `THIRD_PARTY_NOTICES.camunda-modeler.txt`.
 
-# GPL Cooperation Commitment
+# GPL 合作承诺
 
-## Our Commitment
+## 我们承诺
 
 Before filing or continuing to prosecute any legal proceeding or claim (other than a Defensive Action) arising from termination of a Covered License, Camunda commits to extend to the person or entity (“you”) accused of violating the Covered License the following provisions regarding cure and reinstatement, taken from GPL version 3. As used here, the term ‘this License’ refers to the specific Covered License being enforced.
 
@@ -61,7 +61,7 @@ Camunda intends this Commitment to be irrevocable, and binding and enforceable a
 
 Camunda may modify this Commitment by publishing a new edition on this page or a successor location.
 
-## Definitions
+## 定义
 
 ‘Covered License’ means the GNU General Public License, version 2 (GPLv2), the GNU Lesser General Public License, version 2.1 (LGPLv2.1), or the GNU Library General Public License, version 2 (LGPLv2), all as published by the Free Software Foundation.
 
@@ -71,6 +71,6 @@ Camunda may modify this Commitment by publishing a new edition on this page or a
 
 This work is available under a [Creative Commons Attribution-ShareAlike 4.0 International license](https://creativecommons.org/licenses/by-sa/4.0/).
 
-# Contact
+# 联系方式
 
-If you have a question specifically about the licensing or distribution of Camunda’s software and it has not been answered by this page, please contact the Open Source Compliance team at [foss@camunda.com](mailto:foss@camunda.com).
+如果您有关于Camunda软件的许可或分销的具体问题，并且该问题没有在本页中得到解答，请联系开源合规团队，邮箱是[foss@camunda.com](mailto:foss@camunda.com).
