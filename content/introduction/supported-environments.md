@@ -1,6 +1,6 @@
 ---
 
-title: 'Supported Environments'
+title: '支持的运行环境'
 weight: 40
 
 menu:
@@ -11,21 +11,21 @@ menu:
 ---
 
 
-Run the Camunda Platform in every Java-runnable environment. Camunda Platform is supported with our QA infrastructure in the following environments. Here you can find more information about our [enterprise support](http://camunda.com/bpm/enterprise/).
+你可以在任何可运行Java的环境中运行Camunda平台。但以下环境中运行可以得到了我们的质量保证。你可以在我们的[企业支持](http://camunda.com/bpm/enterprise/)页面中获得更多的信息。
 
-{{< note title="Supported Environments" class="info" >}}
-  Please note that the environments listed in this section depend on the version of the Camunda Platform. Please select the corresponding version of this documentation to see the environment that fits to your version of the Camunda Platform. e.g., [supported environments for version 7.3](http://docs.camunda.org/7.3/guides/user-guide/#introduction-supported-environments)
+{{< note title="支持的运行环境" class="info" >}}
+  请注意，本节中列出的环境与Camunda平台的版本有关。请选择本文档的相应版本，以查看适合您的Camunda平台版本的环境。例如，[7.3版本的支持环境](http://docs.camunda.org/7.3/guides/user-guide/#introduction-supported-environments)。
 {{< /note >}}
 
 
-# Container/Application Server for Runtime Components
+# 容器/应用 服务器
 
-## Application-Embedded Process Engine
+## 嵌入应用程序的流程引擎
 
-* All Java application servers
-* Camunda Spring Boot Starter: Embedded Tomcat (see [Supported versions]({{< ref "/user-guide/spring-boot-integration/version-compatibility.md" >}}) and [Deployment scenarios]({{< ref "/user-guide/spring-boot-integration/_index.md#supported-deployment-scenarios" >}}))
+* 所有的 Java 应用服务器
+* Camunda Spring Boot Starter: 启用 Tomcat （参见 [支持的版本]({{< ref "/user-guide/spring-boot-integration/version-compatibility.md" >}}) 和 [部署场景]({{< ref "/user-guide/spring-boot-integration/_index.md#supported-deployment-scenarios" >}})）
 
-## Container-Managed Process Engine and Camunda Cockpit, Tasklist, Admin
+## 容器管理的流程引擎 和 Camunda Cockpit, Tasklist, Admin
 
 * Apache Tomcat 9.0
 * JBoss EAP 6.4 / 7.0 / 7.1 / 7.2 / 7.3
@@ -34,9 +34,9 @@ Run the Camunda Platform in every Java-runnable environment. Camunda Platform is
 * Oracle WebLogic Server 12c (12R2) ([Enterprise Edition only](http://camunda.com/enterprise/))
 
 
-# Databases
+# 数据库
 
-## Supported Database Products
+## 支持的数据库产品
 
 * MySQL 5.6 / 5.7 / 8.0
 * MariaDB 10.2 / 10.3
@@ -48,68 +48,68 @@ Run the Camunda Platform in every Java-runnable environment. Camunda Platform is
 * H2 1.4 (not recommended for [Cluster Mode]({{< ref "/introduction/architecture.md#clustering-model" >}}) - see [Deployment Note]({{< ref "/user-guide/process-engine/deployments.md" >}}))
 * CockroachDB v20.1.3 (see [Configuration guide]({{< ref "/user-guide/process-engine/database/cockroachdb-configuration.md" >}}) for more details)
 
-## Database Clustering & Replication
+## 数据库集群 & 复制
 
-Clustered or replicated databases are supported given the following conditions. The communication between Camunda Platform and the database cluster has to match with the corresponding non-clustered / non-replicated configuration. It is especially important that the configuration of the database cluster guarantees the equivalent behavior of READ-COMMITTED isolation level.
+使用支持集群或复制的数据库，需要满足以下条件下。Camunda平台和数据库集群之间的通信必须与相应的非集群/非复制（non-clustered / non-replicated）的配置。尤为重要的是，数据库集群的配置必须保证READ-COMMITTED或者更高的隔离级别。
 
-* MariaDB Galera Cluster: Galera Cluster for MariaDB is supported with specific configuration settings and some known limitations. See [Details]({{< ref "/user-guide/process-engine/database/mariadb-galera-configuration.md" >}}).
+* MariaDB Galera Cluster。支持MariaDB的Galera Cluster，有特定的配置设置和一些已知的限制。见[详情]({{< ref "/user-guide/process-engine/database/mariadb-galera-configuration.md" >}})。
 
-# Web Browser
+# Web 浏览器
 
-* Google Chrome latest
-* Mozilla Firefox latest
-* Microsoft Edge latest
+* Google Chrome 最新版
+* Mozilla Firefox 最新版
+* Microsoft Edge 最新版
 
 
 # Java
 
-* Java 8 / 9 / 10 / 11 / 12 / 13 / 14 (if supported by your application server/container)
+* Java 8 / 9 / 10 / 11 / 12 / 13 / 14 (前提是你的应用服务器/容器支持)
 
 
-# Java Runtime
+# Java 运行时
 
 * Oracle JDK 8 / 9 / 10 / 11 / 12 / 13 / 14
 * IBM JDK 8 (with J9 JVM)
-* OpenJDK 8 / 9 / 10 / 11 / 12 / 13 / 14, including builds of the following products:
+* OpenJDK 8 / 9 / 10 / 11 / 12 / 13 / 14, 包括以下的发行版：
   * Oracle OpenJDK
   * AdoptOpenJDK (with HotSpot JVM)
   * Amazon Corretto
   * Azul Zulu
 
-# Camunda Modeler
+# Camunda模型编辑器（Camunda Modeler）
 
-Supported on the following platforms:
+支持以下平台：
 
 * Windows 7 / 10
 * Mac OS X 10.11
 * Ubuntu LTS (latest)
 
-Reported to work on
+正在努力支持：
 
 * Ubuntu 12.04 and newer
 * Fedora 21
 * Debian 8
 
-# Maintenance Policy
+# 维护政策
 
-Check our [Enterprise Announcements page](/enterprise/announcement/) for confirmed changes to our supported environments in upcoming releases.
+查看我们的[企业公告页面](/enterprise/announcement/) ，了解对我们支持的环境的变化情况。
 
-## Adding Environments
+## 添加支持环境
 
-Whenever a new version of one of the following environments is released, we target support of that new version with the next minor release of Camunda Platform:
+每当以下环境的新版本发布时，我们会在Camunda平台的下一个小版本中对该新版本进行支持。
 
-* Java Language
-* Wildfly Application Server
-* Oracle Database
+* Java 语言
+* Wildfly 应用服务器
+* Oracle 数据库
 
-The exact release in which we support a new environment depends on factors such as the release date of the environment and the required implementation effort.
+我们支持一个新环境的确切版本取决于环境的发布日期和所需的开发工作量等因素。
 
-Version support for other environments is decided case by case, much of which is based on the demand in our user base.
+对其他环境的版本支持是根据具体情况决定的，主要是基于我们用户群的需求。
 
-## Removing Environments
+## 移除支持环境
 
-Whenever a new version of one of the following environments is supported, we usually discontinue support of the oldest version with the same release:
+每当以下环境的一个新版本被支持时，我们通常会在同一版本中停止对最旧版本的支持。
 
-* Wildfly Application Server
+* Wildfly 应用服务器
 
-Note that we may decide to deviate from this policy on a case-by-case basis.
+请注意，我们可能会根据具体情况确定是否真的执行这一决定。
