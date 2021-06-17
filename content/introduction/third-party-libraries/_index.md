@@ -1,6 +1,6 @@
 ---
 
-title: 'Third-Party Libraries'
+title: '第三方库'
 weight: 70
 
 menu:

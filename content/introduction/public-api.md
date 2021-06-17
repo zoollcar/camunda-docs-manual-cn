@@ -1,6 +1,6 @@
 ---
 
-title: 'Public API'
+title: '公共API'
 weight: 80
 
 menu:
@@ -11,16 +11,16 @@ menu:
 ---
 
 
-The Camunda platform provides a public API. This section covers the definition of the public API and backwards compatibility for version updates.
+Camunda平台提供了一个公共API。本节主要包括公共API的定义和版本更新的向后兼容性问题。
 
 
-# Definition of Public API
+# 公共 API 的定义
 
-The Camunda Platform public API is limited to the following items:
+Camunda平台的公共API包含两部分：
 
 Java API: 
 
-All non-implementation Java packages (package name does not contain `impl`) of the following modules.
+以下模块的所有非实现的Java包（包名不包含`impl`，也就是接口类）：
 
 * `camunda-engine`
 * `camunda-engine-spring`
@@ -35,9 +35,9 @@ All non-implementation Java packages (package name does not contain `impl`) of t
 
 HTTP API (REST API):
 
-* `camunda-engine-rest`: HTTP interface (set of HTTP requests accepted by the REST API as documented in [REST API reference]({{< ref "/reference/rest/_index.md" >}}). Java classes are not part of the public API.
+* `camunda-engine-rest`: HTTP接口（REST API接受的一组HTTP请求，详情见[REST API参考]({{< ref "/reference/rest/_index.md" >}})。Java类不是公共API的一部分.
 
 
-# Backwards Compatibility for Public API
+# 公共API的向后兼容
 
-The Camunda versioning scheme follows the MAJOR.MINOR.PATCH pattern put forward by [Semantic Versioning](http://semver.org/). Camunda will maintain public API backwards compatibility for MINOR version updates. Example: Update from version `7.1.x` to `7.2.x` will not break the public API.
+Camunda的版本管理方案遵循[语义化版本](http://semver.org/)提出的 大版本号.小版本号.补丁 模式。Camunda将保持小版本号版本更新是向后兼容性的。例如：从版本 `7.1.x` 到 `7.2.x` 公共API是向后兼容的。

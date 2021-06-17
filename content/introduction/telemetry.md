@@ -1,6 +1,6 @@
 ---
 
-title: 'Telemetry'
+title: 'Telemetry 遥测'
 weight: 45
 
 menu:
