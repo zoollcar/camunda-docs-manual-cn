@@ -135,7 +135,7 @@ ProcessInstance processInstance = runtimeService.createProcessInstanceByKey("Loa
 
 现在在JUnit测试中，你可以断言流程实例正在 "Accept Loan Application" 处等待。
 
-# 语义化操作
+# 操作语义
 
 这一章节规定了流程实例修改的确切语义，应阅读这些章节以了解不同情况下的修改效果。如果没有特别指出，下面的例子就是基于如下的流程模型来说明的。
 
@@ -202,7 +202,7 @@ ProcessInstanceModificationBuilder#cancelActivityInstance(String activityInstanc
 ProcessInstanceModificationBuilder#cancelTransitionInstance(String activityInstanceId)
 ```
 
-过渡实例表示即将以异步延续的形式进入/离开一个活动的执行流。一个已经创建但尚未执行的异步延续作业被表示为一个过渡实例。这些实例可以通过`cancelTransitionInstance`来取消。参见[关于活动和过渡实例的细节]({{< relref "#activity-instance-based-api" >}})学习如何查询进程实例的过渡实例。
+过渡实例表示即将以异步延续的形式进入/离开一个活动的执行流。一个已经创建但尚未执行的异步延续作业被表示为一个过渡实例。这些实例可以通过`cancelTransitionInstance`来取消。参见[关于活动和过渡实例的细节]({{< relref "#activity-instance-based-api" >}})学习如何查询流程实例的过渡实例。
 
 
 ### 取消一个活动的所有活动实例

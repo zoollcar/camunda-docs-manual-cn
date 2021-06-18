@@ -196,7 +196,7 @@ runtimeService.createExecutionQuery()
     .list();
 ```
 
-上述查询返回一个给定进程实例的所有执行情况。
+上述查询返回一个给定流程实例的所有执行情况。
 
 你也可以[使用REST API查询执行情况]({{< ref "/reference/rest/execution/get.md" >}}).
 
@@ -317,10 +317,10 @@ managementService.createJobDefinitionQuery()
 
 禁用Job可以防止Job被执行。暂停Job的执行可以在不同的层面上进行控制。
 
-* Job实例级别：单个Job可以通过`managementService.suspendJob(..)` API直接暂停，或者在暂停一个进程实例或Job定义时过渡性地暂停。
+* Job实例级别：单个Job可以通过`managementService.suspendJob(..)` API直接暂停，或者在暂停一个流程实例或Job定义时过渡性地暂停。
 * Job定义级别：某个定时器或活动的所有实例可以被暂停。
 
-通过对Job定义的暂停Job允许你暂停某个定时器或异步继续的所有实例。直观地说，这允许你暂停进程中的某个活动，其方式是所有的进程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
+通过对Job定义的暂停Job允许你暂停某个定时器或异步继续的所有实例。直观地说，这允许你暂停进程中的某个活动，其方式是所有的流程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
 
 让我们假设有一个以 "orderProcess" 为关键字部署的进程，它包含一个名为 "processPayment" 的服务任务。该服务任务配置了一个异步继续，导致它被Job执行器执行。下面的例子显示了如何防止 "processPayment"服务被执行：
 

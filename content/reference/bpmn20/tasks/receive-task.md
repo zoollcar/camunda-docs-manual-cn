@@ -49,7 +49,7 @@ runtimeService.messageEventReceived(subscription.getEventName(), subscription.ge
 并行多实例的相关性是不可能的，因为订阅不能被明确地识别。
 {{< /note >}}
 
-要继续一个当前在接收任务中等待的进程实例，而没有消息参考，可以调用`runtimeService.signal(executionId)`，使用接收任务中的执行的id。
+要继续一个当前在接收任务中等待的流程实例，而没有消息参考，可以调用`runtimeService.signal(executionId)`，使用接收任务中的执行的id。
 
 ```xml
 <receiveTask id="waitState" name="wait" />
