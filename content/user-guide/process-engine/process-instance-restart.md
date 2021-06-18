@@ -1,6 +1,6 @@
 ---
 
-title: 'Process Instance Restart'
+title: '恢复流程实例'
 weight: 50
 
 menu:
@@ -10,30 +10,30 @@ menu:
 
 ---
 
-After a process instance termination, its historic data still exists and can be accessed to restore a process instance, provided that the history level is set to FULL. 
-This can, for example, be useful when termination did not proceed in a desired way. Use cases for this API may be:
+在流程实例终止后，其历史数据仍然存在，并且可以被访问以恢复流程实例，前提是历史级别被设置为FULL。
+例如，当流程没有以期望的方式终止时，恢复流程实例是有用的。这个API的使用的其他可能情况有：
 
-* Restoring the last state of process instances that have been erroneously canceled
-* Restarting process instances after a termination caused by a wrong decision
+* 恢复被错误地取消的流程实例的到最后状态
+* 由于错误路由导致流程实例终止后，重启流程实例
 
-To perform such an operation the process engine offers *the process instance restart API*, that is entered via `RuntimeService.restartProcessInstances(...)`. This API allows to specify multiple instantiation instructions in one call by using a fluent builder.
+为了执行这样的操作，进程引擎提供了 *流程实例重启API* `RuntimeService.restartProcessInstances(..)` 。该API允许通过使用流式构建器在一次调用中指定多个实例化指令。
 
-Note that these operations are also available via REST: [Restart Process Instance]({{< ref "/reference/rest/process-definition/post-restart-process-instance-sync.md" >}}) and [Restart Process Instance (async)]({{< ref "/reference/rest/process-definition/post-restart-process-instance-async.md" >}})
+请注意，这些操作也可以通过REST方式进行。[重启流程实例]({{< ref "/reference/rest/process-definition/post-restart-process-instance-sync.md" >}})和[重启流程实例（async）]({{< ref "/reference/rest/process-definition/post-restart-process-instance-async.md" >}})
 
-# Process Instance Restart by Example
+# 流程实例重启的例子
 
-As an example, consider the following process model where the red dots mark active tasks:
+考虑以下流程模型，其中红点标志着活动任务：
 
 {{< img src="../img/variables-3.png" title="Running Process Instance" >}}
 
-Let us assume that the process instance has been canceled externally by a worker using the following code:
+让我们假设流程实例已经被别人用以下代码从外部取消了：
 
 ```java
 ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().singleResult();
 runtimeService.deleteProcessInstance(processInstance.getId(), "any reason");
 ```
 
-After that, the manager decides to restore the last state of that process instance.
+之后，我们决定恢复该流程实例到最后状态：
 
 ```java
 runtimeService.restartProcessInstance(processInstance.getProcessDefinitionId())
@@ -43,42 +43,40 @@ runtimeService.restartProcessInstance(processInstance.getProcessDefinitionId())
 	.execute();
 ```
 
-The process instance has been restarted with the last set of variables. However, only global variables are set in the restarted process instance. 
-Local variables can be set manually, for example by calling `RuntimeService.setVariableLocal(...)`.
+流程实例已经用最后一组变量重启了。然而，在重启的流程实例中，只有全局变量被恢复了。
+本地变量还需要调用 `RuntimeService.setVariableLocal(..)` 手动设置。
 
 {{< note title="" class="info" >}}
-  Technically, a new process instance has been created.
+  从技术上讲，创建的是一个新的流程实例。
 
-  **Please note:**
-  The ids of the historic and the restarted process instance are different.
+  **请注意:**
+  历史流程和重启的流程实例的id是不同的。
 {{< /note >}}
 
+# 操作语义
 
-# Operational Semantics
+在下文中，将描述流程实例恢复功能的确切语义。建议阅读本节，以充分了解该功能的效果、能力和限制。
 
-In the following, the exact semantics of the process instance restart feature are documented. Reading this section is recommended to fully understand the effects, power and limitations of this feature.
+## 实例化指令类型
 
-## Instantiation Instruction Types
-
-The fluent process instance restart builder offers the following instructions to be submitted:
+流式流程实例重启构建器提供了以下的方法，可以调用。
 
 * `startBeforeActivity(String activityId)`
 * `startAfterActivity(String activityId)`
 * `startTransition(String transitionId)`
 
-For information about the instruction types, please refer to the similar
- [modification instruction types]({{< ref "/user-guide/process-engine/process-instance-modification.md#modification-instruction-types" >}}) section.
+关于指令类型的信息，请参考类似的
+ [修改指令类型]({{< ref "/user-guide/process-engine/process-instance-modification.md#modification-instruction-types" >}}) section.
 
-## Selecting process instances to restart
+## 选择要重启的流程实例
 
-Process instances can be selected for restart by either providing a set of process instance ids
-or providing a historic process instance query. It is also possible to specify both, a list of process instance ids and a query.
-The process instances to be restarted will then be the union of the resulting sets.
+可以通过提供一组流程实例ID来选择流程实例进行重启
+或者提供一个历史流程实例查询。也可以同时指定一个流程实例id列表和一个查询。
+然后，要重启的流程实例将是所产生的集合的并集。
 
-### List of Process Instances
+### 流程实例列表
 
-The process instances which should be restarted can either
-be specified as a list of the process instance ids:
+应该被重启的进程实例可以是一个进程实例ID的列表。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -90,7 +88,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
   .execute();
 ```
 
-or, for a static number of process instances, there is a convenience varargs method:
+或者，对于固定数量的流程实例，有一个方便的可变参数方法。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -104,7 +102,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
   .execute();
 ```
 
-### Historic Process Instance Query
+### 历史流程实例查询
 
 If the instances are not known beforehand, the process instances can be selected by a historic process instance query:
 
@@ -120,7 +118,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
   .execute();
 ```
 
-## Skipping Listeners and Input/Output Mappings
+## 跳过监听器、输入输出映射
 
 It is possible to skip invocations of execution and task listeners as well as input/output mappings for the transaction that performs the restart. This can be useful when the restart is executed on a system that has no access to the involved process application deployments and their contained classes.
 
@@ -139,10 +137,10 @@ runtimeService.restartProcessInstances(processDefinition.getId())
   .execute();
 ```
 
-## Restarting a Process Instance With the Initial Set of Variables
+## 使用初试变量集重启流程实例
 
-By default, a process instance is restarted with the last set of variables.
-To alternatively choose the initial set of variables, the `initialSetOfVariables` method is used.
+默认情况下，进程实例会以最后一组变量重新启动。
+如果要选择初始变量集，可以使用 `initialSetOfVariables` 方法。
 
 This feature does not only copy the start variables, but will copy the first version of all process variables that have been set in the start activity of the old process instance.
 
@@ -160,10 +158,10 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 
 The initial set of variables can not be set if the historic process instance has no unique start activity. In that case, no variables are taken over.
 
-## Omitting the Business Key of a Historic Process Instance
+## 忽略历史进程实例的 Business Key
 
-By default, a process instance is restarted with the same business key as the historic process instance.
-By using the method `withoutBusinessKey`, the business key of the restarted process instance is not set.
+默认情况下，一个流程实例以与历史流程实例相同的Business Key重启。
+通过使用方法`withoutBusinessKey`，重新启动的流程实例的Business Key不被设置。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -175,7 +173,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
   .withoutBusinessKey()
   .execute();
 ```
-## Execution
+## 执行
 
 The restart can either be executed synchronously (blocking) or asynchronously
 (non-blocking) by using a [batch]({{< ref "/user-guide/process-engine/batch.md" >}}) .
@@ -196,7 +194,7 @@ The following are some reasons to prefer either one or the other:
   - the restart should be executed by another thread, i.e., the job
     executor should handle the execution
 
-### Synchronous execution
+### 同步执行
 
 To execute the restart synchronously, the `execute` method is used. It will
 block until the restart is completed.
@@ -213,7 +211,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 
 Restart is successful if all process instances can be restarted.
 
-### Asynchronous batch execution
+### 异步批量执行
 
 To execute the restart asynchronously, the `executeAsync` method is used. It will
 return immediately with a reference to the batch that executes the restart.
