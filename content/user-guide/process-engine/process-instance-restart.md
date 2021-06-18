@@ -139,7 +139,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 
 ## 使用初试变量集重启流程实例
 
-默认情况下，进程实例会以最后一组变量重新启动。
+默认情况下，进程实例会以最后一组变量重启。
 如果要选择初始变量集，可以使用 `initialSetOfVariables` 方法。
 
 This feature does not only copy the start variables, but will copy the first version of all process variables that have been set in the start activity of the old process instance.
@@ -161,7 +161,7 @@ The initial set of variables can not be set if the historic process instance has
 ## 忽略历史进程实例的 Business Key
 
 默认情况下，一个流程实例以与历史流程实例相同的Business Key重启。
-通过使用方法`withoutBusinessKey`，重新启动的流程实例的Business Key不被设置。
+通过使用方法`withoutBusinessKey`，重启的流程实例的Business Key不被设置。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -175,29 +175,25 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 ```
 ## 执行
 
-The restart can either be executed synchronously (blocking) or asynchronously
-(non-blocking) by using a [batch]({{< ref "/user-guide/process-engine/batch.md" >}}) .
+重启可以同步或通过使用[批处理]({{< ref "/user-guide/process-engine/batch.md" >}})功能异步执行
 
-The following are some reasons to prefer either one or the other:
+下面是两者适用的不同场景：
 
-- Use synchronous execution if:
-  - the number of process instances is small
-  - the restart should be atomic, i.e., it should be executed
-    immediately and should fail if at least one process instance cannot
-    be restarted
+- 以下情况适用同步执行：
+  - 流程实例的数量很小的情况
+  - 重启操作必须是原子的，也就是重启必须立刻执行并且在任何一个重启不成功的情况下报错。
 
 
-- Use asynchronous execution if:
-  - the number of process instances is large
-  - all process instances should be restarted decoupled from the other
-    instances, i.e., every instance is restarted in its own transaction
-  - the restart should be executed by another thread, i.e., the job
-    executor should handle the execution
+- 以下情况适用异步执行：
+  - 流程实例的数量很大
+  - 所有的进程实例都独立重启，也就是说所有实例都在自己的事务中重启
+  - 重启需要由另一个线程执行，即job执行器处理执行
 
 ### 同步执行
 
 To execute the restart synchronously, the `execute` method is used. It will
 block until the restart is completed.
+调用 `execute` 同步执行重启，调用后，直到重启完成的时间将阻塞。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -209,12 +205,11 @@ runtimeService.restartProcessInstances(processDefinition.getId())
   .execute();
 ```
 
-Restart is successful if all process instances can be restarted.
+如果所有流程实例都能被重新启动，则重启成功。
 
 ### 异步批量执行
 
-To execute the restart asynchronously, the `executeAsync` method is used. It will
-return immediately with a reference to the batch that executes the restart.
+要异步执行重启，需要使用 `executeAsync` 方法。它将立即返回一个对执行重启的 `批处理` 的引用。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -226,16 +221,8 @@ Batch batch = runtimeService.restartProcessInstances(processDefinition.getId())
   .executeAsync();
 ```
 
-Using a batch, the process instance restart is split into several jobs which
-are executed asynchronously. These batch jobs are executed by the job executor.
-See the [batch]({{< ref "/user-guide/process-engine/batch.md" >}}) section for more 
-information. A batch is completed if all batch execution jobs are successfully 
-completed. However, in contrast to the synchronous execution, it is not guaranteed 
-that either all or no process instances are restarted. As the restart is split into
-several independent jobs, every single job may fail or succeed.
+使用一个批处理，进程实例的重启被分割成几个job，这些job被job执行器异步执行。
+更多信息请参见[批处理]({{< ref "/user-guide/process-engine/batch.md" >}}) 部分。
+如果所有的批处理job都成功完成，那么这个批处理就完成了完成了。然而，与同步执行不同的是，它并不保证流程实例是否真的重启完成。由于重启被分割成几个独立的job，每一个job都可能失败或成功。
 
-If a restart job fails, it is retried by the job executor
-and, if no retries are left, an incident is created. In this case, manual action
-is necessary to complete the batch restart: The job's retries can be incremented
-or the job can be deleted. Deletion cancels restart of the specific instance but
-does not affect the batch beyond that.
+如果重启job失败，job执行者会重试，重试直到超出最大重试次数，然后就会创建一个事件。在这种情况下，可以手动操作来完成批量重启。那么job的重试次数会递增，也可以手动删除该job。删除会取消特定实例的重启，但是但不影响此后的批次。
