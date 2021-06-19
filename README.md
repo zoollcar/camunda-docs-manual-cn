@@ -1,6 +1,6 @@
 # Camunda平台文档中文（简体）翻译项目
 
-Camunda平台是一种轻量级的商业流程开源平台
+Camunda平台是一款轻量级的商业流程开源平台
 项目复刻自 Camunda官方文档 [camunda/camunda-docs-manual](https://github.com/camunda/camunda-docs-manual)
 
 ## 贡献

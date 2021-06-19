@@ -10,14 +10,12 @@ menu:
 
 ---
 
-Camunda Platform supports Unified Expression Language (EL), specified as part of the JSP 2.1 standard
-([JSR-245][]). To do so, it uses the open source [JUEL][] implementation. To get more general
-information about the usage of Expression Language, please read the [official documentation][].
-Especially the provided [examples][examples] give a good overview of the syntax of expressions.
+Camunda平台支持统一表达式语言（EL），它是JSP 2.1标准的一部分（[JSR-245][]）。使用了开源的[JUEL][]实现。要获得更多关于表达式语言使用的一般信息，请阅读[官方文档][official documentation]。
 
-Within Camunda Platform, EL can be used in many circumstances to evaluate small script-like
-expressions. The following table provides an overview of the BPMN elements which support
-usage of EL.
+Especially the provided [examples][examples] give a good overview of the syntax of expressions.
+特别是提供了很好的[实例][examples]，对学习表达式语法有很方便。
+
+在Camunda平台内，EL可以在许多情况下用于评估小型的脚本式表达。下面的例子是一个使用了EL的BPMN元素：
 
 <table class="table desc-table">
   <tr>
@@ -69,21 +67,15 @@ usage of EL.
 </table>
 
 
-# Usage of Expression Language
+# 表达式语言的用法
 
-## Delegation Code
+## 委托代码
 
-Besides Java code, Camunda Platform also supports the evaluation of expressions as delegation code. For
-general information about delegation code, see the corresponding
-[section]({{< ref "/user-guide/process-engine/delegation-code.md" >}}).
+除了Java代码，Camunda平台还支持将表达式作为委托代码进行计算。关于委托代码的信息，请参见相应的[章节]({{< ref "/user-guide/process-engine/delegation-code.md" >}}).
 
-Two types of expressions are currently supported: `camunda:expression` and
-`camunda:delegateExpression`.
+目前表达式支持两种类型：`camunda:expression`和`camunda:delegateExpression`。
 
-With `camunda:expression` it is possible to evaluate a value expression or to invoke
-a method expression. You can use special variables which are available inside an expression or
-Spring and CDI beans. For more information about [variables][] and [Spring][], respectively [CDI][] beans,
-please see the corresponding sections.
+通过`camunda:expression`，可以计算一个值表达式或调用一个方法表达式。你可以使用在表达式或Spring和CDI Bean中可用的特殊变量。关于[变量][variables]、[Spring][Spring]，以及[CDI][]bean的更多信息，请参见相应章节。
 
 ```xml
   <process id="process">
@@ -112,31 +104,24 @@ please see the corresponding sections.
   </process>
 ```
 
-The attribute `camunda:delegateExpression` is used for expressions which evaluate to a delegate
-object. This delegate object must implement either the `JavaDelegate` or `ActivityBehavior`
-interface.
+属性`camunda:delegateExpression`用于表达式，该表达式可以调用一个委托对象。这个委托对象必须实现了`JavaDelegate`或`ActivityBehavior`接口。
 
 ```xml
-  <!-- service task which calls a bean implementing the JavaDelegate interface -->
+  <!-- 服务任务调用一个实现JavaDelegate接口的Bean -->
   <serviceTask id="task1" camunda:delegateExpression="${myBean}" />
 
-  <!-- service task which calls a method which returns delegate object -->
+  <!-- 服务任务调用一个返回委托对象的方法 -->
   <serviceTask id="task2" camunda:delegateExpression="${myBean.createDelegate()}" />
 ```
 
 
-## Conditions
+## 作为条件
 
-To use conditional sequence flows or conditional events, expression language is usually used.
-For conditional sequence flows, a `conditionExpression` element of a sequence flow has to be used.
-For conditional events, a `condition` element of a conditional event has to be used. Both are
-of the type `tFormalExpression`. The text content of the element is the expression to be evaluated.
+为了使用条件序列流（译者注：就是带条件的分支线，一般用在网关后面）或条件事件，通常使用表达式语言。对于条件序列流，必须使用序列流的 `conditionExpression` 元素。对于条件性事件，必须使用条件性事件的 `condition` 元素。两者都是 `tFormalExpression` 的类型。该元素的文本内容是要被计算的表达式。
 
-Within the expression, some special variables are available which enable access of the current
-context. To find more information about the available variables, please see the [corresponding
-section][variables].
+在表达式中，一些特殊的变量是可用的，这些变量可以访问当前的上下文。要找到关于可用变量的更多信息，请参见[变量章节][variables]。
 
-The following example shows usage of expression language as condition of a sequence flow:
+关于表达式语言作为序列流条件的用法，请看下面的例子：
 
 ```xml
   <sequenceFlow>
@@ -146,7 +131,7 @@ The following example shows usage of expression language as condition of a seque
   </sequenceFlow>
 ```
 
-For usage of expression language on conditional events, see the following example:
+关于表达式语言在条件事件上的用法，请看下面的例子：
 
 ```xml
 <conditionalEventDefinition>
@@ -155,17 +140,13 @@ For usage of expression language on conditional events, see the following exampl
 ```
 
 
-## inputOutput Parameters
+## 输入输出参数
 
-With the Camunda `inputOutput` extension element you can map an `inputParameter` or `outputParameter`
-with expression language.
+通过Camunda `inputOutput` 扩展，你可以用表达式语言映射 `inputParameter` 或 `outputParameter` 。
 
-Inside the expression some special variables are available which enable the access of the current
-context. To find more information about the available variables please see the [corresponding
-section][variables].
+在表达式中，一些特殊的变量是可用的，这些变量可以访问当前的上下文。要找到关于可用变量的更多信息，请参见[变量章节][variables]。
 
-The following example shows an `inputParameter` which uses expression language to call a method of
-a bean.
+下面的例子显示了一个输入参数 "inputParameter"，它使用表达式语言来调用一个bean的方法。
 
 ```xml
   <serviceTask id="task" camunda:class="org.camunda.bpm.example.SumDelegate">
@@ -179,19 +160,15 @@ a bean.
   </serviceTask>
 ```
 
-## External Task Error Handling
+## 外部任务错误处理
 
-For External Tasks it is possible to define
-[camunda:errorEventDefinition]({{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#erroreventdefinition" >}})
-elements which can be provided with a JUEL expression. The expression is evaluated on `ExternalTaskService#complete` and
-`ExternalTaskService#handleFailure`. If the expression evaluates to `true`, a BPMN error is thrown which can be caught by an
-[Error Boundary Event]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}}).
+外部任务可以定义 [camunda:errorEventDefinition]({{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#erroreventdefinition" >}})元素，可以用JUEL表达式提供。该表达式在`ExternalTaskService#complete`和`ExternalTaskService#handleFailure`时被计算。如果表达式结果为 "true"，就会抛出一个BPMN错误，这个错误可以被[错误边界事件]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}})捕获。
 
-In the scope of an External Task, expressions have access to the {{< javadocref page="?org/camunda/bpm/engine/externaltask/ExternalTask.html" text="ExternalTaskEntity" >}} object via the key `externalTask` which provides getter methods for `errorMessage`, `errorDetails`, `workerId`, `retries` and more.
+在外部任务的范围内，表达式可以通过key `externalTask`对象访问{{< javadocref page="?org/camunda/bpm/engine/externaltask/ExternalTask.html" text="ExternalTaskEntity" >}}，它为 "errorMessage"、"errorDetails"、"workerId"、"retries" 等提供getter方法。
 
-**Examples:**
+**案例:**
 
-How to access the External Task object:
+下面的例子展示了如何访问外部任务对象：
 
 ```xml
 <bpmn:serviceTask id="myExternalTaskId" name="myExternalTask" camunda:type="external" camunda:topic="myTopic">
@@ -201,7 +178,7 @@ How to access the External Task object:
 </bpmn:serviceTask>
 ```
 
-How to match an error message:
+如何匹配一个错误信息：
 
 ```xml
 <bpmn:serviceTask id="myExternalTaskId" name="myExternalTask" camunda:type="external" camunda:topic="myTopic">
@@ -211,21 +188,17 @@ How to match an error message:
 </bpmn:serviceTask>
 ```
 
-For further details on the functionality of error event definitions in the context of external tasks, consult the [External Tasks Guide]({{< ref "/user-guide/process-engine/external-tasks.md#error-event-definitions" >}}).
+关于外部任务背景下错误事件定义功能的进一步细节，请查阅[外部任务指南]({{< ref "/user-guide/process-engine/external-tasks.md#error-event-definitions" >}}).
 
 ## Value
 
-Different BPMN and CMMN elements allow to specify their content or an attribute value by an
-expression. Please see the corresponding sections for [BPMN][] and [CMMN][] in the references
-for more detailed examples.
+很多的BPMN和CMMN元素允许通过表达式指定其内容或属性值。请参阅参考文献中[BPMN][]和[CMMN][]的相应章节，以了解更详细的例子。
 
+# 表达式语言内变量与函数
 
-# Availability of Variables and Functions Inside Expression Language
+## 流程变量
 
-## Process Variables
-
-All process variables of the current scope are directly available inside an expression. So a
-conditional sequence flow can directly check a variable value:
+当前范围内的所有过程变量在表达式中都可以直接使用。所以条件序列流可以直接检查一个变量的值：
 
 ```xml
   <sequenceFlow>
@@ -235,10 +208,9 @@ conditional sequence flow can directly check a variable value:
   </sequenceFlow>
 ```
 
-## Internal Context Variables
+## 内置环境变量
 
-Depending on the current execution context, special built-in context variables are available while
-evaluating expressions:
+根据当前的执行环境，在计算表达式时，可以使用特殊的内置环境变量：
 
 <table class="table">
   <thead>
@@ -284,8 +256,7 @@ evaluating expressions:
   </tbody>
 </table>
 
-The following example shows an expression which sets the variable `test` to the current
-event name of an execution listener.
+以下示例展示了，将变量`test`设置为执行侦听器的当前事件名称的表达式；
 
 ```xml
   <camunda:executionListener event="start"
@@ -293,12 +264,9 @@ event name of an execution listener.
 ```
 
 
-## External Context Variables With Spring and CDI
+## 从 Spring 和 CDI 的外部上下文中获取外部变量
 
-If the process engine is integrated with Spring or CDI, it is possible to access Spring and CDI
-beans inside of expressions. Please see the corresponding sections for [Spring][] and [CDI][]
-for more information. The following example shows the usage of a bean which implements the
-`JavaDelegate` interface as delegateExecution.
+如果流程引擎与 Spring 或 CDI 集成，则可以在表达式中访问 Spring 和 CDI Bean。请参阅 [Spring][] 和 [CDI][] 的相应章节以了解更多信息。下面的例子显示了一个实现了 "JavaDelegate "接口的Bean作为委托表达式的用法。
 
 ```xml
   <serviceTask id="task1" camunda:delegateExpression="${myBean}" />
@@ -311,9 +279,9 @@ With the expression attribute any method of a bean can be called.
 ```
 
 
-## Internal Context Functions
+## 内置上下文
 
-Special built-in context functions are available while evaluating expressions:
+在对表达式进行评估时，可以使用以下内置上下文函数：
 
 <table class="table">
   <thead>
@@ -355,18 +323,16 @@ Special built-in context functions are available while evaluating expressions:
   </tbody>
 </table>
 
-The following example sets the due date of a user task to the date 3 days after the creation
-of the task.
+下面的例子将一个用户任务的到期日设置为任务创建3天后：
 
 ```xml
 <userTask id="theTask" name="Important task" camunda:dueDate="${dateTime().plusDays(3).toDate()}"/>
 ```
 
 
-## Built-In Camunda Spin Functions
+## Camunda Spin 内置的方法
 
-If the Camunda Spin process engine plugin is activated, the Spin functions `S`,
-`XML` and `JSON` are also available inside of an expression. See the [Data Formats section][spin-section] for a detailed explanation.
+如果激活了Camunda Spin流程引擎插件，Spin函数`S`、`XML`和`JSON`在表达式中也可用。参见[数据格式部分][spin-section]了解详情。
 
 ```xml
   <serviceTask id="task" camunda:expression="${XML(xml).attr('test').value()}" resultVariable="test" />
