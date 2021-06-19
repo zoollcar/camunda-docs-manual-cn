@@ -1,6 +1,6 @@
 ---
 
-title: 'Model API'
+title: '模型 API'
 weight: 80
 
 menu:

@@ -1,6 +1,6 @@
 ---
 
-title: 'Microsoft Sql Server Database Configuration'
+title: 'Microsoft Sql Server 数据库配置'
 weight: 30
 menu:
   main:

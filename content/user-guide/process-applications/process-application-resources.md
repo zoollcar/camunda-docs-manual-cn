@@ -1,6 +1,6 @@
 ---
 
-title: 'Process Application Resource Access'
+title: 'Process Application 资源访问'
 weight: 31
 
 menu:

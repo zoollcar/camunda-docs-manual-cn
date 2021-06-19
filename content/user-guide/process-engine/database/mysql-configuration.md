@@ -1,6 +1,6 @@
 ---
 
-title: 'MySQL Database Configuration'
+title: 'MySQL 数据库配置'
 weight: 50
 menu:
   main:

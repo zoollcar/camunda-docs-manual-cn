@@ -1,6 +1,6 @@
 ---
 
-title: 'Identity Service'
+title: '身份服务 Identity Service'
 weight: 230
 
 menu:

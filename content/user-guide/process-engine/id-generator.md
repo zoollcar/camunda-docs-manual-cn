@@ -1,6 +1,6 @@
 ---
 
-title: 'Id Generators'
+title: 'Id 生成器'
 weight: 190
 
 menu:

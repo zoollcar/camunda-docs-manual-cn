@@ -1,6 +1,6 @@
 ---
 
-title: 'Database Schema'
+title: '数据库结构'
 weight: 10
 menu:
   main:

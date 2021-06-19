@@ -1,6 +1,6 @@
 ---
 
-title: 'Logging'
+title: '日志'
 weight: 200
 
 menu:

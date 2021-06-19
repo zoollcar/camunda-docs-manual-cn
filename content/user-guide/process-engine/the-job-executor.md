@@ -1,6 +1,6 @@
 ---
 
-title: 'The Job Executor'
+title: 'Job 执行器'
 weight: 170
 
 menu:

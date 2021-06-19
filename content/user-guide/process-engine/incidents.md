@@ -1,6 +1,6 @@
 ---
 
-title: 'Incidents'
+title: '事件'
 weight: 210
 
 menu:

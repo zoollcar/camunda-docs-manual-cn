@@ -1,6 +1,6 @@
 ---
 
-title: 'Camunda Platform Run'
+title: '运行Camunda平台'
 weight: 50
 
 menu:

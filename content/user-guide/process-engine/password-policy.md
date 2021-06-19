@@ -1,6 +1,6 @@
 ---
 
-title: 'Password Policy'
+title: '密码格式要求'
 weight: 155
 
 menu:

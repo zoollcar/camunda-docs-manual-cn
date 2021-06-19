@@ -1,6 +1,6 @@
 ---
 
-title: 'Time zones'
+title: '时区'
 weight: 255
 
 menu:

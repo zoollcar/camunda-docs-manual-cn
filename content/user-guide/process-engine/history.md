@@ -1,6 +1,6 @@
 ---
 
-title: 'History and Audit Event Log'
+title: '历史和审批事件日志'
 weight: 140
 
 menu:

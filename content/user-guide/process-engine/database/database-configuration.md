@@ -1,6 +1,6 @@
 ---
 
-title: 'Database Configuration'
+title: '数据库配置'
 weight: 20
 menu:
   main:

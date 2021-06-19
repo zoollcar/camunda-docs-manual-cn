@@ -1,6 +1,6 @@
 ---
 
-title: 'Multi-Tenancy'
+title: '多租户'
 weight: 180
 
 menu:

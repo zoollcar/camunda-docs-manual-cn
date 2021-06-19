@@ -1,6 +1,6 @@
 ---
 
-title: 'Templating'
+title: '模板'
 weight: 90
 
 menu:

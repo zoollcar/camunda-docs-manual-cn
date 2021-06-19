@@ -1,6 +1,6 @@
 ---
 
-title: "Spring Framework Integration"
+title: "Spring 框架集成"
 weight: 50
 
 menu:

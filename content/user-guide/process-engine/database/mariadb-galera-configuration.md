@@ -1,6 +1,6 @@
 ---
 
-title: 'MariaDB Galera Database Configuration'
+title: 'MariaDB Galera 数据库配置'
 weight: 40
 menu:
   main:

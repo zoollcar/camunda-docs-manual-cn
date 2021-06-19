@@ -1,6 +1,6 @@
 ---
 
-title: 'CockroachDB Database Configuration'
+title: 'CockroachDB 数据库配置'
 weight: 50
 menu:
   main:

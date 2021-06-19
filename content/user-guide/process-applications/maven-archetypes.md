@@ -1,6 +1,6 @@
 ---
 
-title: 'Maven Project Templates (Archetypes)'
+title: 'Maven 项目模板 (Archetypes)'
 weight: 40
 
 menu:

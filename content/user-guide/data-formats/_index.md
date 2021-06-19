@@ -1,6 +1,6 @@
 ---
 
-title: 'Data Formats (XML, JSON, Other)'
+title: '数据格式 (XML, JSON, Other)'
 weight: 90
 
 menu:

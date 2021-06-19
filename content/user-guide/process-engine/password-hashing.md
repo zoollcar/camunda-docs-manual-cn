@@ -1,6 +1,6 @@
 ---
 
-title: 'Password Hashing'
+title: '密码哈希加密'
 weight: 150
 
 menu:

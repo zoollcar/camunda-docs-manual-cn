@@ -1,11 +1,11 @@
 ---
 
-title: 'Decisions in the Process Engine'
+title: '流程引擎中的决策'
 weight: 260
 
 menu:
   main:
-    name: "Decisions"
+    name: "决策"
     identifier: "user-guide-process-engine-decisions"
     parent: "user-guide-process-engine"
 

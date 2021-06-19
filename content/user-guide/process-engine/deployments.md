@@ -1,6 +1,6 @@
 ---
 
-title: 'Deployments'
+title: '部署'
 weight: 245
 
 menu:

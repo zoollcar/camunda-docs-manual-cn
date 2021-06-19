@@ -1,6 +1,6 @@
 ---
 
-title: "CDI and Java EE Integration"
+title: "CDI 和 Java EE 集成"
 weight: 60
 
 menu:

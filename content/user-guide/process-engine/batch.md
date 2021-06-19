@@ -1,6 +1,6 @@
 ---
 
-title: 'Batch'
+title: '批处理'
 weight: 270
 
 menu:

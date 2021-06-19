@@ -1,6 +1,6 @@
 ---
 
-title: 'Security Instructions'
+title: '安全指南'
 weight: 210
 
 menu:

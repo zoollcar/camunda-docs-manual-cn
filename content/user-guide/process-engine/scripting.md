@@ -1,6 +1,6 @@
 ---
 
-title: 'Scripting'
+title: '脚本'
 weight: 80
 
 menu:

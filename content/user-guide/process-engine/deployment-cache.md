@@ -1,6 +1,6 @@
 ---
 
-title: 'Deployment Cache'
+title: '部署缓存'
 weight: 150
 
 menu:

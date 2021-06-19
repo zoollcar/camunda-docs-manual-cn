@@ -1,6 +1,6 @@
 ---
 
-title: "Spring Boot Integration"
+title: "Spring Boot 集成"
 weight: 55
 
 menu:
