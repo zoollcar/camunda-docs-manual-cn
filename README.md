@@ -15,7 +15,7 @@ Camunda平台是一种轻量级的商业流程开源平台
 
 网站使用 [hugo](http://gohugo.io/) 静态网站生成器生成，版本是特别选定的0.54版本（官方选的,我也不知道为什么），已经放到项目根目录了，直接用就好。
 
-下载或clone后，在项目所在目录运行 `.\hugo.exe server`，浏览器打开 [http://localhost:1313/camunda-cn/](http://localhost:1313/camunda-cn/) 即可
+下载或clone后，在项目所在目录运行 `.\hugo.exe server`，浏览器打开 [http://localhost:1313/](http://localhost:1313/) 即可
 
 ## 贡献者列表
 |:construction_worker:|:construction_worker:|:construction_worker:|:construction_worker:|:construction_worker:|:construction_worker:|
