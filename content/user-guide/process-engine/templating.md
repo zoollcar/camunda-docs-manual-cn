@@ -11,39 +11,33 @@ menu:
 ---
 
 
-Camunda Platform supports template engines which are implemented as script engines compatible with
-JSR-223. As a result, templates can be used everywhere where scripts can be used.
+Camunda平台支持模板引擎，兼容JSR-223的脚本引擎。因此，模板用于任何可以使用脚本的地方。
 
-In community distributions of Camunda Platform, the following template engine is provided out of the
-box:
+在Camunda平台的社区版本中，以下模板引擎是开箱即用的：
 
 * [FreeMarker][freemarker]
 
-The following template engine is provided as optional add-on:
+以下模板引擎是作为插件添加：
 
 * [Apache Velocity][velocity]
 
-The script engine wrapper implementations can be found in the
-[camunda-template-engines][camunda-template-engines] repository.
+脚本引擎包装器的实现可以在[camunda-template-engines][camunda-template-engines]资源库中找到。
 
-Additionally, the following template engine is supported as enterprise extension:
+此外，以下模板引擎可以在企业版中使用：
 
 * [XSLT](/enterprise/download/#additional-information)
 
 
-# Install a Template Engine
+# 安装一个模板引擎
 
-## Install a Template Engine for an Embedded Process Engine
+## 为嵌入式流程引擎安装模板引擎
 
-A template engine must be installed in the same way as a script engine. This means that the template
-engine must be added to the process engine classpath.
+模板引擎和脚本引擎是用相同方式安装的。这意味着模板引擎必须被添加到进程引擎的classpath中。
 
-When using an embedded process engine, the template engine libraries must be added to the
-application deployment. When using the process engine in a maven `war` project, the template engine
-dependencies must be added as dependencies to the maven `pom.xml` file:
+使用嵌入式流程引擎时，模板引擎库必须添加到应用程序部署中。在maven`war`项目中使用流程引擎时，模板引擎依赖必须作为依赖项添加到maven`pom.xml`文件中。
 
 {{< note title="" class="info" >}}
-  Please import the [Camunda BOM](/get-started/apache-maven/) to ensure correct versions for every Camunda project.
+   请导入[Camunda BOM](/get-started/apache-maven/)，以确保Camunda项目的版本是正确的。
 {{< /note >}}
 
 ```xml
@@ -65,29 +59,23 @@ dependencies must be added as dependencies to the maven `pom.xml` file:
 ```
 
 
-## Install a Template Engine for a Shared Process Engine
+## 为分布式流程引擎安装一个模板引擎
 
-When using a shared process engine, the template engine must be added to the shared process engine
-classpath. The procedure for this depends on the application server. In Apache Tomcat, the
-libraries have to be added to the shared `lib/` folder.
+当使用一个分布式流程引擎时，模板需要添加到分布式流程引擎的classpath中。classpath的位置取决于应用服务器。在Apache Tomcat中，库必须被添加到共享的`lib/`文件夹中。
 
 {{< note title="" class="info" >}}
-  [FreeMarker](http://freemarker.org/) is pre-installed in the Camunda pre-packaged distribution.
+  [FreeMarker](http://freemarker.org/) 是封装在Camunda预编译发行版中的。
 {{< /note >}}
 
 
-# Use a Template Engine
+# 使用模板引擎
 
-If the template engine library is in the classpath, you can use templates everywhere in the BPMN
-process where you can [use scripts][use-scripts], for example as a script task or inputOutput mapping.
-The FreeMarker template engine is part of the Camunda Platform distribution.
+如果模板引擎库在classpath中，你可以在BPMN流程中任何可以[使用脚本][use-scripts]的地方使用模板，例如作为一个脚本任务或输入输出映射。
+FreeMarker模板引擎是Camunda平台发布的一部分。
 
-Inside the template, all process variables of the BPMN element scope are available. The
-template can also be loaded from an external resource as described in the [script source
-section][script-source].
+在模板内部，BPMN元素范围的所有流程变量都是可用的。模板也可以从外部资源加载，如[脚本源部分][script-source]所述。
 
-The following example shows a FreeMarker template, of which the result is saved in the process variable
-`text`.
+下面的例子显示了一个FreeMarker模板，它的结果被保存在流程变量`text`中：
 
 ```xml
 <scriptTask id="templateScript" scriptFormat="freemarker" camunda:resultVariable="text">
@@ -102,8 +90,7 @@ The following example shows a FreeMarker template, of which the result is saved 
 </scriptTask>
 ```
 
-In an inputOutput mapping it can be very useful to use an external template to generate the
-payload of a `camunda:connector`.
+在输入输出映射中，使用外部模板来生成 "camunda:connector" 的有效载荷是非常有用的。
 
 ```xml
 <bpmn2:serviceTask id="soapTask" name="Send SOAP request">
@@ -125,21 +112,21 @@ payload of a `camunda:connector`.
 ```
 
 
-# Use XSLT as Template Engine
+# 使用模板引擎 XSLT
 
 {{< enterprise >}}
-  Please note that this feature is only included in the enterprise edition of the Camunda Platform, it is not available in the community edition.
+  请注意，该功能只包含在Camunda平台的企业版中，社区版中没有。
 {{< /enterprise >}}
 
 
-## Install the XSLT Template Engine
+## 安装 XSLT 模板引擎
 
 The XSLT Template Engine can be downloaded from the [Enterprise Edition Download page](/enterprise/download/#additional-information).
 
 Instructions on how to install the template engine can be found inside the downloaded distribution.
 
 
-## Use XSLT Template Engine with an embedded process engine
+## 在嵌入式流程引擎中使用XSLT模板引擎
 
 When using an embedded process engine, the XSLT template engine library must be added to the
 application deployment. When using the process engine in a maven `war` project, the template engine
@@ -161,7 +148,7 @@ dependency must be added as dependencies to the maven `pom.xml` file:
 </dependencies>
 ```
 
-## Use XSLT Templates
+## 使用 XSLT 模板
 
 The following is an example of a BPMN ScriptTask used to execute an XSLT Template:
 
