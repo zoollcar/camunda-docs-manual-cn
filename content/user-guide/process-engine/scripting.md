@@ -11,18 +11,15 @@ menu:
 ---
 
 
-Camunda Platform supports scripting with JSR-223 compatible script engine implementations. Currently we
-test the integration for Groovy, JavaScript, JRuby and Jython. To use a scripting engine
-it is necessary to add the corresponding jar to the classpath.
+Camunda平台支持与JSR-223兼容的脚本语言。目前，我们对Groovy、JavaScript、JRuby和Jython进行了测试。为了使用一个脚本语言，有必要在classpath中添加相应的jar。
 
 {{< note title="" class="info" >}}
-  **JavaScript** is part of the Java Runtime (JRE) and thus available out of the box.
+  **JavaScript** 是Java Runtime（JRE）的一部分，因此开箱即用。
 
-  We include **Groovy** in the pre-packaged Camunda distributions.
+  **Groovy** 也包含在预编译的Camunda发行版中。
 {{< /note >}}
 
-The following table provides an overview of the BPMN elements which support the execution of
-scripts.
+下表展示了支持执行脚本的BPMN元素：
 
 <table class="table desc-table">
   <tr>
@@ -68,12 +65,11 @@ scripts.
 </table>
 
 
-# Use Script Tasks
+# 使用脚本任务
 
-With a BPMN 2.0 script task you can add a script to your BPM process (for more information see the
-[BPMN 2.0 reference]({{< ref "/reference/bpmn20/tasks/script-task.md" >}}).
+通过BPMN 2.0脚本任务，你可以向你的BPM流程添加一个脚本（更多信息请参见[BPMN 2.0参考]({{< ref "/reference/bpmn20/tasks/script-task.md" >}})）。
 
-The following process is a simple example with a Groovy script task that sums up the elements of an array.
+下面的流程是一个简单的例子，有一个Groovy脚本任务，对一个数组的元素进行求和：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -101,7 +97,7 @@ The following process is a simple example with a Groovy script task that sums up
 </definitions>
 ```
 
-To start the process, a variable `inputArray` is necessary.
+为了启动这个过程，需要一个变量`inputArray`：
 
 ```java
 Map<String, Object> variables = new HashMap<String, Object>();
@@ -110,17 +106,13 @@ runtimeService.startProcessInstanceByKey("process", variables);
 ```
 
 
-# Use Scripts as Execution Listeners
+# 在执行监听器中使用脚本
 
-Besides Java code and expression language, Camunda Platform also supports the execution of a script
-as an execution listener. For general information about execution listeners see the corresponding
-[section]({{< ref "/user-guide/process-engine/delegation-code.md#execution-listener" >}}).
+除了Java代码和表达式语言，Camunda平台还支持执行监听器脚本的执行。关于执行监听器的一般信息，请参见相应的[章节]({{< ref "/user-guide/process-engine/delegation-code.md#execution-listener" >}}).
 
-To use a script as an execution listener, a `camunda:script` element has to be added as a child
-element of the `camunda:executionListener` element. During script evaluation, the variable `execution` is
-available, which corresponds to the `DelegateExecution` interface.
+要在执行监听器中使用脚本，必须在`camunda:executionListener`元素下添加一个`camunda:script`子元素。在脚本执行期间，变量`execution`是可用的，它对应于`DelegateExecution`接口。
 
-The following example shows usage of scripts as execution listeners.
+下面的例子展示了如何在执行监听器中使用脚本。
 
 ```xml
 <process id="process" isExecutable="true">
@@ -156,17 +148,13 @@ The following example shows usage of scripts as execution listeners.
 ```
 
 
-# Use Scripts as Task Listeners
+# 在任务监听器中使用脚本
 
-Similar to execution listeners, task listeners can also be implemented as scripts. For general
-information about task listeners see the corresponding
-[section]({{< ref "/user-guide/process-engine/delegation-code.md#task-listener" >}}).
+与执行监听器类似，任务监听器也可以使用脚本实现。关于任务监听器的更多信息，请参见相应的[章节]({{< ref "/user-guide/process-engine/delegation-code.md#task-listener" >}}).
 
-To use a script as a task listener, a `camunda:script` element has to be added as a child element of
-the `camunda:taskListener` element. Inside the script, the variable `task` is available, which corresponds to
-the `DelegateTask` interface.
+要在任务监听器中使用脚本，必须在`camunda:taskListener`元素中添加`camunda:script`子元素。在脚本中，变量`task`是可用的，它对应于`DelegateTask`接口。
 
-The following example shows usage of scripts as task listeners.
+下面的例子显示了脚本作为任务监听器的用法：
 
 ```xml
 <userTask id="userTask">
@@ -181,16 +169,11 @@ The following example shows usage of scripts as task listeners.
 </userTask>
 ```
 
-# Use Scripts as Conditions
+# 使用脚本作为条件表达
 
-As an alternative to expression language, Camunda Platform allows you to use scripts as
-`conditionExpression` of conditional sequence flows. To do that, the `language` attribute of the
-`conditionExpression` element has to be set to the desired scripting language. The script source code
-is the text content of the element, as with expression language. Another way to specify the script
-source code is to define an external source as described in the [script source section]({{< relref "#script-source" >}}).
+Camunda平台允许你使用 **脚本** 代替 **表达式语言** 作为条件序列流程的 "条件表达"。要做到这一点，"conditionExpression" 元素的 "language" 属性必须被设置为所需的脚本语言。脚本源代码是该元素的文本内容，与表达式语言一样。另一种指定脚本源代码的方法是定义一个外部源，参见[脚本源部分]({{< relref "#script-source" >}}).
 
-The following example shows usage of scripts as conditions. The Groovy variable `status` is a
-process variable which is available inside the script.
+下面的例子显示了脚本作为条件的用法。Groovy变量`status`是一个流程变量，可以在脚本中使用：
 
 ```xml
 <sequenceFlow>
@@ -205,17 +188,12 @@ process variable which is available inside the script.
 </sequenceFlow>
 ```
 
-# Use Scripts as inputOutput Parameters
+# 使用脚本作为输入输出参数
 
-With the Camunda `inputOutput` extension element you can map an `inputParameter` or `outputParameter`
-with a script. The following example process uses the Groovy script from the previous example to assign
-the Groovy variable `sum` to the process variable `x` for a Java delegate.
+通过Camunda的 `inputOutput` 扩展元素，你可以用脚本映射 `inputParameter` 或`outputParameter`。下面的例子流程使用了前面例子中的Groovy脚本，将Groovy变量`sum`分配给一个Java委托的流程变量`x`。
 
-{{< note title="Script Return Value" class="info" >}}
-  Please note that the last statement of the script is returned. This applies to Groovy,
-  JavaScript and JRuby but not to Jython. If you want to use Jython, your script has to be a
-  single expression like `a + b` or `a > b` where `a` and
-  `b` are already process variables. Otherwise, the Jython scripting engine will not return a value.
+{{< note title="脚本返回值" class="info" >}}
+  请注意，脚本的最后一条语句的结果会被返回。这适用于Groovy、JavaScript和JRuby，但不适用于Jython。如果你想使用Jython，你的脚本必须是一个单一的表达式，如`a + b`或`a > b`，其中`a`和`b`已经是流程变量。否则，Jython脚本引擎将不会返回值。
 {{< /note >}}
 
 ```xml
@@ -252,8 +230,7 @@ the Groovy variable `sum` to the process variable `x` for a Java delegate.
 </definitions>
 ```
 
-After the script has assigned a value to the `sum` variable, `x` can be used inside the Java delegate
-code.
+在脚本为`sum`变量赋值后，`x`可以在Java委托代码中使用：
 
 ```java
 public class SumDelegate implements JavaDelegate {
@@ -267,8 +244,7 @@ public class SumDelegate implements JavaDelegate {
 }
 ```
 
-The script source code can also be loaded from an external resource in the same way as described
-for [script tasks]({{< relref "#script-source" >}}).
+脚本的源代码也可以从外部资源加载，方法与[脚本任务]({{< relref "#script-source" >}})一致。
 
 ```xml
 <camunda:inputOutput>
@@ -277,29 +253,26 @@ for [script tasks]({{< relref "#script-source" >}}).
   </camunda:inputParameter>
 </camunda:inputOutput>
 ```
-# Script Engine Caching
+# 脚本引擎缓存
 
-Whenever the process engine reaches a point where a script has to be executed, the process engine looks for a Script Engine by a language name. The default behavior is that if it is the first request, a new Script Engine is created. If the Script Engine declares to be thread safe, it is also cached. The caching prevents the process engine from creating a new Script Engine for each request for the same script language.
+每当流程引擎到达必须执行脚本的时候，流程引擎就会按语言名称寻找一个脚本引擎。默认的行为是，如果是第一次请求，就会创建一个新的脚本引擎。如果脚本引擎声明是线程安全的，它也会被缓存起来。通过缓存可以防止流程引擎为同一脚本语言的每个请求创建一个新的脚本引擎。
 
-By default the caching of Script Engines happens at process application level. Each process application holds an own instance of a Script Engine for a given language. This behavior can be disabled by setting the process engine configuration flag named `enableFetchScriptEngineFromProcessApplication` to false. Consequently, the Script Engines are cached globally at process engine level and they are shared between each process application. For further details about the process engine configuration flag `enableFetchScriptEngineFromProcessApplication`, please read the section about [referencing process application classes]({{< ref "/user-guide/process-engine/scripting.md#reference-process-application-provided-classes" >}}).
+默认情况下，脚本引擎的缓存发生在流程应用程序层面。每个流程应用程序都持有一个特定语言的脚本引擎的实例。这种行为可以通过将名为 "enableFetchScriptEngineFromProcessApplication" 的流程引擎配置设置为false来禁用。因此，脚本引擎在流程引擎层面被全局缓存，它们在每个流程应用程序之间被共享。关于流程引擎配置标志 "enableFetchScriptEngineFromProcessApplication" 的更多信息，请阅读关于[引用流程应用程序类]({{< ref "/user-guide/process-engine/scripting.md#reference-process-application-provided-classes" >}})的部分。
 
-If it is not desired to cache Script Engines in general, it can be disabled by setting the process engine configuration flag name `enableScriptEngineCaching` to false.
+如果大多数情况下不希望对脚本引擎进行缓存，可以通过将流程引擎配置 `enableScriptEngineCaching` 设置为false来禁用它。
 
 
-# Script Compilation
+# 脚本编译
 
-Most script engines compile script source code either to a Java class or to a different
-intermediary format prior to executing the script. Script engines implementing the Java `Compilable`
-interface allow programs to retrieve and cache the script compilation. The default setting of the
-process engine is to check if a Script Engine supports the compile feature. If true and the caching of Script Engines is enabled, the script engine compiles the script and then caches the compilation result. This prevents the process engine from compiling a script source each time the same script task is executed.
+大多数脚本引擎在执行脚本之前，都会将脚本源代码编译成Java类或其他的中间格式。实现Java `Compilable`接口的脚本引擎允许程序查询和缓存脚本编译。流程引擎的默认会检查一个脚本引擎是否支持编译。如果支持，则会启用脚本引擎的缓存功能，也就是脚本引擎会编译脚本，然后缓存编译的结果。这可以防止流程引擎在每次执行同一个脚本任务时都要编译脚本源代码。
 
-By default, compilation of scripts is enabled. If you need to disable script compilation, you can set the process engine configuration flag named `enableScriptCompilation` to false.
+默认情况下，脚本的编译是启用的。如果你想禁用脚本编译，你可以将名为 "enableScriptCompilation" 的流程引擎配置设置为false。
 
-# Load Script Engine
+# 加载脚本引擎
 
-If the process engine configuration flag named `enableFetchScriptEngineFromProcessApplication` is set to true, it is also possible to load Script Engines from the classpath of the process application. For that, the Script Engine can be packaged as a library within the process application. It is also possible to install the Script Engine globally.
+如果名为 "enableFetchScriptEngineFromProcessApplication" 的流程引擎配置配置被设置为 "true"，也可以从流程应用程序的classpath中加载脚本引擎。为此，脚本引擎可以被打包成流程应用程序中的一个库。也可以全局安装脚本引擎。
 
-In case the Script Engine module should be installed globally and JBoss is used, it is necessary to add a module dependency to the Script Engine. This can be done by adding a `jboss-deployment-structure.xml` to the process application, e.g.,:
+如果脚本引擎模块全局安装，并且使用JBoss，就有必要给脚本引擎添加一个模块依赖关系。这可以通过在流程应用程序中添加`jboss-deployment-structure.xml`来实现，例如：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -314,9 +287,9 @@ In case the Script Engine module should be installed globally and JBoss is used,
 ```
 
 
-# Reference Process Application Provided Classes
+# 使用应用程序提供的类
 
-The script can reference to process application provided classes by importing them like in the following groovy script example.
+脚本可以像下面的groovy脚本例子那样通过来导入应用程序提供的类：
 
 ```java
 import my.process.application.CustomClass
@@ -325,59 +298,59 @@ sum = new CustomClass().calculate()
 execution.setVariable('sum', sum)
 ```
 
-To avoid possible class loading problems during the script execution, it is recommended to set the process engine configuration flag name `enableFetchScriptEngineFromProcessApplication` to true.
+为了避免在脚本执行过程中可能出现的类加载问题，建议将流程引擎配置`enableFetchScriptEngineFromProcessApplication` 设置为true。
 
-Be aware that the process engine flag `enableFetchScriptEngineFromProcessApplication` is only relevant in a shared engine scenario.
+请注意，流程引擎配置项`enableFetchScriptEngineFromProcessApplication`只在使用分布式流程引擎的情况下才有意义。
 
-# Variables Available During Script Execution
+# 脚本执行中可用的变量
 
-During the execution of scripts, all process variables visible in the current scope are available.
-They can be accessed directly by the name of the variable (i.e., `sum`). This does not apply for
-JRuby where you have to access the variable as a ruby global variable (prepend with a dollar sign,
-i.e., `$sum`)
+在脚本的执行过程中，所有在当前范围内可见的流程变量都是可用的。可以通过变量的名称直接访问（例如，`sum`）。但JRuby不同，你必须把变量当做ruby全局变量来访问（在前面加一个美元符号，即`$sum`）。
 
-There are also special variables:
+还有一些特殊的变量：
 
-1. `execution`, which is always available if the script is executed in an execution scope (e.g., in a script task) ([`DelegateExecution`](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.7/org/camunda/bpm/engine/delegate/DelegateExecution.html)).
-1. `task`, which is available if the script is executed in a task scope (e.g., a task listener) ([`DelegateTask`](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.7/org/camunda/bpm/engine/delegate/DelegateTask.html)).
-1. `connector`, which is available if the script is executed in a connector variable scope (e.g., outputParameter of a camunda:connector) ([`ConnectorVariableScope`](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.7/org/camunda/connect/plugin/impl/ConnectorVariableScope.html)).
+1. `execution`, 如果脚本是在一个执行范围内执行的（例如，脚本任务），`execution`是可用的({{< javadocref page="?org/camunda/bpm/engine/delegate/DelegateExecution.html" text="DelegateExecution" >}})。
+1. `task`, 如果脚本是在一个任务范围内执行的（例如，任务监听器），`task`是可用的({{< javadocref page="?org/camunda/bpm/engine/delegate/DelegateTask.html" text="DelegateTask" >}})。
+1. `connector`，如果脚本在连接器的变量范围内执行（例如，camunda:connector的outputParameter），`connector`是可用的。 ({{< javadocref page="?org/camunda/connect/plugin/impl/ConnectorVariableScope.html" text="ConnectorVariableScope" >}})。
 
-These variables correspond to the `DelegateExecution`, `DelegateTask` or resp. `ConnectorVariableScope`
-interface which means that it can be used to get and set variables or access process engine services.
+这些变量对应着 "DelegateExecution"、"DelegateTask" 或 "ConnectorVariableScope" 接口，这意味着它可以用来获取和设置变量以及访问流程引擎服务。
 
 ```java
-// get process variable
+// 获取流程变量
 sum = execution.getVariable('x')
 
-// set process variable
+// 设置流程变量
 execution.setVariable('y', x + 15)
 
-// get task service and query for task
+// 获取 task service 查询 task
 task = execution.getProcessEngineServices().getTaskService()
   .createTaskQuery()
   .taskDefinitionKey("task")
   .singleResult()
 ```
 
-# Accessing Process Engine Services using Scripts
+# 在脚本中访问流程引擎服务
 
-Camunda's Java API provides access to Camunda's process engine services; these services can be accessed using Scripts:
+Camunda 的 Java API 提供的访问流程引擎服务可以用脚本来访问：
 
-[Process Engine Services](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.3/org/camunda/bpm/engine/ProcessEngineServices.html)
-[Public Java API of Camunda Platform Engine](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.7/org/camunda/bpm/engine/package-summary.html)
+{{< javadocref page="?org/camunda/bpm/engine/ProcessEngineServices.html" text="Process Engine Services" >}}
+
+{{< javadocref page="?org/camunda/bpm/engine/package-summary.html" text="Public Java API of Camunda Platform Engine" >}}
 
 Example of creating a BPMN Message that correlates with the message key "work":
+
+下面的案例，创建了一个 message key 为 "work" 的BPMN消息：
+
 
 ```javascript
 execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation("work").correlateWithResult();
 ```
 
 
-# Printing to Console using Scripts
+# 使用脚本打印到控制台
 
-During the execution of scripts, it might be desired to print to the console due to logging and debugging reasons.
+在执行脚本的过程中，由于记录和调试的需要，可能需要打印信息到控制台。
 
-Here are examples on how this can be accomplished in the respective language:
+下面展示了如何在各种脚本语言中做到：
 
 * Goovy:
 
@@ -393,37 +366,33 @@ system.out.println('This prints to the console');
 ```
 
 
-# Script Source
+# 脚本来源
 
-The standard way to specify the script source code in the BPMN XML model is to add it directly to
-the XML file. Nonetheless, Camunda Platform provides additional ways to specify the script source.
+在BPMN XML模型中指定脚本源代码的标准方式是直接将其添加到XML文件中。尽管如此，Camunda平台提供了额外的方式来指定脚本源。
 
-If you use another scripting language than Expression Language, you can also specify the script
-source as an expression which returns the source code to be executed. This way, the source code can,
-for example, be contained in a process variable.
+如果你使用的是表达式语言以外的另一种脚本语言，你也可以将脚本源指定为一个表达式，该表达式返回要执行的源代码。例如，源代码可以设置在一个流程变量中。
 
-In the following example snippet the process engine will evaluate the expression `${sourceCode}` in
-the current context every time the element is executed.
+在下面的例子中，进程引擎将在每次执行元素时在当前上下文中评估表达式`${sourceCode}`：
 
 ```xml
-<!-- inside a script task -->
+<!-- 在脚本任务中 -->
 <scriptTask scriptFormat="groovy">
   <script>${sourceCode}</script>
 </scriptTask>
 
-<!-- as an execution listener -->
+<!-- 在执行监听器中 -->
 <camunda:executionListener>
   <camunda:script scriptFormat="groovy">${sourceCode}</camunda:script>
 </camunda:executionListener>
 
-<!-- as a condition expression -->
+<!-- 作为一个条件表达 -->
 <sequenceFlow id="flow" sourceRef="theStart" targetRef="theTask">
   <conditionExpression xsi:type="tFormalExpression" language="groovy">
     ${sourceCode}
   </conditionExpression>
 </sequenceFlow>
 
-<!-- as an inputOutput mapping -->
+<!-- 作为一个输入输出参数 -->
 <camunda:inputOutput>
   <camunda:inputParameter name="x">
     <camunda:script scriptFormat="groovy">${sourceCode}</camunda:script>
@@ -431,41 +400,34 @@ the current context every time the element is executed.
 </camunda:inputOutput>
 ```
 
-You can also specify the attribute `camunda:resource` on the `scriptTask` and `conditionExpression`
-element, respectively the `resource` attribute on the `camunda:script` element. This extension
-attribute specifies the location of an external resource which should be used as script source code.
-Optionally, the resource path can be prefixed with an URL-like scheme to specify if the resource is
-contained in the deployment or classpath. The default behaviour is that the resource is part of the
-classpath. This means that the first two script task elements in the following examples are equal.
+你也可以在`scriptTask`和`conditionExpression`元素上指定`camunda:resource`属性，分别对应各自`camunda:script`元素上的`resource`属性。这个扩展属性指定了一个外部资源的位置，用于指向脚本源代码。
+可以在资源路径前加上类似于URL的前缀，用来说明资源是否包含在deployment或classpath中。默认的行为是，deployment是classpath的一部分。这意味着以下例子中的前两个脚本指向是一样的：
 
 ```xml
-<!-- on a script task -->
+<!-- 在脚本任务上 -->
 <scriptTask scriptFormat="groovy" camunda:resource="org/camunda/bpm/task.groovy"/>
 <scriptTask scriptFormat="groovy" camunda:resource="classpath://org/camunda/bpm/task.groovy"/>
 <scriptTask scriptFormat="groovy" camunda:resource="deployment://org/camunda/bpm/task.groovy"/>
 
-<!-- in an execution listener -->
+<!-- 在执行监听器中 -->
 <camunda:executionListener>
   <camunda:script scriptFormat="groovy" resource="deployment://org/camunda/bpm/listener.groovy"/>
 </camunda:executionListener>
 
-<!-- on a conditionExpression -->
+<!-- 作为条件表达式 -->
 <conditionExpression xsi:type="tFormalExpression" language="groovy"
     camunda:resource="org/camunda/bpm/condition.groovy" />
 
-<!-- in an inputParameter -->
+<!-- 作为输入参数 -->
 <camunda:inputParameter name="x">
   <camunda:script scriptFormat="groovy" resource="org/camunda/bpm/mapX.groovy" />
 </camunda:inputParameter>
 ```
 
-The resource path can also be specified as an expression which is evaluated on the invocation of the
-script task.
+资源路径也可以被指定为一个表达式，在调用脚本任务时被计算：
 
 ```xml
 <scriptTask scriptFormat="groovy" camunda:resource="${scriptPath}"/>
 ```
 
-For more information, see the
-[camunda:resource]({{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resource" >}})
-section of the [Custom Extensions]({{< ref "/reference/bpmn20/custom-extensions/_index.md" >}}) chapter.
+想要了解更多信息， 参见 [Custom Extensions]({{< ref "/reference/bpmn20/custom-extensions/_index.md" >}}) 中的 [camunda:resource]({{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resource" >}})章节。
