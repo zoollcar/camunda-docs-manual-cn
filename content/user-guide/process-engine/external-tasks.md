@@ -10,47 +10,47 @@ menu:
 
 ---
 
-The process engine supports two ways of executing service tasks:
+流程引擎支持两种执行服务任务的方式。
 
-1. Internal Service tasks: Synchronous invocation of code deployed along with a process application
-2. External tasks: Providing a unit of work in a list that can be polled by workers
+1. 内部服务任务：同步调用与进程应用程序一起部署的代码
+2. 外部任务：在一个可以被工作者轮询的列表中提供一个工作单元
 
-The first option is used when code is implemented as [Delegation Code]({{< ref "/user-guide/process-engine/delegation-code.md" >}}) or as a [Script]({{< ref "/user-guide/process-engine/scripting.md" >}}). By contrast, external (service) tasks work in a way that the process engine publishes a unit of work to a worker to fetch and complete. We refer to this as the *external task pattern*.
+当代码被实现为[委托代码]({{< ref "/user-guide/process-engine/delegation-code.md" >}})或 [脚本]({{< ref "/user-guide/process-engine/scripting.md" >}})时，会使用第一个内部服务任务。外部（服务）任务的工作方式是：进程引擎将一个工作单元发布给外部工作者去完成。我们把这称为 *外部任务模式* 。
 
-Note that the above distinction does not say whether the actual "business logic" is implemented locally or as a remote service. The Java Delegate invoked by an internal service task may either implement the business logic itself or it may call out to a web/rest service, send a message to another system and so forth. The same is true for an external worker. The worker can implement the business logic directly or again delegate to a remote system.
+请注意，上面的区别并没有说实际的 "业务逻辑" 是在本地实现还是作为远程服务实现。内部服务任务调用的 Java代理类 也可以自己实现业务逻辑，也可以调用 Web/rest 服务，向另一个系统发送消息等等。对于外部工作者也是如此。外部工作者可以直接实现业务逻辑或再次委托给远程服务实现。
 
-# The External Task Pattern
+# 外部任务模式
 
-The flow of executing external tasks can be conceptually separated into three steps, as depicted in the following image:
+执行外部任务的流程可以分为三个步骤，如下图所示：
 
 {{< img src="../img/external-task-pattern.png" title="External Task Pattern" >}}
 
-1. **Process Engine**: Creation of an external task instance
-2. **External Worker**: Fetch and lock external tasks
-3. **External Worker & Process Engine**: Complete external task instance
+1. **流程引擎（Process Engine）**: 创建外部任务实例
+2. **外部工作者（External Worker）**: 获取和锁定外部任务
+3. **外部工作者（External Worker）和 流程引擎（Process Engine）**: 完整的外部任务实例
 
-When the process engine encounters a service task that is configured to be externally handled, it creates an external task instance and adds it to a list of external tasks (step 1). The task instance receives a *topic* that identifies the nature of the work to be performed. At a time in the future, an external worker may fetch and lock tasks for a specific set of topics (step 2). To prevent one task being fetched by multiple workers at the same time, a task has a timestamp-based lock that is set when the task is acquired. Only when the lock expires, another worker can fetch the task again. When an external worker has completed the desired work, it can signal the process engine to continue process execution after the service task (step 3).
+当流程引擎遇到一个被配置为外部处理的服务任务时，它会创建一个外部任务实例并将其添加到外部任务列表中（步骤1）。该任务实例接收一个主题（topic）*，该主题确定了要执行的工作的性质。在未来的某个时间，一个外部工作者可以为一组特定的主题获取并锁定任务（步骤2）。为了防止一个任务被多个工作者同时获取，一个任务有一个基于时间戳的锁，这个锁在任务被获取时被设置。只有当锁过期时，另一个工作者才能再次获取该任务。当外部工作者完成了所需的工作，它可以向进程引擎发出信号，然后流程引擎继续执行流程（步骤3）。
 
-{{< note class="info" title="The User Task Analogy" >}}
-External tasks are conceptually very similar to user tasks. When first trying to understand the external task pattern, it can be helpful to think about it in analogy to user tasks:
-User tasks are created by the process engine and added to a task list. The process engine then waits for a human user to query the list, claim a task and then complete it. External tasks are similar: An external task is created and then added to a topic. An external application then queries the topic and locks the task. After the task is locked, the application can work on it and complete it.
+{{< note class="info" title="类比 **用户任务**" >}}
+外部任务在概念上与用户任务非常相似。在第一次尝试理解外部任务模式时，将其与用户任务进行类比思考可能会有所帮助。
+用户任务由流程引擎创建并添加到任务列表中。然后，流程引擎等待人类用户查询该列表，提出任务要求，然后完成它。外部任务是类似的。一个外部任务被创建，然后被添加到一个主题。然后，一个外部应用程序查询该主题并锁定该任务。在任务被锁定后，外部应用程序可以完成它。
 {{< /note >}}
 
-The essence of this pattern is that the entities performing the actual work are independent of the process engine and receive work items by polling the process engine's API. This has the following benefits:
+这种模式的本质是，执行实际工作的程序独立于流程引擎，并通过轮询流程引擎的API的方式接收工作项。这样做有以下好处：
 
-* **Crossing System Boundaries**: An external worker does not need to run in the same Java process, on the same machine, in the same cluster or even on the same continent as the process engine. All that is required is that it can access the process engine's API (via REST or Java). Due to the polling pattern, the worker does not need to expose any interface for the process engine to access.
-* **Crossing Technology Boundaries**: An external worker does not need to be implemented in Java. Instead, any technology can be used that is most suitable to perform a work item and that can be used to access the process engine's API (via REST or Java).
-* **Specialized Workers**: An external worker does not need to be a general purpose application. Each external task instance receives a topic name identifying the nature of the task to perform. Workers can poll tasks for only those topics that they can work on.
-* **Fine-Grained Scaling**: If there is high load concentrated on service task processing, the number of external workers for the respective topics can be scaled out independently of the process engine.
-* **Independent Maintenance**: Workers can be maintained independently of the process engine without breaking operations. For example, if a worker for a specific topic has a downtime (e.g., due to an update), there is no immediate impact on the process engine. Execution of external tasks for such workers degrades gracefully: They are stored in the external task list until the external worker resumes operation.
+* **解耦系统**: 外部工作者与流程引擎不需要在同一Java进程中、同一机器上、同一集群中或甚至在同一大陆上运行。只需要它能够访问进程引擎的API（通过REST或Java）。由于采用了轮询模式，外部工作者不需要暴露任何接口供进程引擎访问。
+* **解耦技术选择**: 外部工作者不需要用Java实现。相反，可以使用任何最适合执行工作项的技术，并且可以用来访问流程引擎的API（通过REST或Java）。
+* **外部工作者可以专注某个主题**: 外部工作者不需要是一个通用的应用程序。每个外部任务实例都会收到要执行的任务性质的主题名。外部工作者可以只轮询它们可以做到的任务主题。
+* **细粒度扩展**: 如果某主题服务任务具有较高的负载，相应主题的外部工作者的数量可以独立于进程引擎来扩展。
+* **独立维护**: 工作者可以独立于流程引擎进行维护，而不会破坏操作。例如，如果有某个特定主题的工作者停机一段时间（例如，由于更新停机），对进程引擎没有直接影响。这类工作者的外部任务的执行会优雅的存储在外部任务列表中，直到外部工作者恢复并运行。
 
-# Working with External Tasks
+# 使用外部任务
 
-To work with external tasks they have to be declared in the BPMN XML. At runtime, external task instances can be accessed via Java and REST API. The following explains the API concepts and focuses on the Java API. Often the REST API is more suitable in this context, especially when implementing workers running in different environments with different technologies.
+为了使用外部任务，它们必须在BPMN XML中声明。在运行时，可以通过Java和REST API访问外部任务实例。下面将解释API的概念，并重点介绍Java API。通常情况下，REST API在这种情况下更适合，特别是在不同地域，使用不同技术的外部工作者。
 
 ## BPMN
 
-In the BPMN XML of a process definition, a service task can be declared to be performed by an external worker by using the attributes `camunda:type` and `camunda:topic`. For example, a service task *Validate Address* can be configured to provide an external task instance for the topic `AddressValidation` as follows:
+在流程定义的BPMN XML中，可以通过使用属性`camunda:type`和`camunda:topic`来声明服务任务由外部工作者执行。例如，服务任务 *Validate Address* 可以被配置为主题 `AddressValidation` ，如下所示：
 
 ```xml
 <serviceTask id="validateAddressTask"
@@ -59,18 +59,16 @@ In the BPMN XML of a process definition, a service task can be declared to be pe
   camunda:topic="AddressValidation" />
 ```
 
-It is possible to define the topic name by using an [expression]({{< ref "/user-guide/process-engine/expression-language.md" >}}) instead of a constant value.
+也可以使用[表达式]({{< ref "/user-guide/process-engine/expression-language.md" >}})而不是固定值定义主题的名字。
 
-In addition, other *service-task-like* elements such as send tasks, business rule tasks, and throwing message events can be implemented with the external task pattern. See the [BPMN 2.0 implementation reference]({{< ref "/reference/bpmn20/_index.md" >}}) for details.
+此外，其他类似 *服务任务* 的元素，如发送任务、业务规则任务和抛出消息事件，都可以用外部任务模式来实现。更多细节参见[BPMN 2.0实现参考]({{< ref "/reference/bpmn20/_index.md" >}})
 
-### Error Event Definitions
+### 错误事件定义
 
-External tasks allow for the definition of error events that throw a specified BPMN error. This can be done by adding a [camunda:errorEventDefinition]({{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#erroreventdefinition" >}}) extension element to the task's definition. Compared to the `bpmn:errorEventDefinition`, the `camunda:errorEventDefinition` elements accept an additional `expression` attribute which supports any JUEL expression. Within the expression, you have access to the {{< javadocref page="?org/camunda/bpm/engine/externaltask/ExternalTask.html" text="ExternalTaskEntity" >}} object via the key `externalTask` which provides getter methods
-for `errorMessage`, `errorDetails`, `workerId`, `retries` and more. 
+外部任务允许定义错误事件，抛出一个指定的BPMN错误。这可以通过在任务定义中添加一个扩展元素 [camunda:errorEventDefinition]({{< ref "/reference/bpmn20/custom-extensions/extension-elements.md#erroreventdefinition" >}})来完成。 与`bpmn:errorEventDefinition`相比，`camunda:errorEventDefinition`元素可以接受一个额外的`expression`属性，支持任何JUEL表达。在表达式内，你可以访问 {{< javadocref page="?org/camunda/bpm/engine/externaltask/ExternalTask.html" text="外部任务实体" >}} 对象，使用key "externalTask" 通过getter方法访问 "errorMessage"、"errorDetails"、"workerId"、"retries"。
 
-The expression is evaluated on invocations of `ExternalTaskService#complete` and
-`ExternalTaskService#handleFailure`. If the expression evaluates to `true`, the actual method execution is canceled and replaced by throwing the respective BPMN error. This error can be caught by an
-[Error Boundary Event]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}}). This implies that the error event definition can be used in success and failure scenarios alike - even if the task was completed successfully, you can still decide to throw a BPMN error.
+该表达式在调用`ExternalTaskService#complete`和`ExternalTaskService#handleFailure`时被计算。
+外部任务服务 `#handleFailure` 在调用时进行评估。如果表达式评估为 `true`，实际的方法执行将被取消，并被抛出相应的BPMN错误。这个错误可以被[错误边界事件]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}})所捕获。这意味着错误事件定义在成功和失败的情况下同样使用--即使任务成功完成，你仍然可以决定抛出一个BPMN错误。
 
 ```xml
 <serviceTask id="validateAddressTask"
@@ -85,42 +83,32 @@ The expression is evaluated on invocations of `ExternalTaskService#complete` and
 </serviceTask>
 ```
 
-Further information on the functionality of error event definitions on external tasks can be found in the [expression language user guide]({{< ref "/user-guide/process-engine/expression-language.md#external-task-error-handling" >}}). The specific use in external tasks for RPA orchestration scenarios is described in the [Camunda Platform RPA Bridge]({{< ref "/user-guide/camunda-bpm-rpa-bridge.md#error-handling" >}}).
+关于外部任务的错误事件定义的进一步信息可以在[表达式语言用户指南]({{< ref "/user-guide/process-engine/expression-language.md#external-task-error-handling" >}})中找到。在RPA协调场景的外部任务中的具体使用方法在[Camunda平台 RPA Bridge]({{< ref "/user-guide/camunda-bpm-rpa-bridge.md#error-handling" >}})。
 
 ## Rest API
 
-See the [REST API documentation]({{< ref "/reference/rest/external-task/_index.md" >}}) for how the API operations can be accessed via HTTP.
+关于如何通过HTTP访问API操作，请参见[REST API文档]({{< ref "/reference/rest/external-task/_index.md" >}})。
 
-### Long Polling to Fetch and Lock External Tasks
+### 长轮询以获取并锁定外部任务
 
-Ordinary HTTP requests are immediately answered by the server, regardless of whether the requested information 
-is available or not. This inevitably leads to a situation where the client has to perform multiple recurring requests until 
-the information is available (polling). This approach can obviously be expensive in terms of resources.
+普通的HTTP请求会立即得到服务器的响应，无论所请求的信息是否可用。这不可避免地导致了这样一种情况：客户端必须执行多次重复的请求，直到信息可用（轮询）。这显然是十分消耗资源的。
 
 {{< img src="../img/external-task-long-polling.png" alt="Long polling to fetch and lock external tasks" >}}
 
-With the aid of long polling, a request is suspended by the server if no external tasks are available. As soon as new 
-external tasks occur, the request is reactivated and the response is performed. The suspension is limited to a 
-configurable period of time (timeout).
+在长时间轮询的帮助下，如果没有外部任务，服务器会暂停请求。一旦有新的外部任务出现，请求就会重新被激活，并执行响应。暂停的时间可以通过 timeout 配置。
 
-Long polling significantly reduces the number of requests and enables using resources more efficiently on both 
-the server and the client side.
+长轮询大大减少了请求的数量，使服务器和客户端都能更有效地利用资源。
 
-Please also see the [REST API documentation]({{< ref "/reference/rest/external-task/fetch.md" >}}).
+参见 [REST API文档]({{< ref "/reference/rest/external-task/fetch.md" >}}).
 
-{{< note title="Heads Up!" class="info" >}}
-This feature is based on JAX-RS 2.0 and is therefore not available on **IBM WebSphere Application Server 8.5**.
+{{< note title="小心!" class="info" >}}
+该功能基于 JAX-RS 2.0，因此在 **IBM WebSphere Application Server 8.5** 上不可用。
 {{< /note >}}
 
-#### Unique Worker Request
-By default, multiple workers can use the same `workerId`. In order to ensure `workerId` uniqueness on server-side, the 
-'Unique Worker Request' flag can be activated. This configuration flag effects only long-polling requests and not ordinary 
-'Fetch and Lock' requests. If the 'Unique Worker Request' flag is activated, pending requests with the same `workerId` are 
-cancelled when a new request is received.
+#### 唯一工作者请求（Unique Worker Request）
+默认情况下，多个工作者可以使用同一个`workerId`。为了确保服务器端的 `workerId` 的唯一性，可以启用 `Unique Worker Request` 标志。这个配置标志只影响长轮询请求，而不是普通的 "获取并锁定" 请求。如果 "Unique Worker Request" 标志被启用，当收到一个新的请求时，具有相同 `workerId` 的请求会被取消。
 
-In order to enable the 'Unique Worker Request' flag, the `engine-rest/WEB-INF/web.xml` file included in the *engine-rest* 
-artifact needs to be adjusted by setting the context parameter `fetch-and-lock-unique-worker-request` to `true`. Please 
-consider the following configuration snippet:
+为了启用 "Unique Worker Request" 标志，需要调整 *engine-rest* 组件中包含的 `engine-rest/WEB-INF/web.xml` 文件，将上下文参数`fetch-and-lock-unique-worker-request` 设置为 `true`。请考虑下面的配置片段：
 
 ```xml
 <!-- ... -->
@@ -135,10 +123,9 @@ consider the following configuration snippet:
 
 ## Java API
 
-The entry point to the Java API for external tasks is the `ExternalTaskService`. It can be accessed via `processEngine.getExternalTaskService()`.
+外部任务的Java API的入口是 "ExternalTaskService"。它可以通过`processEngine.getExternalTaskService()`获取到。
 
-The following is an example of an interaction which fetches 10 tasks,
-works on these tasks in a loop and for each task, either completes the task or marks it as failed.
+下面是一个用于交互的例子，它获取了10个任务，在一个循环中处理这些任务，对于每个任务，要么完成任务，要么将其标记为失败：
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -149,15 +136,15 @@ for (LockedExternalTask task : tasks) {
   try {
     String topic = task.getTopicName();
 
-    // work on task for that topic
+    // 业务代码
     ...
 
-    // if the work is successful, mark the task as completed
+    // 如果执行成功，则设置任务成功
     if(success) {
       externalTaskService.complete(task.getId(), variables);
     }
     else {
-      // if the work was not successful, mark it as failed
+      // 否则标记任务失败
       externalTaskService.handleFailure(
         task.getId(),
         "externalWorkerId",
@@ -166,16 +153,16 @@ for (LockedExternalTask task : tasks) {
     }
   }
   catch(Exception e) {
-    //... handle exception
+    //... 处理异常
   }
 }
 ```
 
-The following sections address the different interactions with the `ExternalTaskService` in greater detail.
+下面几节将更详细地讨论与 "外部任务服务" 的不同交互：
 
-### Fetching Tasks
+### 获取任务
 
-In order to implement a polling worker, a fetching operation can be executed by using the method `ExternalTaskService#fetchAndLock`. This method returns a fluent builder that allows to define a set of topics to fetch tasks for. Consider the following code snippet:
+实现轮询工作者，可以通过使用 `ExternalTaskService#fetchAndLock` 方法来执行获取操作。该方法返回一个流式构建器，允许定义一组主题来获取任务。请看下面的代码片段：
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -186,14 +173,15 @@ List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalW
 for (LockedExternalTask task : tasks) {
   String topic = task.getTopicName();
 
-  // work on task for that topic
+  // 业务代码
   ...
 }
 ```
 
-This code fetches at most 10 tasks of the topics `AddressValidation` and `ShipmentScheduling`. The result tasks are locked exclusively for the worker with id `externalWorkerId`. Locking means that the task is reserved for this worker for a certain duration beginning with the time of fetching and prevents that another worker can fetch the same task while the lock is valid. If the lock expires and the task has not been completed meanwhile, a different worker can fetch it such that silently failing workers do not block execution indefinitely. The exact duration is given in the single topic fetch instructions: Tasks for `AddressValidation` are locked for 60 seconds (`60L * 1000L` milliseconds) while tasks for `ShipmentScheduling` are locked for 120 seconds (`120L * 1000L` milliseconds). The lock expiration duration should not be shorter than than the expected execution time. It should also not be too high if that implies a too long timeout until the task is retried in case the worker fails silently.
+这段代码首先获取最多10个主题为 "AddressValidation" 和 "ShipmentScheduling" 的任务。获取后任务被锁定，只留给id为`externalWorkerId`的工作者。锁定意味着任务在一定的时间内被保留给这个工作者，从获取的时间开始到锁过期前防止其他工作者获得这个任务。如果锁过期了，同时任务还没有完成，那么另一个工作器则可以获取它，这样运行失败的工作器就不会无限期地阻塞执行。
+确切的锁定持续时间在主题获取指令中给出 "AddressValidation" 的任务被锁定60秒（`60L * 1000L`毫秒），而 "ShipmentScheduling" 的任务被锁定120秒（`120L * 1000L`毫秒）。锁定到期时间不应短于预期执行时间。但它也不应该太高。
 
-Variables that are required to perform a task can be fetched along with the task. For example, assume that the `AddressValidation` task requires an `address` variable. Fetching tasks with this variable could look like:
+在获取任务时也可以获取执行任务所需的变量。例如，假设`AddressValidation`任务需要一个`address`变量。可以这样做：
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -204,14 +192,14 @@ for (LockedExternalTask task : tasks) {
   String topic = task.getTopicName();
   String address = (String) task.getVariables().get("address");
 
-  // work on task for that topic
+  // 业务代码
   ...
 }
 ```
 
-The resulting tasks then contain the current values of the requested variable. Note that the variable values are the values that are visible in the scope hierarchy from the external task's execution. See the chapter on [Variable Scopes and Variable Visibility]({{< ref "/user-guide/process-engine/variables.md#variable-scopes-and-variable-visibility" >}}) for details.
+之后，产生的任务就包含了所请求的变量。注意，变量值是外部任务执行时在作用域中的。详情参见[变量作用域和变量可见性]({{< ref "/user-guide/process-engine/variables.md#variable-scopes-and-variable-visibility" >}})一章。
 
-In order to fetch all variables, call to `variables()` method should be omitted 
+如果想要获取所有变量，不调用 `variables` 方法即可。
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -222,12 +210,12 @@ for (LockedExternalTask task : tasks) {
   String topic = task.getTopicName();
   String address = (String) task.getVariables().get("address");
 
-  // work on task for that topic
+  // 业务代码
   ...
 }
 ```
 
-In order to enable the deserialization of serialized variables values (typically variables that store custom Java objects), it is necessary to call `enableCustomObjectDeserialization()`. Otherwise an exception, that the object is not deserialized, is thrown once the serialized variable is retrieved from the variables map.
+为了启用序列化变量值的反序列化（通常是存储自定义Java对象的变量），必须调用`enableCustomObjectDeserialization()`。否则，一旦从变量映射中检索到序列化的变量，就会抛出一个异常，即该对象没有被反序列化。
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -240,41 +228,41 @@ for (LockedExternalTask task : tasks) {
   String topic = task.getTopicName();
   MyAddressClass address = (MyAddressClass) task.getVariables().get("address");
 
-  // work on task for that topic
+  // 业务代码
   ...
 }
 ```
  
 
-### External Task Prioritization
-External task prioritization is similar to job prioritization. The same problem exists with starvation which should be considered. 
-For further details, see the section on [Job Prioritization]({{< ref "/user-guide/process-engine/the-job-executor.md#the-job-priority" >}}).
+### 外部任务的优先顺序
+外部任务的优先级与Job的优先级相似。也存在同样的饥饿问题（一种锁的问题）需要考虑。
+进一步的细节，见[Job优先级]({{< ref "/user-guide/process-engine/the-job-executor.md#the-job-priority" >}})一节。
 
-### Configure the Process Engine for External Task Priorities
+### 外部任务的配置
 
-This section explains how to enable and disable external task priorities in the configuration. There are two relevant configuration properties which can be set on the process engine configuration:
+本节解释了如何在配置中启用和禁用外部任务优先级。有两个相关的配置属性可以在流程引擎配置文件上配置。
 
-`producePrioritizedExternalTasks`: Controls whether the process engine assigns priorities to external tasks. The default value is `true`.
-If priorities are not needed, the process engine configuration property `producePrioritizedExternalTasks` can be set to `false`. In this case, all external tasks receive a priority of 0.
-For details on how to specify external task priorities and how the process engine assigns them, see the following section on [Specifying External Task Priorities]({{< relref "#specify-external-task-priorities" >}}).
+`producePrioritizedExternalTasks`: 控制流程引擎是否为外部任务分配优先级。默认值是 `true`。
+如果不需要优先级，流程引擎配置属性`producePrioritizedExternalTasks`可以设置为`false`。在这种情况下，所有外部任务的优先级都是0。
+关于如何指定外部任务的优先级以及流程引擎如何分配这些优先级的细节，参见后面关于[指定外部任务优先级]({{< relref "#specify-external-task-priorities" >}})的部分。
 
-### Specify External Task Priorities
+### 指定外部任务的优先顺序
 
-External task priorities can be specified in the BPMN model as well as overridden at runtime via API.
+外部任务的优先级可以在BPMN模型中指定，也可以在运行时通过API重写。
 
-#### Priorities in BPMN XML
+#### BPMN XML 中指定优先级
 
-External task priorities can be assigned at the process or the activity level. To achieve this, the Camunda extension attribute `camunda:taskPriority` can be used.
+外部任务的优先级可以在流程或活动级别分配。使用Camunda扩展属性`camunda:taskPriority`。
 
-For specifying the priority, both constant values and [expressions]({{< ref "/user-guide/process-engine/expression-language.md" >}}) are supported. 
-When using a constant value, the same priority is assigned to all instances of the process or activity. 
-Expressions, on the other hand, allow assigning a different priority to each instance of the process or activity. Expression must evaluate to a number in the Java `long` range.
-The concrete value can be the result of a complex calculation and be based on user-provided data (resulting from a task form or other sources).
+指定优先级使用常量值和[表达式]({{< ref "/user-guide/process-engine/expression-language.md" >}})都可以。
+当使用常量值时，该流程或活动的所有实例都将使用相同的优先级。
+表达式允许给流程或活动的每个实例分配不同的优先级。表达式返回类型必须为 Java `long` 范围内的一个数字。
+具体数值可以是复杂计算的结果，并基于用户提供的数据（来自任务表格或其他来源）。
 
+#### 在流程级别指定优先级
 
-#### Priorities at the Process Level
+在流程实例级别配置外部任务优先级时，需要在bpmn的 `<process ...>` 元素中设置 `camunda:taskPriority` 属性
 
-When configuring external task priorities at the process instance level, the `camunda:taskPriority` attribute needs to be applied to the bpmn `<process ...>` element:
 
 ```xml
 <bpmn:process id="Process_1" isExecutable="true" camunda:taskPriority="8">
@@ -282,9 +270,9 @@ When configuring external task priorities at the process instance level, the `ca
 </bpmn:process>
 ```
 
-The effect is that all external tasks inside the process inherit the same priority (unless it is overridden locally).
-The above example shows how a constant value can be used for setting the priority. This way the same priority is applied to all instances of the process. 
-If different process instances need to be executed with different priorities, an expression can be used:
+其效果是，流程内的所有外部任务都继承相同的优先级（除非它被本地重写）。
+上面的例子显示了如何使用一个常量值来设置优先级。这样一来，相同的优先级就会应用于流程的所有实例。
+如果不同的流程实例需要以不同的优先级执行，可以使用一个表达式：
 
 ```xml
 <bpmn:process id="Process_1" isExecutable="true" camunda:taskPriority="${order.priority}">
@@ -292,12 +280,12 @@ If different process instances need to be executed with different priorities, an
 </bpmn:process>
 ```
 
-In the above example the priority is determined based on the property `priority` of the variable `order`.
+在上面的例子中，优先级是根据变量`order`的属性`priority`决定的。
 
-#### Priorities at the Service Task Level
+#### 在服务任务级别指定优先级
 
-When configuring external task priorities at the service task level, the `camunda:taskPriority` attribute needs to be applied to the bpmn `<serviceTask ...>` element.
-The service task must be an external task with the attribute `camunda:type="external"`.
+在服务任务层面配置外部任务优先级时，需要将`camunda:taskPriority`属性应用于bpmn`<serviceTask ...>`元素。
+服务任务必须是一个外部任务，属性为`camunda:type="external"`。
 
 ```xml
   ...
@@ -308,9 +296,9 @@ The service task must be an external task with the attribute `camunda:type="exte
   ...
 ```
 
-The effect is that the priority is set for the defined external task (overrides the process taskPriority).
-The above example shows how a constant value can be used for setting the priority. This way the same priority is applied to the external task in different instances of the process.
-If different process instances need to be executed with different external task priorities, an expression can be used:
+其效果是为定义的外部任务设置优先级（覆盖流程的taskPriority）。
+上面的例子展示了如何使用一个常量值设置优先级。这样，在流程的不同实例中，所有外部任务都将使用相同的优先级。
+如果不同的进程实例需要以不同的外部任务优先级来执行，可以使用一个表达式。
 
 ```xml
   ...
@@ -321,15 +309,14 @@ If different process instances need to be executed with different external task 
   ...
 ```
 
-In the above example the priority is determined based on the property `priority` of the variable `order`.
+在上面的例子中，优先级是根据变量`order`的属性`priority`决定的。
 
 
 
-### Fetch External Task with Priority
+### 根据优先级查询外部任务
 
-To fetch external tasks based on their priority, the overloaded method `ExternalTaskService#fetchAndLock` with the parameter `usePriority` can be used.
-The method without the boolean parameter returns the external tasks arbitrarily. If the parameter is given, the returned external tasks are ordered descendingly.
-See the following example which regards the priority of the external tasks:
+为了根据优先级查询外部任务，可以使用`ExternalTaskService#fetchAndLock`带有参数 "usePriority" 的重载方法。没有布尔参数的方法可以任意地返回外部任务。如果给了参数，返回的外部任务将按优先级降序排列。
+请看下面的例子，它使用了外部任务的优先级查询：
 
 ```java
 List<LockedExternalTask> tasks =
@@ -341,29 +328,29 @@ List<LockedExternalTask> tasks =
 for (LockedExternalTask task : tasks) {
   String topic = task.getTopicName();
 
-  // work on task for that topic
+  // 业务代码
   ...
 }
 ```
 
 
-### Completing Tasks
+### 完成任务
 
-After fetching and performing the requested work, a worker can complete an external task by calling the `ExternalTaskService#complete` method. A worker can only complete tasks that it fetched and locked before. If the task has been locked by a different worker in the meantime, an exception is raised.
+在获取并执行请求的工作后，工作者可以通过调用 "ExternalTaskService#complete" 方法完成外部任务。外部工作者只能完成它之前获取并锁定的任务。如果该任务在此期间被其他的工作器锁定，就会出现异常。
 
-{{< note class="info" title="Error Events" >}}
-External tasks can include [error event definitions]({{< ref "/user-guide/process-engine/external-tasks.md#error-event-definitions" >}}) that can cancel the execution of `#complete` in case the error event's expression evaluates to `true`. In case an error event's expression evaluation raises an exception, the call to `#complete` will fail with that same exception.
+{{< note class="info" title="错误事件" >}}
+外部任务可以包括[错误事件定义]({{< ref "/user-guide/process-engine/external-tasks.md#error-event-definitions" >}}) 在错误事件的表达式评估为 `true`的情况下，可以取消`#complete`的执行。如果错误事件的表达式评估产生了一个异常，对 `#complete` 的调用也会因为这个异常而失败。
 {{< /note >}}
 
-### Extending of Locks on External Tasks
+### 延长锁定时间
 
-When an external task is locked by a worker, the lock duration can be extended by calling the method `ExternalTaskService#extendLock`. A worker can specify the amount of time (in milliseconds) to update the timeout. A lock can only be extended by the worker who owns a lock on the given external task.
+当外部任务被工作者锁定时，可以通过调用`ExternalTaskService#extendLock`方法来延长锁定时间。工作者可以指定更新超时的时间量（以毫秒为单位）。一个锁只能由拥有该锁的外部任务来延长。
 
-### Reporting Task Failure
+### 报告任务执行失败
 
-A worker may not always be able to complete a task successfully. In this case it can report a failure to the process engine by using `ExternalTaskService#handleFailure`. Like `#complete`, `#handleFailure` can only be invoked by the worker possessing the most recent lock for a task. The `#handleFailure` method takes four additional arguments: `errorMessage`,`errorDetails`, `retries`, `retryTimeout`. The error message can contain a description of the nature of the problem and is limited to 666 characters. It can be accessed when the task is fetched again or is queried for. The `errorDetails` can contain the full error description and are unlimited in length. Error details are accessible through the separate method `ExternalTaskService#getExternalTaskErrorDetails`, based on task id parameter. With `retries` and `retryTimout`, workers can specify a retry strategy. When setting `retries` to a value > 0, the task can be fetched again after `retryTimeout` expires. When setting retries to 0, a task can no longer be fetched and an incident is created for this task.
+外部工作者可能并不总能够成功地完成任务。在这种情况下，它可以通过使用`ExternalTaskService#handleFailure`向流程引擎报告失败。与 "#complete" 一样，"#handleFailure" 只能由拥有最新任务锁的工作者调用。`#handleFailure`方法需要四个参数。 `错误信息（errorMessage）`，`错误细节（errorDetails）`，`重试（retries）`，`重试时间（retryTimeout）`。错误信息（errorMessage）可以包含对问题性质的描述，限制在666个字符。它可以在任务再次被获取或被查询时被访问。错误细节（errorDetails）可以包含完整的误差描述，长度不限。错误细节可以通过单独的方法`ExternalTaskService#getExternalTaskErrorDetails`访问，基于任务id参数。通过参数`重试（retries）`和`重试时间（retryTimeout）`，外部工作者可以指定一个重试策略。当设置`retries`的值大于0时，任务可以在`retryTimeout`到期后被再次获取。当设置retries为0时，任务不能再被提取，并为该任务创建一个事件。
 
-Consider the following code snippet:
+参考下面的代码：
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -372,7 +359,7 @@ List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalW
 
 LockedExternalTask task = tasks.get(0);
 
-// ... processing the task fails
+// ... 处理任务失败
 
 externalTaskService.handleFailure(
   task.getId(),
@@ -382,30 +369,30 @@ externalTaskService.handleFailure(
   1,                                                                    // retries
   10L * 60L * 1000L);                                                   // retryTimeout
 
-// ... other activities
+// ... 其他业务代码
 
 externalTaskService.getExternalTaskErrorDetails(task.getId());
 ```
 
-A failure is reported for the locked task such that it can be retried once more after 10 minutes. The process engine does not decrement retries itself. Instead, such a behavior can be implemented by setting the retries to `task.getRetries() - 1` when reporting a failure.
+通过以上代码，任务会被报告为失败，这样它就可以在10分钟后再重试一次。流程引擎不会自己递减重试（参数retries）。可以通过在报告失败时将重试设置为`task.getRetries() - 1`来实现。
 
-At the moment when error details are required, they are queried from the service using separate method. 
+如果需要错误细节信息，可以使用单独的方法查询到。
 
-{{< note class="info" title="Error Events" >}}
-External tasks can include [error event definitions]({{< ref "/user-guide/process-engine/external-tasks.md#error-event-definitions" >}}) that can cancel the execution of `#handleFailure` in case the error event's expression evaluates to `true`. In case an error event's expression evaluation raises an exception, this expression will be considered as evaluating to `false`.
+{{< note class="info" title="错误事件" >}}
+外部任务可以包括[错误事件定义]({{< ref "/user-guide/process-engine/external-tasks.md#error-event-definitions" >}}) 如果错误事件的表达式返回结果为 "true"，可以取消 "#handleFailure"的执行。如果错误事件的表达式执行引发异常，该表达式将被视为 "false"。
 {{< /note >}}
 
-### Reporting BPMN Error
+### 报告BPMN错误
 
-See the documentation for [Error Boundary Events]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}}).
+见[错误边界事件]({{< ref "/reference/bpmn20/events/error-events.md#error-boundary-event" >}})的一章。
 
-For some reason a business error can appear during execution. In this case, the worker can report a BPMN error to the process engine by using `ExternalTaskService#handleBpmnError`. 
-Like `#complete` or `#handleFailure`, it can only be invoked by the worker possessing the most recent lock for a task. 
-The `#handleBpmnError` method takes one additional argument: `errorCode`. 
-The error code identifies a predefined error. If the given `errorCode` does not exist or there is no boundary event defined,
-the current activity instance simply ends and the error is not handled.
+由于某些原因，执行过程中会出现业务错误。在这种情况下，外部工作者可以通过使用`ExternalTaskService#handleBpmnError`向流程引擎报告一个BPMN错误。
+与 "#complete"或 "#handleFailure"一样，它只能由拥有最新任务锁的工作者调用。
+`#handleBpmnError`方法需要一个额外的参数：`errorCode`。
+该错误代码确定了一个预定义的错误。如果给定的`errorCode`不存在或者没有定义边界事件。
+当前的活动实例就会结束，错误不会被处理。
 
-See the following example:
+请看下面的例子：
 
 ```java
 List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalWorkerId")
@@ -414,7 +401,7 @@ List<LockedExternalTask> tasks = externalTaskService.fetchAndLock(10, "externalW
 
 LockedExternalTask task = tasks.get(0);
 
-// ... business error appears
+// ... 出现业务错误
 
 externalTaskService.handleBpmnError(
   task.getId(),
@@ -424,17 +411,16 @@ externalTaskService.handleBpmnError(
   variables);
 ```
 
-A BPMN error with the error code `bpmn-error` is propagated. If a boundary event with this error code exists, the BPMN error will be caught and handled.
-The error message and variables are optional. They can provide additional information for the error. The variables will be passed to the execution if the BPMN error is caught.
+然后，一个带有错误代码`bpmn-error`的BPMN错误被传播。如果存在具有该错误代码的边界事件，BPMN错误将被捕获和处理。
+错误信息和变量是可选的。它们可以为错误提供额外的信息。如果BPMN错误被捕获，这些变量将被传递给执行。
 
-### Querying Tasks
+### 查询任务
 
-A query for external tasks can be made via `ExternalTaskService#createExternalTaskQuery`. Contrary to `#fetchAndLock`, this is a reading query that does not set any locks.
+可以通过`ExternalTaskService#createExternalTaskQuery`对外部任务进行查询。与`#fetchAndLock`相反，这是一个不设置任何锁的读取查询。
 
-### Managing Operations
+### 管理业务
 
-Additional management operations are `ExternalTaskService#unlock`, `ExternalTaskService#setRetries` and `ExternalTaskService#setPriority` to clear the current lock, to set the retries and to set the priority of an external task. 
-Setting the retries is useful when a task has 0 retries left and must be resumed manually. With the last method the priority can 
-be set to a higher value for more important or to a lower value for less important external tasks.
+其他的管理操作有`ExternalTaskService#unlock`、`ExternalTaskService#setRetries`和`ExternalTaskService#setPriority`来清除当前的锁，设置重试以及设置外部任务的优先级。
+当一个任务的重试（retries ）为0，且必须手动恢复时，作为最后的手段，设置重试会很有用。优先级也可以设置，对于更重要的外部任务可以设置为较高的值，对于不那么重要的外部任务可以设置为较低的值。
 
-There are also operations `ExternalTaskService#setRetriesSync` and `ExternalTaskService#setRetriesAsync` to set retries for multiple external tasks synchronously or asynchronously.
+还有操作`ExternalTaskService#setRetriesSync`和`ExternalTaskService#setRetriesAsync`可以同步或异步为多个外部任务设置重试。
