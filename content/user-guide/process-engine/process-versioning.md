@@ -148,4 +148,4 @@ processEngine.getRuntimeService().startProcessInstanceById(pd.getId());
 
 # 流程实例迁移
 
-默认情况下，当部署新的流程版本时，运行在以前版本上的流程实例不受影响。如果想将以前版本的流程迁移到新版本，可以参考[进程实例迁移]({{< ref "/user-guide/process-engine/process-instance-migration.md" >}})。
+默认情况下，当部署新的流程版本时，运行在以前版本上的流程实例不受影响。如果想将以前版本的流程迁移到新版本，可以参考[流程实例迁移]({{< ref "/user-guide/process-engine/process-instance-migration.md" >}})。

@@ -33,11 +33,11 @@ CaseService caseService = processEngine.getCaseService();
 DecisionService decisionService = processEngine.getDecisionService();
 ```
 
-`ProcessEngines.getDefaultProcessEngine()` 将在第一次调用时初始化并建立一个进程引擎，此后总是返回相同的进程引擎。所有进程引擎的正确创建和关闭可以通过`ProcessEngines.init()`和`ProcessEngines.destroy()`完成。
+`ProcessEngines.getDefaultProcessEngine()` 将在第一次调用时初始化并建立一个流程引擎，此后总是返回相同的流程引擎。所有流程引擎的正确创建和关闭可以通过`ProcessEngines.init()`和`ProcessEngines.destroy()`完成。
 
 ProcessEngines类将扫描所有`camunda.cfg.xml`和`activiti.cfg.xml`文件。
 
-对于所有`camunda.cfg.xml`文件，进程引擎将以典型的方式建立。
+对于所有`camunda.cfg.xml`文件，流程引擎将以典型的方式建立。
 
 ```java
 ProcessEngineConfiguration
@@ -45,11 +45,11 @@ ProcessEngineConfiguration
   .buildProcessEngine()
 ```
 
-对于所有的`activiti.cfg.xml`文件，进程引擎将以Spring的方式构建：首先创建Spring应用上下文，然后从该应用上下文中获得进程引擎。
+对于所有的`activiti.cfg.xml`文件，流程引擎将以Spring的方式构建：首先创建Spring应用上下文，然后从该应用上下文中获得流程引擎。
 
 所有的服务都是无状态的。这意味着你可以很容易地在一个集群的多个节点上运行Camunda平台，每个节点都去同一个数据库，而不必担心哪个机器实际执行了以前的调用。对任何服务的任何调用都是无状态的，无论它在哪里执行。
 
-当使用Camunda引擎时，**仓库服务（RepositoryService）**可能是第一个需要的服务。这个服务提供了管理和操纵部署和流程定义的操作。流程定义是BPMN 2.0流程的Java对应物，这里就不多说了。它是一个流程的每个步骤的结构和行为的表示。部署是引擎中的包装单元。一个部署可以包含多个BPMN 2.0 XML文件和任何其他资源。一个部署中包含的内容的选择由开发者决定。它的范围可以从一个单一的流程BPMN 2.0 XML文件到整个流程和相关资源包（例如，部署 "hr-processes "可以包含与hr流程相关的一切内容）。RepositoryService允许部署这种包。进行一次部署意味着部署内容被上传到引擎，在那里所有的流程都被检查和解析，然后被存储在数据库中。从那时起，系统就知道该部署了，并且任何包含在部署中的进程现在都可以被启动。
+当使用Camunda引擎时，**仓库服务（RepositoryService）**可能是第一个需要的服务。这个服务提供了管理和操纵部署和流程定义的操作。流程定义是BPMN 2.0流程的Java对应物，这里就不多说了。它是一个流程的每个步骤的结构和行为的表示。部署是引擎中的包装单元。一个部署可以包含多个BPMN 2.0 XML文件和任何其他资源。一个部署中包含的内容的选择由开发者决定。它的范围可以从一个单一的流程BPMN 2.0 XML文件到整个流程和相关资源包（例如，部署 "hr-processes "可以包含与hr流程相关的一切内容）。RepositoryService允许部署这种包。进行一次部署意味着部署内容被上传到引擎，在那里所有的流程都被检查和解析，然后被存储在数据库中。从那时起，系统就知道该部署了，并且任何包含在部署中的流程现在都可以被启动。
 
 此外，这项仓库服务（RepositoryService）允许：
 

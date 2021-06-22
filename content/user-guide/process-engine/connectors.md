@@ -37,7 +37,7 @@ menu:
 
 存在以下 "连接" 组件：
 
-* `camunda-connect-core`: 一个只包含核心连接类的jar。该组价已经可以作为进程引擎的依赖项。除了 "camunda-connect-core" 之外，还有 "camunda-connect-http-client" 和 "camunda-connect-soap-http-client" 等单个连接器的实现。当需要重新配置默认连接器或使用自定义连接器实现时，应使用这些依赖关系。
+* `camunda-connect-core`: 一个只包含核心连接类的jar。该组价已经可以作为流程引擎的依赖项。除了 "camunda-connect-core" 之外，还有 "camunda-connect-http-client" 和 "camunda-connect-soap-http-client" 等单个连接器的实现。当需要重新配置默认连接器或使用自定义连接器实现时，应使用这些依赖关系。
 * `camunda-connect-connectors-all`: 没有依赖关系的单一jar，包含HTTP和SOAP连接器。
 * `camunda-engine-plugin-connect`: 是一个流程引擎插件，用于向Camunda平台添加连接器。
 
@@ -117,7 +117,7 @@ menu:
 ```
 
 {{< note title="" class="info" >}}
-  When using a pre-built distribution of Camunda Platform, the plugin is already pre-configured.
+  当使用预编译的Camunda平台发行版时，该插件已经预先配置好了。
 {{< /note >}}
 
 

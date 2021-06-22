@@ -25,12 +25,12 @@ menu:
 
 # 共享的，容器化管理流程引擎
 
-你选择的容器（例如Tomcat、JBoss或IBM WebSphere）为你管理进程引擎。配置是以一种特定的容器方式进行的，详情见[运行时容器集成]({{< ref "/user-guide/runtime-container-integration/_index.md" >}}).
+你选择的容器（例如Tomcat、JBoss或IBM WebSphere）为你管理流程引擎。配置是以一种特定的容器方式进行的，详情见[运行时容器集成]({{< ref "/user-guide/runtime-container-integration/_index.md" >}}).
 
 
 ## ProcessEngineConfiguration Bean （流程引擎配置Bean）
 
-Camunda引擎使用 {{< javadocref page="?org/camunda/bpm/engine/ProcessEngineConfiguration.html" text="ProcessEngineConfiguration bean" >}} 来配置和构建一个独立的流程引擎。它有多个可用的子类，可以用来定义进程引擎的配置。这些类代表不同的环境，并相应地设置默认值。最好的做法是选择与你的环境相匹配（大部分）的类，以尽量减少配置引擎所需的属性数量。目前有以下几个类。
+Camunda引擎使用 {{< javadocref page="?org/camunda/bpm/engine/ProcessEngineConfiguration.html" text="ProcessEngineConfiguration bean" >}} 来配置和构建一个独立的流程引擎。它有多个可用的子类，可以用来定义流程引擎的配置。这些类代表不同的环境，并相应地设置默认值。最好的做法是选择与你的环境相匹配（大部分）的类，以尽量减少配置引擎所需的属性数量。目前有以下几个类。
 
 * `org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration`  
 流程引擎是以独立的方式使用的。引擎本身将负责处理事务。默认情况下，只有在引擎启动时才会检查数据库（如果没有数据库模式或模式版本不正确，会抛出一个异常）。
@@ -51,7 +51,7 @@ ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
 ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration();
 ```
 
-现在你可以调用`buildProcessEngine()`操作来创建一个进程引擎。
+现在你可以调用`buildProcessEngine()`操作来创建一个流程引擎。
 
 ```java
 ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration()
@@ -132,7 +132,7 @@ ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration();
 * IBM WebSphere Application Server
 * Oracle WebLogic Application Server
 
-`<process-engine ... />` xml标签允许你定义一个进程引擎。
+`<process-engine ... />` xml标签允许你定义一个流程引擎。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -162,8 +162,8 @@ ProcessEngineConfiguration.createStandaloneInMemProcessEngineConfiguration();
 见[部署描述符参考]({{< ref "/reference/deployment-descriptors/descriptors/bpm-platform-xml.md" >}}) 以获得关于`bpm-platform.xml`文件语法的完整文档。
 
 
-## 在 processes.xml中配置进程引擎
+## 在 processes.xml中配置流程引擎
 
-进程引擎也可以使用`META-INF/processes.xml`文件进行配置和引导。 见[processes.xml 文件]({{< ref "/user-guide/process-applications/the-processes-xml-deployment-descriptor.md" >}}) 了解详情。
+流程引擎也可以使用`META-INF/processes.xml`文件进行配置和引导。 见[processes.xml 文件]({{< ref "/user-guide/process-applications/the-processes-xml-deployment-descriptor.md" >}}) 了解详情。
 
 见 [部署描述符参考]({{< ref "/reference/deployment-descriptors/descriptors/processes-xml.md" >}}) 以获得关于`processes.xml`文件语法的完整文档。

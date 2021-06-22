@@ -11,7 +11,7 @@ menu:
 
 ---
 
-用户任务用于模拟人类演员需要完成的工作。当进程执行到达这样的用户任务时，在分配给该任务的用户或组的任务列表中创建一个新任务。
+用户任务用于模拟人类演员需要完成的工作。当流程执行到达这样的用户任务时，在分配给该任务的用户或组的任务列表中创建一个新任务。
 
 {{< bpmn-symbol type="user-task" >}}
 
@@ -309,7 +309,7 @@ taskService.handleBpmnError(
 
 查看[捕获升级事件]({{< ref "/reference/bpmn20/events/escalation-events.md#catching-escalation-events" >}})的文档。
 
-在用户任务执行过程中报告升级可以通过`TaskService#handleEscalation`实现。调用时用户任务应处于活动状态，`escalationCode`是调用升级的必要参数，这个代码标识了一个预定义的升级。如果给定的`escalationCode`不存在，将抛出进程引擎异常。请看下面的例子：
+在用户任务执行过程中报告升级可以通过`TaskService#handleEscalation`实现。调用时用户任务应处于活动状态，`escalationCode`是调用升级的必要参数，这个代码标识了一个预定义的升级。如果给定的`escalationCode`不存在，将抛出流程引擎异常。请看下面的例子：
 
 ```java
 taskService.handleEscalation(
@@ -376,7 +376,7 @@ for(Task task : tasks) {
 
 ## 表格提交
 
-提交表单时，可以获取进程变量以返回：
+提交表单时，可以获取流程变量以返回：
 
 ```java
 VariableMap processVariables = formService

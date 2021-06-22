@@ -236,7 +236,7 @@ ProcessInstance
 
 注意：多实例活动由多实例主体和内部活动组成。多实例主体包含所有内部活动，并收集内部活动的活动实例。
 
-* 嵌入子进程内的用户任务：
+* 嵌入子流程内的用户任务：
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/userTask_inside_embeddedSubprocess"></div>
 
@@ -320,9 +320,9 @@ managementService.createJobDefinitionQuery()
 * Job实例级别：单个Job可以通过`managementService.suspendJob(..)` API直接暂停，或者在暂停一个流程实例或Job定义时过渡性地暂停。
 * Job定义级别：某个定时器或活动的所有实例可以被暂停。
 
-通过对Job定义的暂停Job允许你暂停某个定时器或异步继续的所有实例。直观地说，这允许你暂停进程中的某个活动，其方式是所有的流程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
+通过对Job定义的暂停Job允许你暂停某个定时器或异步继续的所有实例。直观地说，这允许你暂停流程中的某个活动，其方式是所有的流程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
 
-让我们假设有一个以 "orderProcess" 为关键字部署的进程，它包含一个名为 "processPayment" 的服务任务。该服务任务配置了一个异步继续，导致它被Job执行器执行。下面的例子显示了如何防止 "processPayment"服务被执行：
+让我们假设有一个以 "orderProcess" 为关键字部署的流程，它包含一个名为 "processPayment" 的服务任务。该服务任务配置了一个异步继续，导致它被Job执行器执行。下面的例子显示了如何防止 "processPayment"服务被执行：
 
 ```java
 List<JobDefinition> jobDefinitions = managementService.createJobDefinitionQuery()

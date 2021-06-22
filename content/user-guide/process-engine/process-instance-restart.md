@@ -16,7 +16,7 @@ menu:
 * 恢复被错误地取消的流程实例的到最后状态
 * 由于错误路由导致流程实例终止后，重启流程实例
 
-为了执行这样的操作，进程引擎提供了 *流程实例重启API* `RuntimeService.restartProcessInstances(..)` 。该API允许通过使用流式构建器在一次调用中指定多个实例化指令。
+为了执行这样的操作，流程引擎提供了 *流程实例重启API* `RuntimeService.restartProcessInstances(..)` 。该API允许通过使用流式构建器在一次调用中指定多个实例化指令。
 
 请注意，这些操作也可以通过REST方式进行。[重启流程实例]({{< ref "/reference/rest/process-definition/post-restart-process-instance-sync.md" >}})和[重启流程实例（async）]({{< ref "/reference/rest/process-definition/post-restart-process-instance-async.md" >}})
 
@@ -76,7 +76,7 @@ runtimeService.restartProcessInstance(processInstance.getProcessDefinitionId())
 
 ### 流程实例列表
 
-应该被重启的进程实例可以是一个进程实例ID的列表。
+应该被重启的流程实例可以是一个流程实例ID的列表。
 
 ```Java
 ProcessDefinition processDefinition = ...;
@@ -139,7 +139,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 
 ## 使用初试变量集重启流程实例
 
-默认情况下，进程实例会以最后一组变量重启。
+默认情况下，流程实例会以最后一组变量重启。
 如果要选择初始变量集，可以使用 `initialSetOfVariables` 方法。
 
 This feature does not only copy the start variables, but will copy the first version of all process variables that have been set in the start activity of the old process instance.
@@ -158,7 +158,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 
 The initial set of variables can not be set if the historic process instance has no unique start activity. In that case, no variables are taken over.
 
-## 忽略历史进程实例的 Business Key
+## 忽略历史流程实例的 Business Key
 
 默认情况下，一个流程实例以与历史流程实例相同的Business Key重启。
 通过使用方法`withoutBusinessKey`，重启的流程实例的Business Key不被设置。
@@ -186,7 +186,7 @@ runtimeService.restartProcessInstances(processDefinition.getId())
 
 - 以下情况适用异步执行：
   - 流程实例的数量很大
-  - 所有的进程实例都独立重启，也就是说所有实例都在自己的事务中重启
+  - 所有的流程实例都独立重启，也就是说所有实例都在自己的事务中重启
   - 重启需要由另一个线程执行，即job执行器处理执行
 
 ### 同步执行
@@ -221,7 +221,7 @@ Batch batch = runtimeService.restartProcessInstances(processDefinition.getId())
   .executeAsync();
 ```
 
-使用一个批处理，进程实例的重启被分割成几个job，这些job被job执行器异步执行。
+使用一个批处理，流程实例的重启被分割成几个job，这些job被job执行器异步执行。
 更多信息请参见[批处理]({{< ref "/user-guide/process-engine/batch.md" >}}) 部分。
 如果所有的批处理job都成功完成，那么这个批处理就完成了完成了。然而，与同步执行不同的是，它并不保证流程实例是否真的重启完成。由于重启被分割成几个独立的job，每一个job都可能失败或成功。
 

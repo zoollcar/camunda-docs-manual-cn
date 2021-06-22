@@ -139,9 +139,9 @@ public class SetVariableToScopeMappingDelegate implements DelegateVariableMappin
 
 ## Object值 序列化
 
-当一个 `Object` 的值被传递给流程引擎时，可以指定一个 *序列化格式* 来告诉进程引擎以特定的格式来存储这个值。根据这个格式，引擎会查找一个 *序列化器* 。序列化器能够将一个Java对象序列化为指定的格式，也能从该格式的结果中反序列化它。这意味着，不同的格式可能有不同的序列化器，而且有可能实现自定义的序列化器，以便以特定的格式存储自定义对象。
+当一个 `Object` 的值被传递给流程引擎时，可以指定一个 *序列化格式* 来告诉流程引擎以特定的格式来存储这个值。根据这个格式，引擎会查找一个 *序列化器* 。序列化器能够将一个Java对象序列化为指定的格式，也能从该格式的结果中反序列化它。这意味着，不同的格式可能有不同的序列化器，而且有可能实现自定义的序列化器，以便以特定的格式存储自定义对象。
 
-进程引擎为 `application/x-java-serialized-object` 格式提供了一个内置的对象序列化器。它能够序列化实现了 `java.io.Serializable` 接口的Java对象，并应用标准的Java对象序列化。
+流程引擎为 `application/x-java-serialized-object` 格式提供了一个内置的对象序列化器。它能够序列化实现了 `java.io.Serializable` 接口的Java对象，并应用标准的Java对象序列化。
 
 所需的序列化格式可以在使用类型化值API设置变量时指定。
 
@@ -286,7 +286,7 @@ Class<com.example.Order> valueClass = retrievedTypedObjectValue.getObjectType();
 String valueClassName = retrievedTypedObjectValue.getObjectTypeName();
 ```
 
-当调用的应用程序不拥有实际变量值的类时（即`com.example.Order`不知道）的情况下，`runtimeService.getVariableTyped(execution.getId(), "order")`将引发一个异常，因为它立即试图对变量值进行反序列化。在这种情况下，可以使用调用`runtimeService.getVariableTyped(execution.getId(), "order", false)`。额外的布尔参数告诉进程引擎不要尝试反序列化。在这种情况下，调用`isDeserialized()`将返回`false`，而诸如`getValue()`和`getObjectType()`的调用将引发异常。尽管如此，调用`getValueSerialized()`和`getObjectTypeName()`也是一种访问变量的方式。
+当调用的应用程序不拥有实际变量值的类时（即`com.example.Order`不知道）的情况下，`runtimeService.getVariableTyped(execution.getId(), "order")`将引发一个异常，因为它立即试图对变量值进行反序列化。在这种情况下，可以使用调用`runtimeService.getVariableTyped(execution.getId(), "order", false)`。额外的布尔参数告诉流程引擎不要尝试反序列化。在这种情况下，调用`isDeserialized()`将返回`false`，而诸如`getValue()`和`getObjectType()`的调用将引发异常。尽管如此，调用`getValueSerialized()`和`getObjectTypeName()`也是一种访问变量的方式。
 
 同样地，也可以通过序列化的表示法来设置一个变量。
 
@@ -321,7 +321,7 @@ Camunda Spin插件为JSON和XML文档提供了一个抽象，以方便它们的�
 
 ## 瞬时变量
 
-瞬时变量的声明只能通过基于类型值的API来实现。它们不会被保存到数据库中，只会在当前事务中存在。在流程实例的执行过程中，每一个等待状态都会导致所有瞬时变量的丢失。这种情况通常发生在诸如外部服务当前不可用、用户任务已达到或进程执行正在等待一个消息、信号或条件的时候。请谨慎使用这一功能。
+瞬时变量的声明只能通过基于类型值的API来实现。它们不会被保存到数据库中，只会在当前事务中存在。在流程实例的执行过程中，每一个等待状态都会导致所有瞬时变量的丢失。这种情况通常发生在诸如外部服务当前不可用、用户任务已达到或流程执行正在等待一个消息、信号或条件的时候。请谨慎使用这一功能。
 
 [任何类型]({{<relref "#supported-variable-values">}}) 都可以通过使用`Variables`类将参数`isTransient`设置为true来声明为瞬时的。
 

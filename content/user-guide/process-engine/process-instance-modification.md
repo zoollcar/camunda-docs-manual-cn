@@ -442,7 +442,7 @@ runtimeService.createProcessInstanceModification(processInstance.getId())
   .execute();
 ```
 
-由于 *Cancel Evaluation* 子进程的启动事件是中断的，它将取消 *Assess Credit Worthiness* 的运行实例。当事件子进程的启动事件通过以下方式启动时，也会发生同样的情况：
+由于 *Cancel Evaluation* 子流程的启动事件是中断的，它将取消 *Assess Credit Worthiness* 的运行实例。当事件子流程的启动事件通过以下方式启动时，也会发生同样的情况：
 
 ```java
 ProcessInstance processInstance = ...;
