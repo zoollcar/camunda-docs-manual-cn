@@ -54,7 +54,7 @@ Camunda为社区用户和企业订阅客户提供不同的运行时下载：
   Wildfly应用服务器是作为档案的一部分提供的，作为一种方便。 关于源代码的副本、版权声明以及其他相关信息，请参见https://github.com/wildfly/wildfly。如果你[联系我们的开源合规团队](https://docs.camunda.org/manual/latest/introduction/licenses/#contact)，我们也会向你提供一份源代码的副本。 在您下载存档后三年内的任何时候（我们可能会对此收取象征性的费用）。Wildfly应用服务器的版权属于 copyright © JBoss, Home of Professional Open Source, 2010, Red Hat Middleware LLC [..and contributors].
 {{< /note >}}
 
-详情参见 [安装教程]][installation-guide-full] 。
+详情参见 [安装教程][installation-guide-full] 。
 
 
 ## 独立的网络应用程序发布

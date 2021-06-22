@@ -12,8 +12,7 @@ menu:
 
 Camunda平台支持统一表达式语言（EL），它是JSP 2.1标准的一部分（[JSR-245][]）。使用了开源的[JUEL][]实现。要获得更多关于表达式语言使用的一般信息，请阅读[官方文档][official documentation]。
 
-Especially the provided [examples][examples] give a good overview of the syntax of expressions.
-特别是提供了很好的[实例][examples]，对学习表达式语法有很方便。
+特别是提供了很好的[实例][examples]，可以方便的学习表达式语法。
 
 在Camunda平台内，EL可以在许多情况下用于评估小型的脚本式表达。下面的例子是一个使用了EL的BPMN元素：
 

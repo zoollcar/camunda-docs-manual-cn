@@ -28,7 +28,7 @@ Camunda平台支持与JSR-223兼容的脚本语言。目前，我们对Groovy、
   </tr>
   <tr>
     <td><a href="#use-script-tasks">Script Task</a></td>
-    <td>Script inside a script task</td>
+    <td>嵌入在脚本任务中的脚本</td>
   </tr>
   <tr>
     <td>
@@ -36,7 +36,7 @@ Camunda平台支持与JSR-223兼容的脚本语言。目前，我们对Groovy、
         Processes, Activities, Sequence Flows, Gateways and Events
       </a>
     </td>
-    <td>Script as an execution listener</td>
+    <td>作为执行监听器的脚本</td>
   </tr>
   <tr>
     <td>
@@ -44,7 +44,7 @@ Camunda平台支持与JSR-223兼容的脚本语言。目前，我们对Groovy、
         User Tasks
       </a>
     </td>
-    <td>Script as a task listener</td>
+    <td>作为任务监听器的脚本</td>
   </tr>
   <tr>
     <td>
@@ -52,7 +52,7 @@ Camunda平台支持与JSR-223兼容的脚本语言。目前，我们对Groovy、
         Sequence Flows
       </a>
     </td>
-    <td>Script as condition expression of a sequence flow</td>
+    <td>作为顺序流条件表达式的脚本</td>
   </tr>
   <tr>
     <td>
@@ -60,7 +60,7 @@ Camunda平台支持与JSR-223兼容的脚本语言。目前，我们对Groovy、
           All Tasks, All Events, Transactions, Subprocesses and Connectors
         </a>
     </td>
-    <td>Script inside an inputOutput parameter mapping</td>
+    <td>输入输出参数映射中的脚本</td>
   </tr>
 </table>
 
@@ -333,10 +333,8 @@ task = execution.getProcessEngineServices().getTaskService()
 Camunda 的 Java API 提供的访问流程引擎服务可以用脚本来访问：
 
 {{< javadocref page="?org/camunda/bpm/engine/ProcessEngineServices.html" text="Process Engine Services" >}}
-
+<br/>
 {{< javadocref page="?org/camunda/bpm/engine/package-summary.html" text="Public Java API of Camunda Platform Engine" >}}
-
-Example of creating a BPMN Message that correlates with the message key "work":
 
 下面的案例，创建了一个 message key 为 "work" 的BPMN消息：
 
