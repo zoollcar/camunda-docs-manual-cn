@@ -78,7 +78,7 @@ RepositoryService是关于静态信息的（即，不改变的数据，或者至
 
 外部任务服务（**ExternalTaskService**）提供对[外部任务实例]({{< relref "external-tasks.md" >}})的访问。外部任务代表在外部处理的工作项目，独立于流程引擎。
 
-案例服务（**CaseService**）与运行时服务（**RuntimeService**）类似，但用于案例实例。它处理启动案例定义的新案例实例并管理案例执行的生命周期。该服务也被用来检索和更新案例实例的过程变量。
+案例服务（**CaseService**）与运行时服务（**RuntimeService**）类似，但用于案例实例。它处理启动案例定义的新案例实例并管理案例执行的生命周期。该服务也被用来检索和更新案例实例的流程变量。
 
 决策服务 （**[DecisionService]({{< ref "/user-guide/process-engine/decisions/decision-service.md" >}})**） 允许评估部署在引擎中的决策。它是评估独立于流程定义的业务规则任务中的决策的一种选择。
 

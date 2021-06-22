@@ -429,7 +429,7 @@ runtimeService.createProcessInstanceModification(processInstance.getId())
 
 ## 启动带有中断／取消行为的活动
 
-如果准备启动的活动存在中断或取消行为，过程实例的修改也会触发这些行为。尤其是，启动一个中断的边界事件或中断的事件子流程将取消／中断其他活动。考虑一下下面的流程。
+如果准备启动的活动存在中断或取消行为，流程实例的修改也会触发这些行为。尤其是，启动一个中断的边界事件或中断的事件子流程将取消／中断其他活动。考虑一下下面的流程。
 
 <div data-bpmn-diagram="../bpmn/example3"></div>
 

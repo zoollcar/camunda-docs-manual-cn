@@ -75,7 +75,7 @@ isSequential属性表示该活动的实例是按顺序执行还是并行执行�
 </multiInstanceLoopCharacteristics>
 ```
 
-另一种定义实例数量的方法是指定一个过程变量的名称，该变量是一个使用`loopDataInputRef`子元素的集合。对于集合中的每个项目，将创建一个实例。可以选择使用inputDataItem子元素为实例设置集合中的那个特定项目。这在下面的XML例子中显示。
+另一种定义实例数量的方法是指定一个流程变量的名称，该变量是一个使用`loopDataInputRef`子元素的集合。对于集合中的每个项目，将创建一个实例。可以选择使用inputDataItem子元素为实例设置集合中的那个特定项目。这在下面的XML例子中显示。
 
 ```xml
 <userTask id="miTasks" name="My Task ${loopCounter}" camunda:assignee="${assignee}">

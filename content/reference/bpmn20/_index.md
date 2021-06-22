@@ -52,7 +52,7 @@ menu:
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h3>子过程</h3>
+      <h3>子流程</h3>
       <div class="bpmn-symbol-container implemented">
         <svg height="90" version="1.1" width="110" xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; position: relative; left: -0.375px;">
           <rect x="5" y="5" width="100" height="80" r="5" rx="5" ry="5" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1" style="stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 1;"></rect>

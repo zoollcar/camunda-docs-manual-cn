@@ -64,7 +64,7 @@ ProcessEngine processEngine = ProcessEngineConfiguration.createStandaloneInMemPr
 
 ## 使用camunda cfg XML配置流程引擎
 
-配置你的过程引擎的最简单的方法是通过一个叫做`camunda.cfg.xml`的XML文件。使用这个文件，你可以简单这样做:
+配置你的流程引擎的最简单的方法是通过一个叫做`camunda.cfg.xml`的XML文件。使用这个文件，你可以简单这样做:
 
 ```java
 ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine()

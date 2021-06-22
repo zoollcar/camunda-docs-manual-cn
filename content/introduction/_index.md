@@ -20,7 +20,7 @@ menu:
 {{< img src="img/architecture-overview.png" title="Camunda组件和角色" >}}
 
 
-# 过程引擎和基础设施
+# 流程引擎和基础设施
 
 * [流程引擎]({{< ref "/user-guide/process-engine/_index.md" >}}) 流程引擎是负责执行BPMN 2.0流程、CMMN 1.1案例和DMN 1.3决策的Java库。它有一个轻量级的POJO核心，并使用关系数据库来持久性。 orm映射由mybatis映射框架提供。
 * [Spring 框架集成]({{< ref "/user-guide/spring-framework-integration/_index.md" >}})
@@ -34,7 +34,7 @@ menu:
 
 # Web应用程序
 
-* [REST API]({{< ref "/reference/rest/_index.md" >}}) REST API允许您使用远程应用程序或JavaScript应用程序的过程引擎。 （注意：REST API的文档已成为自己的文档。）
+* [REST API]({{< ref "/reference/rest/_index.md" >}}) REST API允许您使用远程应用程序或JavaScript应用程序的流程引擎。 （注意：REST API的文档已成为自己的文档。）
 * [Camunda Tasklist]({{< ref "/webapps/tasklist/_index.md" >}}) 用于人工流管理和用户任务的Web应用程序，允许流程参与者检查其工作流任务并导航到任务表单，以便在任务上工作并提供数据输入。
 * [Camunda Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) 用于过程监视和操作的Web应用程序，允许您搜索流程实例，检查其状态并修复损坏的实例。
 * [Camunda Admin]({{< ref "/webapps/admin/_index.md" >}}) 允许您管理用户，组和授权的Web应用程序。

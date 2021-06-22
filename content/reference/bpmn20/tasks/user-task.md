@@ -192,7 +192,7 @@ List<Task> tasks = taskService.createTaskQuery().taskCandidateUser("kermit");
 
 首先, `camunda:initiator` 参数用于绑定启动的人的用户标识 (_"initiated"_) 变量的过程 `starter`. 然后是表达式 `${ starter }` 检索该值并将其用作任务的assignee（受让人）。
 
-可以使用所有[可见]({{< ref "/user-guide/process-engine/variables.md#variable-scopes-and-variable-visibility" >}})的过程变量用于用户任务的表达式。
+可以使用所有[可见]({{< ref "/user-guide/process-engine/variables.md#variable-scopes-and-variable-visibility" >}})的流程变量用于用户任务的表达式。
 
 #### 调用 Service / Bean
 

@@ -417,7 +417,7 @@ public class DelegatedVarMapping implements DelegateVariableMapping {
   }
 ```
 
-类`ExampleFieldInjectedExecutionListener`将注入2个字段（一个是固定的，另一个是动态的），并将其存储在过程变量_var_中。
+类`ExampleFieldInjectedExecutionListener`将注入2个字段（一个是固定的，另一个是动态的），并将其存储在流程变量_var_中。
 
 ```java
   @Deployment(resources = {

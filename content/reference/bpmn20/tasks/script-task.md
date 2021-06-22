@@ -55,7 +55,7 @@ Camunda平台应该可以与大多数JSR-223兼容的脚本引擎实现协同工
 </script>
 ```
 
-也可以在脚本中设置过程变量。变量可以通过使用`VariableScope`接口提供的`setVariable(..)`方法来设置。
+也可以在脚本中设置流程变量。变量可以通过使用`VariableScope`接口提供的`setVariable(..)`方法来设置。
 
 
 ```xml
@@ -89,7 +89,7 @@ Camunda平台应该可以与大多数JSR-223兼容的脚本引擎实现协同工
 
 # 脚本返回结果
 
-脚本任务的返回值可以分配给先前存在的或新的流程变量，方法是将流程变量名称作为脚本任务定义的`camunda:resultVariable`属性的字面值。特定过程变量的任何现有值将被脚本执行的结果值所覆盖。当没有指定结果变量名称时，脚本的结果值会被忽略。
+脚本任务的返回值可以分配给先前存在的或新的流程变量，方法是将流程变量名称作为脚本任务定义的`camunda:resultVariable`属性的字面值。特定流程变量的任何现有值将被脚本执行的结果值所覆盖。当没有指定结果变量名称时，脚本的结果值会被忽略。
 
 ```xml
 <scriptTask id="theScriptTask" name="Execute script" scriptFormat="juel" camunda:resultVariable="myVar">

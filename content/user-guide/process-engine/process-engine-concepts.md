@@ -11,7 +11,7 @@ menu:
 ---
 
 
-本节介绍了一些核心过程引擎概念，用于流程引擎API和内部流程引擎实现。了解这些基础知识可以更容易的额使用流程引擎API。
+本节介绍了一些核心流程引擎概念，用于流程引擎API和内部流程引擎实现。了解这些基础知识可以更容易的额使用流程引擎API。
 
 
 # 流程定义
@@ -100,7 +100,7 @@ List<ProcessDefinition> processDefinitions = repositoryService.createProcessDefi
 </process>
 ```
 
-## 在任何一组活动中启动一个过程实例
+## 在任何一组活动中启动一个流程实例
 
 `startProcessInstanceByKey`和`startProcessInstanceById`方法在其默认的初始活动处启动流程实例，这通常是流程定义的单一空白启动事件。通过使用流程实例的**fluent builder**，也可以在流程实例的任何地方启动。可以通过RuntimeService的方法`createProcessInstanceByKey`和`createProcessInstanceById`来访问fluent builder。
 
@@ -149,7 +149,7 @@ ProcessInstanceWithVariables instance = runtimeService.createProcessInstanceByKe
 
 ## 流程变量的交互
 
-一旦你对一个特定的过程实例（或过程实例的列表）进行了查询，你可能想与它进行交互。有多种可能性与一个流程实例进行交互，最典型的是：
+一旦你对一个特定的流程实例（或流程实例的列表）进行了查询，你可能想与它进行交互。有多种可能性与一个流程实例进行交互，最典型的是：
 
   * 触发它（使其继续执行）：
       * 通过 [消息事件]({{< ref "/reference/bpmn20/events/message-events.md" >}})

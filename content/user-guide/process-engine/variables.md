@@ -107,7 +107,7 @@ public class SetVariableToScopeMappingDelegate implements DelegateVariableMappin
 
 # 支持的变量类型
 
-过程引擎支持以下变量值类型：
+流程引擎支持以下变量值类型：
 
 {{< img src="../img/variables-1.png" title="Variables" >}}
 
@@ -134,7 +134,7 @@ public class SetVariableToScopeMappingDelegate implements DelegateVariableMappin
 如果需要校验，可以自行实现，必须在调用Camunda API来设置变量之前进行。
 {{< /note >}}
 
-过程变量可以用[Camunda Spin插件]({{< ref "/user-guide/data-formats/_index.md" >}}) 提供的JSON和XML等格式存储。Spin为 `object` 类型的变量提供了序列化器，这样Java变量就可以以这JSON或XML格式持久化到数据库中了。此外，通过`xml`和`json`的值类型，可以直接将JSON和XML文档存储为Spin对象。相对于普通的`string`变量，Spin对象提供了一个流畅的API来对这类文档进行普通的操作，如读写变量对象的属性。
+流程变量可以用[Camunda Spin插件]({{< ref "/user-guide/data-formats/_index.md" >}}) 提供的JSON和XML等格式存储。Spin为 `object` 类型的变量提供了序列化器，这样Java变量就可以以这JSON或XML格式持久化到数据库中了。此外，通过`xml`和`json`的值类型，可以直接将JSON和XML文档存储为Spin对象。相对于普通的`string`变量，Spin对象提供了一个流畅的API来对这类文档进行普通的操作，如读写变量对象的属性。
 
 
 ## Object值 序列化
