@@ -10,52 +10,40 @@ menu:
 
 ---
 
-Whenever a new version of a process definition is deployed, existing process instances that run
-on previous versions are not affected. That means, the new process definition does not apply
-to them automatically. If process instances are supposed to continue execution on a different process
-definition, the *process instance migration* API can be employed.
+当部署流程定义的新版本时，在以前版本上运行的现有流程实例不受影响。这意味着，新的流程定义不会影响它们。如果流程实例应该在新的流程定义上继续执行，可以使用 *流程实例迁移* API。
 
-Migration consists of two parts:
+迁移分为两部分：
 
-1. Creating a *migration plan* that describes how process instances are to be migrated from one
-process definition to another
-2. Applying the migration plan to a set of process instances
+1. 创建一个 *迁移计划* ，描述如何将流程实例从一个流程定义迁移到另一个流程定义。
+2. 将迁移计划应用于流程实例
 
-A migration plan consists of a set of *migration instructions* that in essence are mappings between
-activities of the two process definitions. In particular, it maps an activity of the *source process definition*,
-i.e., the definition process instances are migrated from, to an activity of the *target process definition*,
-i.e., the definition process instances are migrated to. A migration instruction ensures that an instance of the source
-activity is migrated into an instance of the target activity. A migration plan is complete when there are instructions for
-all active source activities.
+迁移计划由一组 *迁移指令* 组成的，这些指令实质上是两个流程定义活动之间的映射。具体地说，就是把 *源流程定义* 的活动（即流程实例被迁移出来的流程）映射到 *目标流程定义* 的活动（即流程实例被迁移到的流程）。迁移指令确保源活动的一个实例被迁移到目标活动的一个实例中。当所有的迁移来源都有对应的迁移指令时，迁移计划定义就完成了。
 
-Migration instructions have the purpose to map semantically equivalent activities. In consequence, migration
-interferes with activity instance state as little as possible which ensures a seamless transition.
-For example, this means that a migrated user task instance is not re-assigned. From the assignee's point of view, migration
-is mostly transparent, so that a task that was started before migration can be completed successfully after migration.
-The same principle is applied to the other BPMN element types.
+迁移指令的目的是为了映射语义上相等的活动。因此，迁移需要尽可能少地干扰活动实例的状态，以确保无缝过渡。
+例如，被迁移的用户任务实例不会被重新分配。从受让人的角度来看，迁移基本上是透明的，所以迁移前开始的任务在迁移后可以顺利完成。
+同样的原则也适用于其他BPMN元素类型。
 
-For cases in which activities are not semantically equivalent,
-we recommend combining migration with the [process instance modification API]({{< ref "/user-guide/process-engine/process-instance-modification.md" >}}), e.g.,
-canceling an activity instance before migration and starting a new instance after migration.
+对于活动在语义上不等同的情况。
+我们建议将迁移与 [流程实例修改 API]({{< ref "/user-guide/process-engine/process-instance-modification.md" >}}) 结合起来。例如：在迁移前取消一个活动实例，在迁移后启动一个新的实例。
 
-In the remainder of this section, the following process models are used to illustrate the API and effects of migration unless otherwise noted:
+在本节的其余部分，除非另有说明，否则将使用以下流程模型来说明API和迁移的影响：
 
-Process `exampleProcess:1`:
+`exampleProcess:1`:
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example1"></div>
 
-Process `exampleProcess:2`:
+`exampleProcess:2`:
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example2"></div>
 
 {{< enterprise >}}
-  The Camunda enterprise edition provides a user interface to migrate process instances in [Camunda Cockpit]({{< ref "/webapps/cockpit/bpmn/process-instance-migration.md" >}})
+  Camunda企业版的[Camunda Cockpit]({{< ref "/webapps/cockpit/bpmn/process-instance-migration.md" >}})提供了一个用于迁移流程实例的用户界面。
 {{< /enterprise >}}
 
-# Process Instance Migration by Example
+# 流程实例迁移案例
 
-We can define a migration plan using the API entrance point `RuntimeService#createMigrationPlan`.
-It returns a fluent builder to create a migration plan. For our example, the code looks like:
+我们可以使用API接口 `RuntimeService#createMigrationPlan` 来定义一个迁移计划。
+它返回一个流式构建器来创建一个迁移计划。对于上面的例子来说，代码如下：
 
 ```java
 MigrationPlan migrationPlan = processEngine.getRuntimeService()
@@ -66,10 +54,9 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-The `mapActivities` invocations each specify a migration instruction and express that instances
-of the first activity should become instances of the second activity.
+`mapActivities` 调用各自指定了一个迁移指令，并表示第一个活动的实例应该成为第二个活动的实例。
 
-Let us assume that we have a process instance in the following activity instance state:
+让我们假设我们有一个流程实例处于以下活动实例状态：
 
 ```
 ProcessInstance
@@ -78,8 +65,7 @@ ProcessInstance
     └── Validate Address
 ```
 
-In order to migrate this process instance according to the defined migration plan, the API method
-`RuntimeService#newMigration` can be used:
+为了根据定义的迁移计划迁移这个流程实例，可以使用API方法`RuntimeService#newMigration`。
 
 ```java
 MigrationPlan migrationPlan = ...;
@@ -90,7 +76,7 @@ runtimeService.newMigration(migrationPlan)
   .execute();
 ```
 
-The resulting activity instance state is:
+运行后的活动实例状态是：
 
 ```
 ProcessInstance
@@ -100,35 +86,28 @@ ProcessInstance
     └── Validate Postal Address
 ```
 
-The following things have happened:
+引擎做了以下事情：
 
-* An instance of the embedded subprocess *Handle Application Receipt* was added to reflect the new sub process in `exampleProcess:2`
-* The activity instances for *Archive Application*, *Assess Credit Worthiness*, and *Validate Postal Address* have been migrated
+* 创建了一个嵌入式子流程 *Handle Application Receipt* 的实例，以反映 "exampleProcess:2 "中的新子流程。
+* *Archive Application* 、 *Assess Credit Worthiness* 和 *Validate Postal Address* 的活动实例被迁移。
 
-What does the second point mean in particular? Since there is a migration instruction for these activity instances they are
-migrated. The entities that comprise this instance are updated to reference the new activity and process definition. Besides that, activity instances, task instances and
-variable instances are preserved.
+第二点的具体含义是什么？因为这些活动实例有一个迁移指令，所以它们被迁移了。组成这个实例的实体被更新以引用新的活动和流程定义。除此之外，活动实例、任务实例和变量实例被保留下来。
 
-Before migration, there was a task instance
-in the tasklist of an accountant to perform the *Validate Address* activity. After migration, the same task instance still exists and can be completed
-successfully. It still has the same properties such as assignee or name.
-From the accountant's perspective, migration is completely transparent while working on a task.
+在迁移之前，审核人员的任务列表中有一个任务实例，执行 *Validate Address* 活动。迁移后，同样的任务实例仍然存在，并且可以成功完成。它仍然有相同的属性，如受让人或名称。
+
+从审核人员的角度来看，在执行任务时，迁移是完全透明的。
 
 
 # API
 
-The following gives a structured overview of the Java API for process instance migration. Note that these operations are also available
-via [REST]({{< ref "/reference/rest/migration/_index.md" >}}).
+下面给出了流程实例迁移的Java API的方法。请注意，这些操作也可以通过[REST]({{< ref "/reference/rest/migration/_index.md" >}})方式进行。
 
-## Creating a Migration Plan
+## 创建迁移计划
 
-A migration plan can be created by using the API `RuntimeService#createMigrationPlan`.
-It defines how migration should be performed.
-A migration plan contains the IDs of the source and target process definition
-as well as a list of migration instructions. A migration instruction is a mapping from activities in
-the source process definition to activities in the target process definition.
+迁移计划可以通过API `RuntimeService#createMigrationPlan` 来创建。它定义了应该如何进行流程实例迁移。
+迁移计划包含源和目标流程定义的ID以及迁移指令的列表。迁移指令是源流程定义中的活动与目标流程定义中的活动之间的映射。
 
-For example, the following code creates a valid migration plan:
+例如，下面的代码创建了一个有效的迁移计划：
 
 ```Java
 MigrationPlan migrationPlan = processEngine.getRuntimeService()
@@ -138,51 +117,36 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-All activities can be mapped. Migration instructions must map between activities of the same type.
+所有的活动都可以被映射。迁移指令必须在相同类型的活动之间进行映射。
 
-Supported activity relationships are:
+支持如下活动映射关系：
 
-* One-to-one relation
+* 一对一关系
 
-A migration plan is *validated after creation* to detect migration
-instructions that are not supported by the process engine. See the [chapter on
-creation time validation]({{< relref "#creation-time-validation" >}}) for details.
+迁移计划在创建后要进行 *验证* ，以发现流程引擎不支持的迁移指令。详情请参见[创建时验证章节]({{< relref "#创建时验证章节" >}})。
 
-In addition, a migration plan is *validated before execution* to ensure that it can be applied to a specific process instance. For example,
-migration instructions for some activity types are only supported for transition instances (i.e., active asynchronous continuations) but not for
-activity instances. See the [chapter on execution time validation]({{< relref "#execution-time-validation" >}}) for details.
+此外，迁移计划在执行前也会被 *验证*，以确保它能被应用于特定的流程实例。例如，某些类型的迁移指令只支持过渡实例（即活动的异步延续），但不支持活动实例。详见[执行时验证章节]({{< relref "#执行时验证章节" >}})。
 
-{{< note title="Validation Limitations" class="warning" >}}
-The process engine can only validate that the process model can be migrated.
-But there are other aspects the user has to care about. You can read more
-about this in the section about [aspects not covered by
-validation](#aspects-not-covered-by-validation).
+{{< note title="验证限制" class="warning" >}}
+流程引擎只能验证流程模型是否可以被迁移。
+但是用户还需要关心其他方面的问题。你可以在关于[验证未涵盖的方面](#验证未涵盖的方面)一节中阅读更多的内容。
 {{< /note >}}
 
-### One-to-One Relation Instruction
+### 一对一映射操作说明
 
 ```java
 MigrationPlanBuilder#mapActivities(String sourceActivityId, String targetActivityId)
 ```
 
-Defining a one-to-one relation instruction means that an instance of the source activity
-is migrated into an instance of the target activity. Activity instance, task instance and variable
-instance state is preserved when migration is executed.
+一对一关系指令意味着源活动的一个实例会被迁移到目标活动的一个实例中。在执行迁移时，活动实例、任务实例和变量实例的状态将被保留下来。
 
 
-### Updating Event Triggers
+### 更新活动触发器
 
-When migrating events, it is possible to decide whether the corresponding event
-triggers should be updated or not.  See the [BPMN-specific considerations on
-events]({{< relref "#events" >}}) for details. When generating a migration
-plan, it is possible to define this setting for generated instructions on 
-[User Tasks]({{< relref "#user-task" >}}) containing `timeout` task listeners and 
-between events by using the method `updateEventTrigger`. For example, 
-the following code generates a migration instruction for a boundary event and 
-updates its event trigger during migration.
+迁移活动时，可以决定是否要更新相应的活动触发器。详见[BPMN的活动]({{< relref "#events" >}})。生成迁移计划时，可以通过使用 "updateEventTrigger" 方法，为包含 "timeout" 的任务监听器的[用户任务]({{< relref "#user-task" >}})和活动之间生成的指令定义这一设置。例如，下面的代码为一个边界活动生成了一个迁移指令，并在迁移过程中更新其活动触发器。
 
-{{< note title="Conditional Events" class="info" >}}
-For conditional events the `#updateEventTrigger` is mandatory.
+{{< note title="条件活动" class="info" >}}
+对于有条件的活动，`#updateEventTrigger` 是强制性的。
 {{< /note >}}
 
 ```java
@@ -194,14 +158,11 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-### Set Variables to Process Instances
+### 为流程实例设置变量
 
-Sometimes it is necessary to add variables after migrating the process instances to a new version
-of the process definition. For example, when the new process model has a new input mapping which
-requires a specific variable which isn't yet present in the migrated process instance. The variables 
-are set to the process instances' scope.
+有时，在将流程实例迁移到流程定义的新版本之后，有必要添加变量。例如，当新的流程模型有一个新的输入映射，需要一个特定的变量，而这个变量在迁移后的流程实例中还没有出现。这时就需要在迁移中设置变量。
 
-Please see below how to call the Java API:
+请看下面如何调用Java API的案例：
 
 ```java
 Map<String, Object> variables = Variables.putValue("my-variable", "my-value");
@@ -211,28 +172,25 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-#### Known Limitation
+#### 已知的限制
 
-Currently, it is not possible to set transient variables asynchronously. However,
-you can [set transient variables] synchronously.
+目前，不可能异步设置瞬时变量。然而。
+你可以同步地[设置瞬时变量][set transient variables]。
 
-[set transient variables]: {{< ref "/user-guide/process-engine/variables.md#transient-variables" >}}
+[set transient variables]: {{< ref "/user-guide/process-engine/variables.md#瞬时变量" >}}
 
-## Generating a migration plan
+## 生成迁移计划
 
-In addition to manually specifying all migration instructions, the `MigrationPlanBuilder`
-is able to generate migration instructions for all *equal* activities in the source
-and target process definitions. This can reduce the effort for creating a migration
-to only those activities that are not equal.
+除了手动指定所有迁移指令外，`MigrationPlanBuilder` 能够为源流程和目标流程定义中所有 *相等* 的活动生成迁移指令。这可以减少创建迁移的工作量，只需要创建那些不相等的活动即可。
 
-Equality of a pair of activities is defined as follows:
+活动相等需要满足如下条件：
 
-* They are of the same activity type
-* They have the same ID
-* They belong to the same scope, i.e., their parent BPMN scopes are equal according to this definition.
-  Process definitions are always equal.
+* 它们属于相同的活动类型
+* 它们有相同的 ID
+* 它们属于同一个作用域，也就是说，根据这个定义，它们的父BPMN作用域是相等的。
+  流程的定义总是相等的。
 
-For example, consider the following code snippet:
+例如，考虑下面的代码片段：
 
 ```Java
 MigrationPlan migrationPlan = processEngine.getRuntimeService()
@@ -242,15 +200,12 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-It creates generated migration instructions for the equal activities
-`assessCreditWorthiness`. It adds an additional mapping from `validateAddress` to `validateProcessAddress`.
+它为相同的活动 `assessCreditWorthiness` 自动生成了迁移指令。然后手动增加了一个从 `validateAddress` 到 `validateProcessAddress` 的额外映射。
 
-### Updating Event Triggers
+### 更新活动触发器
 
-Like for individual instructions, it is possible to specify the event trigger update flag
-for generated migration instructions by using the `updateEventTriggers` method.
-This is equal to calling `updateEventTrigger` on all event migration instructions
-which are generated.
+和单个指令一样，可以通过使用 `updateEventTriggers` 方法为生成的迁移指令指定活动触发器更新标志。
+这相当于对所有生成的活动迁移指令调用 `updateEventTrigger`。
 
 ```Java
 MigrationPlan migrationPlan = processEngine.getRuntimeService()
@@ -260,41 +215,33 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-## Executing a migration plan
+## 执行迁移计划
 
-Migration plans can be applied to a set of process instances of the source process
-definition by using the API Method `RuntimeService#newMigration`.
+迁移计划可以通过使用API方法 `RuntimeService#newMigration` 应用于一组流程实例。
 
-The migration can either be executed synchronously (blocking) or asynchronously
-(non-blocking) using a [batch][].
+迁移既可以同步执行（阻塞的），也可以使用[batch][batch]异步执行（非阻塞）。
 
-The following are some reasons to prefer either one or the other:
+下面是两者的对比：
 
-- Use synchronous migration if:
-  - the number of process instances is small
-  - the migration should be atomic, i.e., it should be executed
-    immediately and should fail if at least one process instance cannot
-    be migrated
+- 以下情况应该使用同步迁移：
+  - 流程实例的数量很少
+  - 迁移应该是原子性的，也就是说，应该立即执行，如果至少有一个流程实例不能被迁移，就要失败。
 
 
-- Use asynchronous migration if:
-  - the number of process instances is large
-  - all process instances should be migrated decoupled from the other
-    instances, i.e., every instance is migrated in its own transaction
-  - the migration should be executed by another thread, i.e., the job
-    executor should handle the execution
+- 以下情况应该使用异步迁移：
+  - 流程实例的数量很大
+  - 所有流程实例的迁移应该与其他实例解耦，也就是说，每个实例都在自己的事务中进行迁移
+  - 迁移应该由另一个线程来执行，也就是说，应该由Job执行器执行。
 
 
-### Selecting process instances to migrate
+### 选择要迁移的流程实例
 
-Process instances can be selected for migration by either providing a set of process instance IDs
-or providing a process instance query. It is also possible to specify both, a list of process instance IDs and a query.
-The process instances to be migrated will then be the union of the resulting sets.
+可以通过提供一组流程实例ID或提供一个流程实例查询来选择流程实例进行迁移。也可以同时指定一个流程实例ID列表和一个查询。
+被迁移的流程实例将是所产生的集合的并集。
 
-#### List of process instances
+#### 流程实例列表
 
-The process instances which should be migrated by a migration plan can either
-be specified as a list of the process instance IDs:
+迁移计划可以指定要迁移的流程实例ID列表：
 
 ```Java
 MigrationPlan migrationPlan = ...;
@@ -306,7 +253,7 @@ runtimeService.newMigration(migrationPlan)
   .execute();
 ```
 
-For a static number of process instances, there is a convenience varargs method:
+对于静态数量的流程实例，有一个方便的可变参数方法：
 
 ```Java
 MigrationPlan migrationPlan = ...;
@@ -319,9 +266,9 @@ runtimeService.newMigration(migrationPlan)
   .execute();
 ```
 
-#### Process Instance Query
+#### 流程实例查询
 
-If the instances are not known beforehand, the process instances can be selected by a process instance query:
+如果事先不知道要修改的实例，可以通过流程实例查询来选择流程实例：
 
 ```Java
 MigrationPlan migrationPlan = ...;
@@ -336,18 +283,14 @@ runtimeService.newMigration(migrationPlan)
 ```
 
 
-### Skipping Listeners and Input/Output Mappings
+### 跳过监听器和输入输出映射
 
-During migration, activity instances may end or new activity instances may emerge.
-Per default, their activities' execution listeners and input/output mappings
-are going to be invoked as appropriate. This may not always be the desired behavior.
+在迁移过程中，活动实例可能会结束或出现新的活动实例。
+默认情况下，活动执行监听器和输入/输出映射会被调用。有时我们不希望它们被调用。
 
-For example, if an execution listener expects the existence of a variable to function
-properly but that variable does not exist in instances of the source process definition,
-then skipping listener invocation can be useful.
+例如，如果一个执行监听器需要一个变量存在以正常工作，但该变量在源流程定义的实例中不存在，那么跳过监听器的调用可能是有用的。
 
-In the API, the two methods `#skipCustomListeners` and `#skipIoMappings`
-can be used for this purpose:
+在API中，方法 `#skipCustomListeners` 和 `#skipIoMappings` 可以分别跳过它们。
 
 ```Java
 MigrationPlan migrationPlan = ...;
@@ -360,10 +303,9 @@ runtimeService.newMigration(migrationPlan)
   .execute();
 ```
 
-### Synchronous migration execution
+### 同步执行迁移
 
-To execute the migration synchronously, the `execute` method is used. It will
-block until the migration is completed.
+同步执行迁移，需要使用`execute`方法。它将阻塞，直到迁移完成：
 
 ```Java
 MigrationPlan migrationPlan = ...;
@@ -374,15 +316,12 @@ runtimeService.newMigration(migrationPlan)
   .execute();
 ```
 
-Migration is successful if all process instances can be migrated. Confer the
-[chapter on validation]({{< relref "#validation" >}}) to learn which kind of validation is performed before
-a migration plan is executed.
+如果所有流程实例都能被迁移，则迁移成功。参考[验证章节]({{< relref "#验证" >}})，了解在执行迁移计划之前要进行哪些验证。
 
 
-### Asynchronous batch migration execution
+### 批量异步执行迁移
 
-To execute the migration asynchronously, the `executeAsync` method is used. It will
-return immediately with a reference to the batch which executes the migration.
+要异步执行迁移，需要使用 `executeAsync` 方法。它将立即返回一个对执行迁移批处理的引用。
 
 ```Java
 MigrationPlan migrationPlan = ...;
@@ -393,180 +332,153 @@ Batch batch = runtimeService.newMigration(migrationPlan)
   .executeAsync();
 ```
 
-Using a batch, the process instance migration is split into several jobs which
-are executed asynchronously. These batch jobs are executed by the job executor.
-See the [batch][] section for more information. A batch is completed if all
-batch execution jobs are successfully completed. However, in contrast to the
-synchronous migration, it is not guaranteed that either all or no process
-instances are migrated. As the migration is split into several independent jobs,
-every single job may fail or succeed.
+使用批处理，流程实例迁移被分割成几个Job，这些Job被异步执行。这些批处理Job是由Job执行器执行的。更多信息请参见[批处理][batch]部分。如果所有的批处理执行Job都成功完成，一个批处理就完成了。然而，与同步迁移相比，不能保证所有或没有流程实例被迁移。由于迁移被分割成几个独立的Job，每一个Job都可能失败或成功。
 
-If a migration job fails, it is retried by the job executor
-and if no retries are left, an incident is created. In this case, manual action
-is necessary to complete the batch migration: The job's retries can be incremented
-or the job can be deleted. Deletion cancels migration of the specific instance but
-does not affect the batch beyond that.
+如果一个迁移Job失败了，Job执行者会重试，如果没有重试，就会产生一个事件。在这种情况下，需要手动操作来完成批量迁移。Job的重试次数可以增加，也可以删除该Job。删除会取消特定实例的迁移，但不会影响到此后的批次。
 
-#### Batch migration in a heterogeneous cluster
+#### 异构集群中的批量迁移
 
-As described in the [job executor][] section of the user guide, the process engine
-can be used in a heterogeneous cluster where deployments are unevenly distributed across cluster nodes.
-The *deployment-aware* job executor only executes jobs for deployments registered with it.
-In a heterogeneous cluster, this avoids problems with accessing deployment resources.
+正如用户指南的[job执行器][job executor]部分所描述的，流程引擎可用于异构集群，其中程序不均匀地部署在集群节点上。
+*deployment-aware* 的Job执行器只执行在它那里注册的部署的Job。
+在一个异构集群中，这避免了访问部署资源的问题。
 
-When executing a migration batch, the batch execution jobs are therefore restricted
-to the job executor that has a registration for the deployment of the source
-process definition. This introduces the requirement that
-source and target deployment are registered with the same job executor or else
-migration may fail when executing custom code (e.g., execution listeners) in the context
-of the target process. Note that it is also possible to
-[skip the execution of custom code](#skipping-listeners-and-input-output-mappings)
-during migration.
+因此，在执行迁移批处理时，批处理执行Job被限制在对源流程定义的部署有注册的Job执行器上。这就引入了一个要求，即源和目标部署要在同一个Job执行器上注册，否则在目标流程的上下文中执行自定义代码（例如执行监听器）时，迁移可能会失败。请注意，在迁移过程中也可以[跳过自定义代码的执行](#skipping-listeners and-input-output-mappings)。
 
-# BPMN-specific API and Effects
+# 针对BPMN的API和效果
 
-Depending on the type of the activities a process model contains, migration has varying effects.
+根据一个流程模型所包含的活动类型，迁移具有不同的效果。
 
-## Tasks
+## 任务（Tasks）
 
-### User Task
+### 用户任务
 
-When a user task is migrated, all properties of the task instance (i.e., `org.camunda.bpm.engine.task.Task`) are preserved apart
-from the process definition id and task definition key. The task is not reinitialized: Attributes like assignee or name do not change.
+当一个用户任务被迁移时，除了流程定义id和任务定义key外，任务实例（即`org.camunda.bpm.engine.task.Task`）的所有属性都会保留下来。该任务不会被重新初始化。像assignee或name这样的属性不会改变。
 
-#### Timeout Task Listeners
+#### 超时任务监听器
 
-User tasks with attached task listeners of event type `timeout` define persistent event triggers that can be updated or preserved during migration.
-For the associated timers, the considerations of [catching events]({{< relref "#events" >}}) apply here as well. On migration of the user task, 
-the following semantics are applied:
+带有事件类型 "timeout" 附属任务监听器的用户任务，定义了一个持久的事件触发器，可以在迁移过程中更新或保留。
+对于相关的定时器，[捕捉事件]({{< relref "#events" >}})的相关内容也适用于此。在用户任务的迁移中，适用以下语义：
 
-* If a timeout task listener is found in the source and target process definition based on its `id`, its persistent event trigger (i.e. timer) is migrated
-* If a timeout task listener in the source process definition is not found in the target definition based on its `id`, then its event trigger is deleted during migration
-* If a timeout task listener of the target definition is not the target of a migration instruction, then a new event trigger is initialized during migration
+* 如果根据超时任务监听器的 `id` 在源流程和目标流程定义中被找到，那么它的持久性事件触发器（即定时器）将被迁移。
+* 如果根据源流程定义中的超时任务监听器的 `id` 在目标定义中找不到，那么它的事件触发器在迁移中会被删除。
+* 如果目标定义中的一个超时任务监听器不是迁移指令的目标，那么在迁移过程中会初始化一个新的事件触发器。
 
 
-### Receive Task
+### 接收任务
 
-A receive task defines a persistent event trigger that can be updated or preserved during migration.
-The considerations for [intermediate catch events]({{< relref "#events" >}}) apply here as well.
+接收任务定义了一个持久的事件触发器，可以在迁移过程中更新或保留。
+[捕捉事件]({{< relref "#events" >}})的相关内容也适用于此。
 
-### External Task
+### 外部任务
 
-When an active [external task]({{< relref "external-tasks.md" >}}) is migrated, all properties of the external task instance (i.e., `org.camunda.bpm.engine.externaltask.ExternalTask`) are preserved
-apart from activity id, process definition key, and process definition id. In particular, this means that attributes like topic and lock state do not change.
+当一个活动的[外部任务]({{< relref "external-tasks.md" >}})被迁移时，外部任务实例（即`org.camunda.bpm.engine.externaltask.ExternalTask`）的所有属性除了活动id、流程定义key和流程定义id外都被保留下来。特别是，像主题和锁定状态这样的属性不会改变。
 
-It is possible to map activities that are implemented as external tasks to each other even if they have different types. For example, an external send task can be mapped to an external service task.
+可以把作为外部任务实现的活动相互映射，即使它们有不同的类型。例如，一个外部发送任务可以被映射到一个外部服务任务。
 
-## Gateways
+## 网关（Gateways）
 
-### Inclusive & Parallel Gateway
+### 包容 & 并行网关
 
-Instances of inclusive and parallel gateways represent waiting tokens before the gateway is able to trigger.
-They can be migrated to a gateway of the same type in the target process by supplying a migration instruction.
+包容网关和平行网关实例意味着网关需要等待之前的令牌才能激活。
+它们可以通过提供迁移指令被迁移到目标流程中相同类型的网关。
 
-In addition, the following conditions must hold:
+此外，还需要满足以下条件：
 
-* The target gateway must have at least the same number of incoming sequence flows as the source gateway
-* There must be a valid migration instruction for the scope in which the gateway is contained in
-* At most one gateway of the source process definition can be mapped to every gateway in the target process definition
+* 目标网关的传入序列流数量需要等于或大于源网关相同数量的传入序列流。
+* 网关所包含的作用域必须有一个有效的迁移指令
+* 目标流程的每个网关最多只能映射一个源流程的网关。
 
-### Event-based Gateway
+### 基于事件的网关
 
-To migrate an event-based gateway instance, a migration instruction to another event-based gateway must be part of the migration plan.
-In order to migrate the gateway's event triggers (event subscriptions, jobs), the events following to the gateway can be mapped as well.
-See the [events section]({{< relref "#events" >}}) for the semantics of instructions between events.
+要迁移一个基于事件的网关实例，需要在迁移计划中添加一个映射到目标基于事件的网关的迁移指令。
+为了迁移网关的事件触发器（事件订阅、Jobs），这些事件触发器也能跟随网关迁移。
+关于各种事件的指令的语法，请参见[事件章节]({{< relref "#事件" >}})。
 
 
-## Events
+## 事件
 
-For all kinds of catching events (start, intermediate, boundary), a migration instruction can be supplied if they define a persistent event
-trigger. This is the case for message, conditional, timer, and signal events.
+对于各种可以捕获的事件 (启动事件、中间事件、边界事件)，迁移指令支持持久化的事件触发器。 消息、条件、定时器和信号事件都是如此。
 
-When mapping events, there are two configuration options:
+映射事件时，有两个可配置项：
 
-1. **The event trigger remains the same**: Even if the target event defines a different trigger (e.g.,  changed timer configuration),
-  the migrated event instance is triggered according to the source definition. This is the default behavior
-  when calling `migrationBuilder.mapActivities("sourceTask", "targetTask")`
-2. **The event trigger is updated**: The migrated event instance is triggered according to the target definition.
-  This behavior can be specified by calling `migrationBuilder.mapActivities("sourceTask", "targetTask").updateEventTrigger()`
+1. **事件的触发器保持不变**。即使目标事件定义了不同的触发器（例如，改变了定时器的配置），被迁移的事件实例也是按照源定义来触发的。这是调用 `migrationBuilder.mapActivities("sourceTask", "targetTask")` 时的默认行为。
+2. **事件触发器被更新**。被迁移的事件实例会根据目标定义被触发。
+这种行为可以通过调用 `migrationBuilder.mapActivities("sourceTask", "targetTask").updateEventTrigger()` 来指定。
 
-{{< note title="Timer Events" class="info" >}}
-  Using `#updateEventTrigger` with a timer event does not take into account that a certain amount of time has already elapsed before migration.
-  In consequence, the event trigger is reset according to the target event.
+{{< note title="计时器事件" class="info" >}}
+  使用 `#updateEventTrigger` 迁移定时器事件并不会考虑到在迁移之前已经过了一定的时间。
+  因此，事件触发器根据目标事件被重置。
 
-  Consider the following two processes where the configuration of the boundary event changes:
+  考虑以下两个过程，其中边界事件的配置发生变化。
 
-  Process `timerBoundary:1`:
+  `timerBoundary:1`:
 
   <div data-bpmn-diagram="../bpmn/process-instance-migration/example-boundary-timer1"></div>
 
-  Process `timerBoundary:2`:
+  `timerBoundary:2`:
 
   <div data-bpmn-diagram="../bpmn/process-instance-migration/example-boundary-timer2"></div>
 
-  Specifying the instruction `migrationBuilder.mapActivities("timer", "timer").updateEventTrigger()` is going to reinitialize the timer job.
-  In effect, the boundary event fires ten days after migration. In contrast, if `updateEventTrigger` is not used, then the
-  timer job configuration is preserved. In effect, it is going to trigger five days after the activity was started regardless of when the migration is performed.
+  指定指令 `migrationBuilder.mapActivities("timer", "timer").updateEventTrigger()` 会重新初始化定时器工作。
+  实际上，边界事件在迁移后的十天就会触发。相反，如果不使用`updateEventTrigger`，那么定时器工作的配置将被保留。实际上，无论何时进行迁移，它都会在活动开始的五天后触发。
 {{< /note >}}
 
-{{< note title="Conditional Events" class="info" >}}
-The usage of `#updateEventTrigger` is mandatory for migrating conditional events. The condition is overridden by the condition of the new conditional event.
+{{< note title="条件事件" class="info" >}}
+迁移条件事件时必须使用 `#updateEventTrigger` 。迁移后条件事件被新条件事件的条件所覆盖。
 {{< /note >}}
 
 
-### Boundary Event
+### 边界事件
 
-Boundary events can be mapped from the source to the target process definition along with the activity that they are attached to. The following applies:
+边界事件可以与它们所附着的活动一起从源流程定义映射到目标流程定义。以下情况适用：
 
-* If a boundary event is mapped, its persistent event trigger (for timers, conditionals, messages, and signals) is migrated
-* If a boundary event in the source process definition is not mapped, then its event trigger is deleted during migration
-* If a boundary event of the target definition is not the target of a migration instruction, then a new event trigger is initialized during migration
-
-
-### Start Event
-
-Start events of event sub processes can be mapped from source to target with similar semantics as boundary events. In particular:
-
-* If a start event is mapped, its persistent event trigger (for timers, conditionals, messages, and signals) is migrated
-* If a start event in the source process definition is not mapped, then its event trigger is deleted during migration
-* If a start event of the target definition is not the target of a migration instruction, then a new event trigger is initialized during migration
+* 如果边界事件被映射，它的持久性事件触发器（用于定时器、条件、消息和信号）被迁移。
+* 如果源流程定义中的边界事件没有被映射，那么它的事件触发器在迁移期间被删除。
+* 如果目标定义中的一个边界事件不是迁移指令的目标，那么在迁移过程中会初始化一个新的事件触发器
 
 
-### Intermediate Catch Event
+### 启动事件
 
-Intermediate catch events must be mapped if a process instance is waiting for that event during migration.
+事件子过程的启动事件可以从源头映射到目标，其语义与边界事件类似。特别是。
+
+* 如果一个开始事件被映射，它的持久性事件触发器（用于定时器、条件反射、消息和信号）被迁移。
+* 如果源流程定义中的一个开始事件没有被映射，那么它的事件触发器在迁移中被删除。
+* 如果目标定义中的一个开始事件不是迁移指令的目标，那么在迁移过程中会初始化一个新的事件触发器。
+
+### 中间捕获事件
+
+如果一个流程实例在迁移过程中等待该事件，则必须映射中间的捕获事件。
 
 
-### Compensation Event
+### 补偿事件
 
-#### Migrating Compensation Events
+#### 迁移补偿事件
 
-When migrating process instances with active compensation subscriptions, the following rules apply:
+当迁移具有活动补偿订阅的流程实例时，以下规则适用：
 
-* The corresponding compensation catch events must be mapped
-* After migration, compensation can be triggered from the same migrated scope as before migration or its closest migrated ancestor
-* In order to preserve the variable snapshots of parent scopes, those scopes must be mapped as well.
+* 相应的补偿捕捉事件必须被映射出来
+* 迁移后，可以从与迁移前相同的已迁移作用域或其最接近的已迁移父级触发补偿。
+* 为了保留父作用域的变量快照，这些作用域也必须被映射。
 
-Process instances with active compensation subscriptions can be migrated by mapping the corresponding catching compensation events.
-This tells the migration API which compensation handler of the source process model corresponds to which handler in the target process model.
+具有活动补偿订阅的流程实例可以通过映射相应的捕捉补偿事件来进行迁移。
+这告诉迁移 API 源流程模型的哪个补偿处理程序对应于目标流程模型中的哪个处理程序。
 
-Consider this source process:
+考虑一下这个源流程：
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example-compensation5"></div>
 
-And this target process:
+以及目标流程：
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example-compensation6"></div>
 
-Assume a process instance in the following state:
+假设一个流程实例处于以下状态：
 
 ```
 ProcessInstance
 └── Assess Credit Worthiness
 ```
 
-The process instance has a compensation subscription for *Archive Application*. A valid migration plan must
-therefore contain a mapping for the compensation boundary event. For example:
+流程实例对 *Archive Application* 有一个补偿订阅。因此，迁移计划中必须包含一个补偿边界事件的映射。例如：
 
 ```java
 MigrationPlan migrationPlan = processEngine.getRuntimeService()
@@ -576,95 +488,95 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
   .build();
 ```
 
-After migration, compensation can be triggered from the same scope as before migration (or in case that scope is removed, the closest ancestor scope that migrates).
-For illustration, consider the following source process:
+在迁移后，可以从与迁移前相同的作用域（或者在该作用域被移除的情况下，可以从迁移的最接近的父级作用域）触发补偿。
+
+为了说明问题，请考虑下面这个源流程：
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example-compensation3"></div>
 
-And this target process:
+以及目标流程：
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example-compensation4"></div>
 
-When migrating the same process instance state as in the above example, the inner compensation event is **not** going to
-trigger compensation of the *Archive Application* activity but only the outer compensation event.
+当迁移与上例相同的流程实例状态时，在 *Archive Application* 活动上的内部补偿事件将 **不会触发** ，只会触发外部补偿事件。
 
-{{< note title="Active Compensation" class="info" >}}
-  Migrating process instances with active compensation handlers is not supported yet.
+{{< note title="积极补偿" class="info" >}}
+  目前还不支持迁移具有活动补偿处理程序的进程实例。
 {{< /note >}}
 
 
-#### Adding Compensation Events
+#### 增加的补偿事件
 
-New compensation boundary events contained in the target process definition only take effect for activity instances that are not started or not finished yet.
-For example, consider the following two processes:
+目标流程定义中包含的新补偿边界事件只对尚未开始或尚未完成的活动实例生效。
 
-Process `compensation:1`:
+例如，考虑以下两个流程。
+
+`compensation:1`:
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example-compensation1"></div>
 
-Process `compensation:2`:
+`compensation:2`:
 
 <div data-bpmn-diagram="../bpmn/process-instance-migration/example-compensation2"></div>
 
-Furthermore, assume that before migration a process instance is in the following state:
+假设在迁移之前，一个流程实例处于以下状态：
 
 ```
 ProcessInstance
 └── Assess Credit Worthiness
 ```
 
-If this process instance is migrated (with *Assess Credit Worthiness* being mapped to its equivalent), then triggering compensation
-afterwards is **not** going to compensate *Archive Application*.
+如果这个流程实例被迁移（ *Assess Credit Worthiness* 被映射到它的等价物），迁移完成后是 **不会补偿** *Archive Application* 的。
 
 
-## Subprocess
+## 子流程
 
-If a migration instruction applies to an embedded/event/transaction sub process, it is migrated to its target sub process in the target process definition.
-This preserves sub process state such as variables. In case no instruction applies, the instance is cancelled before migration is performed.
-Should the target process definition contain new sub processes that no existing instance migrates to, then these are instantiated as needed during migration.
+如果为嵌入式/事件/过渡子流程设置了迁移指令，那么它们将被迁移到目标流程定义中的目标子流程。
+这会保留子流程的状态，如变量。如果没有迁移指令，在执行迁移之前，子流程实例会被取消。
+如果目标流程定义包含新的子流程，而现有的实例没有迁移到这些子流程的实例，那么这些子流程将在迁移过程中根据需要被实例化。
 
-Embedded/Event/Transaction sub processes can be mapped interchangeably. For example, it is possible to map an embedded sub process to an event sub process.
+嵌入式/事件/过渡子流程可以互换地被映射。例如，可以将一个嵌入式子流程映射到一个事件子流程。
 
-### Call Activity
+### 发起活动（Call Activity）
 
-Call activities are migrated like any other activity. The called instance, be it a BPMN process or a CMMN case, is not changed. It can be migrated separately.
+发起活动可以和其他活动一样被迁移。被发起的实例，无论是BPMN流程还是CMMN案例，都不会被改变。它可以单独迁移。
 
 
 ## Flow Node Markers
 
-### Multi-Instance
+### 多实例
 
-Active multi-instance activities can be migrated if
+符合以下情况的多实例活动可以被迁移：
 
-* the target activity is multi-instance of the same type (parallel or sequential)
-* the target activity is not a multi-instance activity.
+* 目标活动是同一类型的多实例（并行的或顺序的）。
+* 目标活动不是多实例活动。
 
-#### Migrating a Multi-instance Activity
+#### 迁移多实例活动
 
-When migrating instances of a multi-instance activity to another multi-instance activity, the migration plan needs to contain two instructions: One for the *inner activity*, i.e., the activity that has multi-instance loop characteristics. And another one for the *multi-instance body*. The body is a BPMN scope that contains the inner activity and that is not visually represented. By convention, it has the id `<id of inner activity>#multiInstanceBody`. When migrating a multi-instance body and its inner activity, the multi-instance state is preserved. That means, if a parallel multi-instance activity is migrated with two instances out of five being active, then the state is the same after migration.
+当把一个多实例活动的实例迁移到另一个多实例活动时，迁移计划需要包含两条指令。一条是针对 *内部活动* 的，也就是具有多实例循环特性的活动。另一条是针对 *多实例主体* 的。主体是包含内部活动的BPMN作用域，它没有直观地表示。按照惯例，它的id是 `<内部活动id>#multiInstanceBody` 。当迁移多实例体及其内部活动时，多实例的状态将被保留下来。这意味着，如果一个平行的多实例活动被迁移，五个实例中有两个处于活动状态，那么迁移后的状态也是一样的。
 
-#### Removing a Multi-Instance Marker
+#### 移除多实例标记
 
-If the target activity is not a multi-instance activity, it is sufficient to have an instruction for the inner activity. During migration, the multi-instance variables `nrOfInstances`, `nrOfActiveInstances` and `nrOfCompletedInstances` are removed. The number of inner activity instances is preserved. That means, if there are two out of five active instances before migration, then there are going to be two instances of the target activity after migration. In addition, their `loopCounter` and collection element variables are kept.
+如果目标活动不是多实例活动，那么只要有内部活动的指令就可以了。在迁移过程中，多实例变量 `nrOfInstances`、`nrOfActiveInstances`和`nrOfCompletedInstances`被删除。内部活动实例的数量被保留了。这意味着，如果在迁移前有五个活动实例中的两个，那么在迁移后将有两个目标活动的实例。此外，它们的`loopCounter`和集合元素变量会被保留。
 
 
-### Asynchronous Continuations
+### 异步延续
 
-When an asynchronous continuation is active, i.e., the corresponding job has not been completed by the job executor yet, it is represented in the form of a *transition instance*. For example, this is the case when job execution failed and an incident has been created. For transition instances the mapping instructions apply just like for activity instances. That means, when there is an instruction from activity `userTask` to activity `newUserTask`, all transition instances that represent an asynchronous continuation before or after `userTask` are migrated to `newUserTask`. In order for this to succeed, the target activity must be asynchronous as well.
+当一个异步延续是活动的，即相应的Job还没有被Job执行者完成，它以 *过渡实例* 的形式表示。例如，当Job执行失败，事件被创建时就是这种情况。对于过渡实例，映射指令就像对活动实例一样适用。这意味着，当有一个从活动`userTask`到活动`newUserTask`的指令时，所有代表`userTask`之前或之后异步延续的过渡实例被迁移到`newUserTask`。为了使之成功，目标活动也必须是异步的。
 
-{{< note title="Limitation with asyncAfter" class="warning" >}}
-  When migrating a transition instance that represents an asynchronous continuation *after* an activity, migration is only successful if the following limitations hold:
+{{< note title="asyncAfter的限制" class="warning" >}}
+当迁移表示异步延续的过渡实例时， asyncAfter，只有在以下限制成立的情况时，迁移才会成功：
 
-  * If the source activity has no outgoing sequence flow, the target activity must not have more than one outgoing sequence flow
-  * If the source activity has outgoing sequence flows, the target activity must have sequence flows with the same IDs or must have not more than one outgoing sequence flow. This also applies if the source activity has a single sequence flow.
+* 如果源活动没有流出的序列流，那么目标活动不能有多于一个流出的序列流。
+* 如果源活动有流出的序列流，那么目标活动必须有具有相同 ID 的序列流或必须有不超过一个流出的序列流。如果源活动有单一的序列流，这也适用。
 {{< /note >}}
 
 
-# Operational Semantics
+# 执行语义
 
-In the following, the exact semantics of migration are documented. Reading this section is recommended to fully understand the effects, power, and limitations of process instance migration.
+下文描述了迁移的确切语义。建议阅读本节，以充分了解流程实例迁移的效果、能力和限制。
 
-## Migration Procedure
+## 迁移程序
 
 Migration of a process instance follows these steps:
 
@@ -675,13 +587,13 @@ Migration of a process instance follows these steps:
   instantiation of newly introduced BPMN scopes, and handler creation for newly introduced events
 
 
-### Assignment of Migration Instructions
+### 迁移指令的分配
 
 In the first step, migration instructions are assigned to activity instances
 of a process instance that is going to be migrated.
 
 
-### Validation of Instruction Assignment
+### 验证迁移指令
 
 The created assignment must be executable by the migration logic which is
 ensured by the validation step. In particular, the following conditions must hold:
@@ -691,7 +603,7 @@ ensured by the validation step. In particular, the following conditions must hol
 * The overall assignment must be executable. See the [validation chapter]({{< relref "#validation" >}}) for details.
 
 
-### Cancellation of Unmapped Activity Instances and Event-Handler Entities
+### 取消未映射的活动实例和事件处理程序实例
 
 Non-leaf activity instances to which no migration instructions apply are cancelled. Event handler entities
 (e.g., message event subscriptions or timer jobs) are removed when their BPMN elements (e.g., boundary events)
@@ -704,7 +616,7 @@ The semantics are:
 * Activity instance cancellation invokes the activity's end execution listeners and output variable mappings
 
 
-### Migration/Creation of Activity Instances
+### 迁移/创建活动实例
 
 Finally, activity instances are migrated and new ones are created as needed.
 
@@ -717,7 +629,7 @@ The semantics are:
 * An activity instance is migrated according to its assigned migration instruction
 
 
-#### Activity instance migration
+#### 活动实例迁移
 
 Migrating an activity instance updates the references to the activity and process definition
 in the activity instance tree and its execution representation. Furthermore, it migrates or removes
@@ -728,7 +640,7 @@ in the activity instance tree and its execution representation. Furthermore, it 
 * Event subscription instances
 
 
-## Validation
+## 验证
 
 A migration plan is validated at two points in time: When it is created, its
 instructions are validated for static aspects. When it is applied to a
@@ -739,7 +651,7 @@ Validation ensures that none of the limitations stated in this guide lead
 to an inconsistent process instance state with undefined behavior after migration.
 
 
-### Creation Time Validation
+### 创建时间验证
 
 For an instruction to be valid when a migration plan is created, it has to fulfill
 the following requirements:
@@ -757,7 +669,7 @@ providing a `MigrationPlanValidationReport` object with details on the
 validation errors.
 
 
-#### Hierarchy Preservation
+#### 层次结构保存
 
 An activity must stay a descendant of its closest ancestor scope that migrates (i.e., that is not cancelled during migration).
 
@@ -788,7 +700,7 @@ parent scope *Assess Credit Worthiness* is migrated to *Handle
 Application Receipt*,  which does not contain *Validate Postal Address*.
 
 
-### Execution Time Validation
+### 执行时间验证
 
 When a migration plan is applied to a process instance, it is validated beforehand
 that the plan is applicable. In particular, the following aspects are checked:
@@ -802,7 +714,7 @@ If validation reports errors, migration fails with a `MigratingProcessInstanceVa
 providing a `MigratingProcessInstanceValidationReport` object with details on the
 validation errors.
 
-#### Completeness
+#### 完整性
 
 Migration is only meaningful if a migration instruction applies to every instance of a leaf activity. Assume a migration plan as follows:
 
@@ -834,7 +746,7 @@ ProcessInstance
 The migration plan is not valid with respect to this instance because there is no instruction that applies to the instance of *Validate Address*.
 
 
-#### Instruction Applicability
+#### 指令适用性
 
 Migration instructions are used to migrate activity instances as well as transition instances (i.e., active asynchronous continuations). Some
 instructions can only be used to migrate transition instances but not activity instances. In general, activity instances can only be
@@ -866,14 +778,14 @@ Transition instances can be migrated for any activity type.
 [execution jobs]: {{< ref "/user-guide/process-engine/batch.md#execution-jobs" >}}
 
 
-### Aspects Not Covered by Validation
+### 验证未涵盖的方面
 
-#### Data Consistency
+#### 数据一致性
 
 Process instances contain data such as variables that are specific to how a process is implemented.
 Validation cannot ensure that such data is useful in the context of the target process definition.
 
-#### Deserialization of Object Variables
+#### 对象变量的反序列化
 
 [Object type variables]({{< ref "/user-guide/process-engine/variables.md#supported-variable-values" >}}) represent Java objects. That means they have a serialized value along with a Java type name that is used to deserialize the value into a Java object. When migrating between processes of different process
 applications, it may occur that an Object variable refers to a Java class that does not exist in the process
