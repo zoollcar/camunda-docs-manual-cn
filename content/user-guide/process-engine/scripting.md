@@ -332,12 +332,11 @@ task = execution.getProcessEngineServices().getTaskService()
 
 Camunda 的 Java API 提供的访问流程引擎服务可以用脚本来访问：
 
-{{< javadocref page="?org/camunda/bpm/engine/ProcessEngineServices.html" text="Process Engine Services" >}}
-\
+{{< javadocref page="?org/camunda/bpm/engine/ProcessEngineServices.html" text="Process Engine Services" >}} \
+
 {{< javadocref page="?org/camunda/bpm/engine/package-summary.html" text="Public Java API of Camunda Platform Engine" >}}
 
 下面的案例，创建了一个 message key 为 "work" 的BPMN消息：
-
 
 ```javascript
 execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation("work").correlateWithResult();
