@@ -9,22 +9,16 @@ menu:
 
 ---
 
-This section of the documentation describes how to use the Camunda process engine with the [CockroachDB
-database](https://www.cockroachlabs.com/).
+本节文档描述了如何在[CockroachDB数据库](https://www.cockroachlabs.com/)中使用Camunda流程引擎。
 
-CockroachDB is a highly scalable SQL database that operates as a distributed system. As such, it has
-different requirements and behavior compared to the other Camunda-supported databases. For this reason, 
-we have adjusted the process engine behavior and added some additional mechanisms in order to make sure 
-that the process engine is able to operate correctly on CockroachDB. 
+CockroachDB是一个高度可扩展的SQL数据库，作为一个分布式系统运行。因此，与其他Camunda支持的数据库相比，它有不同的要求和行为。出于这个原因，我们调整了进程引擎的行为，并增加了一些额外的机制，以确保进程引擎能够在CockroachDB上正确运行。
 
-# Communication with CockroachDB
+# 连接到 CockroachDB
 
-CockroachDB implements the PostgreSQL wire protocol for communication between a Java application, like
-the process engine, and the database. It is recommended to use a PostgreSQL JDBC driver version compatible 
-with PostgreSQL 9.5+, i.e. versions 42.X.X of the JDBC driver (see [the CockroachDB docs](https://www.cockroachlabs.com/docs/v20.1/install-client-drivers.html#java) 
+CockroachDB implements the PostgreSQL wire protocol for communication between a Java application, like the process engine, and the database. It is recommended to use a PostgreSQL JDBC driver version compatible with PostgreSQL 9.5+, i.e. versions 42.X.X of the JDBC driver (see [the CockroachDB docs](https://www.cockroachlabs.com/docs/v20.1/install-client-drivers.html#java) 
 for more details).  
 
-# Concurrency conflicts in CockroachDB
+# CockroachDB 的并发冲突
 
 Whenever the process engine detects a concurrency conflict between transactions, it reports an
 `OptimisticLockingException` (for more details please see [this docs section]({{< ref "/user-guide/process-engine/transactions-in-processes.md#the-optimisticlockingexception" >}})), 
@@ -51,7 +45,7 @@ These cases are handled in the following ways:
    transparent retries of these API calls. The set of API calls, as well as the CRDB-specific mechanism,
    are described in the section below.
 
-## Custom CockroachDB transaction retry mechanism
+## 自定义CockroachDB事务重试机制
 
 As mentioned in the section above, when using CockroachDB, a selected set of API calls are transparently
 retried using a CRDB-specific mechanism:
@@ -82,7 +76,7 @@ appropriate value based on the use-case.
 When the number of retries is exhausted or is set to 0, a `CrdbTransactionRetryException` will be thrown
 to the user. The API call will then need to be manually retried by the user.
 
-# Differences in Process Engine Behavior 
+# 流程引擎行为的差异
 
 ## CockroachDB-specific behaviors with alternatives
 

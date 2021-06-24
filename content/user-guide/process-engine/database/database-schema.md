@@ -1,6 +1,6 @@
 ---
 
-title: '数据库结构'
+title: '数据库表结构'
 weight: 10
 menu:
   main:
@@ -9,78 +9,56 @@ menu:
 
 ---
 
-The database schema of the process engine consists of multiple tables.
-The table names all start with ACT. The second part is a two-character
-identification of the use case of the table. This use case will also roughly
-match the service API.
+流程引擎的数据库由多个表组成。
+表的名称都以ACT开头的。后面是说明表的用途的两个字符标识。这个用途标志也将与服务API大致匹配。
 
-* `ACT_RE_*`: `RE` stands for repository. Tables with this prefix contain 'static' information such as process definitions and process resources (images, rules, etc.).
-* `ACT_RU_*`: `RU` stands for runtime. These are the runtime tables that contain the runtime data of process instances, user tasks, variables, jobs, etc. The engine only stores the runtime data during process instance execution and removes the records when a process instance ends. This keeps the runtime tables small and fast.
-* `ACT_ID_*`: `ID` stands for identity. These tables contain identity information such as users, groups, etc.
-* `ACT_HI_*`: `HI` stands for history. These are the tables that contain historical data such as past process instances, variables, tasks, etc.
-* `ACT_GE_*`: General data, which is used in various use cases.
+* `ACT_RE_*`: `RE`代表资源库。带有这个前缀的表包含 "静态 "信息，如流程定义和流程资源（图像、规则等）。
+* `ACT_RU_*`: `RU`代表运行时。包含流程实例、用户任务、变量、作业等的运行时数据。引擎只在流程实例执行期间存储运行时数据，并在流程实例结束时删除记录。这使运行时表保持小而快。
+* `ACT_ID_*`: `ID`代表身份信息。这些表包含身份信息有用户、组等。
+* `ACT_HI_*`: `HI`代表历史。这些是包含历史数据的表，如过去的流程实例、变量、任务等。
+* `ACT_GE_*`: 一般数据，在各种使用情况下使用。
 
-The main tables of the process engines are the entities of process definitions, executions, tasks, variables and
-event subscriptions. Their relationship is shown in the following UML model.
+流程引擎的主要表是流程定义、执行、任务、变量和事件订阅的实体。它们的关系显示在下面的UML模型中：
 
 {{< img src="../../img/database-schema.png" title="Database Schema" >}}
 
 
-## Process Definitions (`ACT_RE_PROCDEF`)
+## 流程定义 (`ACT_RE_PROCDEF`)
 
-The `ACT_RE_PROCDEF` table contains all deployed process definitions. It
-includes information like the version details, the resource name or the
-suspension state.
+`ACT RE Procdef` 表包含所有已部署的流程定义。它包括有版本详细信息，资源名称或暂停状态等信息。
 
 
-## Executions (`ACT_RU_EXECUTION`)
+## 执行 (`ACT_RU_EXECUTION`)
 
-The `ACT_RU_EXECUTION` table contains all current executions. It includes
-information like the process definition, parent execution, business key, the
-current activity and different metadata about the state of the execution.
+`ACT_RU_EXECUTION` 表包含所有当前的执行。它包括有流程定义，父执行，业务密钥，当前活动和关于执行状态的不同元数据的信息。
 
 
-## Tasks (`ACT_RU_TASK`)
+## 任务 (`ACT_RU_TASK`)
 
-The `ACT_RU_TASK` table contains all open tasks of all running process
-instances. It includes information like the corresponding process instance,
-execution and also metadata such as creation time, assignee or due date.
+`ACT_RU_TASK` 表包含所有正在运行的流程实例的所有执行中的任务。它包括有相应的流程实例，执行以及元数据等信息，例如创建时间，受让人或截止日期。
 
 
-## Variables (`ACT_RU_VARIABLE`)
+## 变量 (`ACT_RU_VARIABLE`)
 
-The `ACT_RU_VARIABLE` table contains all currently set process or task
-variables. It includes the names, types and values of the variables and
-information about the corresponding process instance or task.
+`ACT_RU_VARIABLE` 表包含所有当前设置的流程或任务变量。它包括变量的名称、类型和值以及相应流程实例或任务的信息。
 
 
-## Event Subscriptions (`ACT_RU_EVENT_SUBSCR`)
+## 事件订阅 (`ACT_RU_EVENT_SUBSCR`)
 
-The `ACT_RU_EVENT_SUBSCR` table contains all currently existing event
-subscriptions. It includes the type, name and configuration of the expected
-event along with information about the corresponding process instance and
-execution.
+`ACT_RU_EVENT_SUBSCR` 表包含所有当前现有的事件订阅。它包括预期事件的类型、名称和配置以及相应的流程实例和执行的信息。
 
-## Schema Log (`ACT_GE_SCHEMA_LOG`)
+## 表结构日志 (`ACT_GE_SCHEMA_LOG`)
 
-The `ACT_GE_SCHEMA_LOG` table contains a history of the database
-schema version. New entries to the table are written when changes to
-the database schema are made. On database creation the initial entry
-is added. Every update script adds a new entry containing an `id`,
-the `version` the database was updated to and the date and time 
-(`timestamp`) of the update.
+`ACT_GE_SCHEMA_LOG` 表记录数据库表结构版本的历史记录。在进行表结构修改时都会写入记录。在数据库创建时会写入一条初试信息，以后每次修改都会记录`id` 、版本、数据库更新日期以及时间戳。
 
-To retrieve entries from the schema log, the SchemaLogQuery-API can be
-used:
+要从表结构日志中查询条目，可以使用查询API：
 ```java
 List<SchemaLogEntry> entries = managementService.createSchemaLogQuery().list();
 ```
 
-## Metrics Log (ACT_RU_METER_LOG)
+## Metrics日志 (ACT_RU_METER_LOG)
 
-The `ACT_RU_METER_LOG` table contains a collection of runtime metrics that can help draw conclusions about usage, load
-and performance of the Camunda Platform. Metrics are reported as numbers in the Java `long` range and count the occurrence of
-specific events. Please find detailed information about how metrics are collected in the [Metrics User Guide]({{< ref "/user-guide/process-engine/metrics.md">}}).
+The `ACT_RU_METER_LOG` table contains a collection of runtime metrics that can help draw conclusions about usage, load and performance of the Camunda Platform. Metrics are reported as numbers in the Java `long` range and count the occurrence of specific events. Please find detailed information about how metrics are collected in the [Metrics User Guide]({{< ref "/user-guide/process-engine/metrics.md">}}).
 
 The default configuration of the [MetricsReporter]({{< ref "/user-guide/process-engine/metrics.md#metrics-reporter">}}) will create one row per [metric]({{< ref "/user-guide/process-engine/metrics.md#built-in-metrics">}}) in `ACT_RU_METER_LOG` every 15 minutes.
 
@@ -88,10 +66,9 @@ The default configuration of the [MetricsReporter]({{< ref "/user-guide/process-
 If you are an enterprise customer, your license agreement might require you to report some metrics annually. Please store `root-process-instance-start`, `activity-instance-start`, `executed-decision-instances` and `executed-decision-elements` metrics for at least 18 months until they were reported.
 {{< /note >}}
 
-## Task Metrics Log (ACT_RU_TASK_METER_LOG)
+## Task Metrics 日志 (ACT_RU_TASK_METER_LOG)
 
-The `ACT_RU_TASK_METER_LOG` table contains a collection of task related metrics that can help draw conclusions about usage, load
-and performance of the BPM platform. Task metrics contain a pseudonymized and fixed-length value of task assignees and their time of appearance. Please find detailed information about how task metrics are collected in the [Metrics User Guide]({{< ref "/user-guide/process-engine/metrics.md">}}).
+The `ACT_RU_TASK_METER_LOG` table contains a collection of task related metrics that can help draw conclusions about usage, load and performance of the BPM platform. Task metrics contain a pseudonymized and fixed-length value of task assignees and their time of appearance. Please find detailed information about how task metrics are collected in the [Metrics User Guide]({{< ref "/user-guide/process-engine/metrics.md">}}).
 
 Every assignment of a task to an assignee will create one row in `ACT_RU_TASK_METER_LOG`.
 
@@ -99,41 +76,41 @@ Every assignment of a task to an assignee will create one row in `ACT_RU_TASK_ME
 If you are an enterprise customer, your license agreement might require you to report some metrics annually. Please store task metrics for at least 18 months until they were reported.
 {{< /note >}}
 
-# Entity Relationship Diagrams
+# 实体关系图
 
 {{< note title="" class="info" >}}
-  The database is not part of the **public API**. The database schema may change for MINOR and MAJOR version updates.
+  该数据库不是 **公共API** 的一部分。数据库的机构可能会在 次要 或 主要 版本更新时发生变化。
 
-  **Please note:**
-  The following diagrams are based on the MySQL database schema. For other databases the diagram may be slightly different.
+  **请注意：**
+  以下图表基于MySQL数据库的。对于其他数据库，图可能略有不同。
 {{< /note >}}
 
 
-The following Entity Relationship Diagrams visualize the database tables and their explicit foreign key constraints, grouped by Engine with focus on BPMN, Engine with focus on DMN, Engine with focus on CMMN, the Engine History and the Identity. Please note that the diagrams do not visualize implicit connections between the tables.
+下面的实体关系图将数据库表和它们的显式外键约束可视化，按照BPMN引擎、DMN引擎、CMMN引擎、历史引擎和身份引擎进行分组。请注意，这些图并没有将表之间的隐性联系可视化。
 
 
-## Engine BPMN
+## BPMN引擎
 
 {{< img src="../../img/erd_715_bpmn.svg" title="BPMN Tables" >}}
 
 
-## Engine DMN
+## DMN引擎
 
 {{< img src="../../img/erd_715_dmn.svg" title="DMN Tables" >}}
 
 
-## Engine CMMN
+## CMMN引擎
 
 {{< img src="../../img/erd_715_cmmn.svg" title="CMMN Tables" >}}
 
 
-## History
+## 历史
 
-To allow different configurations and to keep the tables more flexible, the history tables contain no foreign key constraints.
+为了允许不同的配置并保持表的灵活性，历史表不包含外键约束。
 
 {{< img src="../../img/erd_715_history.svg" title="History Tables" >}}
 
 
-## Identity
+## 身份
 
 {{< img src="../../img/erd_715_identity.svg" title="Identity Tables" >}}

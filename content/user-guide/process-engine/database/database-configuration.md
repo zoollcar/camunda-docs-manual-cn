@@ -9,36 +9,36 @@ menu:
 
 ---
 
-There are two ways to configure the database that the Camunda engine will use. The first option is to define the JDBC properties of the database:
+有两种方法可以配置Camunda引擎使用的数据库。第一个方法是定义数据库的JDBC属性：
 
-* `jdbcUrl`: JDBC URL of the database.
-* `jdbcDriver`: implementation of the driver for the specific database type.
-* `jdbcUsername`: username to connect to the database.
-* `jdbcPassword`: password to connect to the database.
+* `jdbcUrl`: 数据库的JDBC URL。
+* `jdbcDriver`: 用于特定数据库的驱动程序实现。
+* `jdbcUsername`: 连接到数据库的用户名。
+* `jdbcPassword`: 连接到数据库的密码。
 
-Note that the engine uses [Apache MyBatis](http://www.mybatis.org/) internally for persistence.
+注意，引擎内部使用[Apache MyBatis](http://www.mybatis.org/)进行持久化。
 
-The data source that is constructed based on the provided JDBC properties will have the default MyBatis connection pool settings. The following attributes can optionally be set to tweak that connection pool (taken from the MyBatis documentation):
+基于提供的JDBC属性构建的数据源将具有默认的MyBatis连接池设置。以下属性可以选择性地设置，以调整该连接池（取自MyBatis文档）。
 
-* `jdbcMaxActiveConnections`: The maximum number of active connections that the connection pool can contain at any given time. Default is 10.
-* `jdbcMaxIdleConnections`: The maximum number of idle connections that the connection pool can contain at any given time.
-* `jdbcMaxCheckoutTime`: The amount of time in milliseconds that a connection can be 'checked out' for from the connection pool before it is forcefully returned. Default is 20000 (20 seconds).
-* `jdbcMaxWaitTime`: This is a low level setting that gives the pool a chance to print a log status and re-attempt the acquisition of a connection in the case that it takes unusually long (to avoid failing silently forever if the pool is misconfigured). Default is 20000 (20 seconds).
-* `jdbcStatementTimeout`: The amount of time in seconds the JDBC driver will wait for a response from the database. Default is null which means that there is no timeout.
-
-
-## Jdbc Batch Processing
-
-<a name="jdbcBatchProcessing"></a>Another configuration - `jdbcBatchProcessing` - sets if batch processing mode must be used when sending SQL statements to the database. When switched off, statements are executed one by one.
-Values: `true` (default), `false`.
-
-Known issues with batch processing:
-
-* batch processing is not working for Oracle versions earlier than 12.
-* when using batch processing on MariaDB and DB2, `jdbcStatementTimeout` is being ignored.
+* `jdbcMaxActiveConnections`: 连接池在任何时间最多可以包含的活动连接数。缺省值是10。
+* `jdbcMaxIdleConnections`: 连接池在任何时间最多可以包含的空闲连接数。
+* `jdbcMaxCheckoutTime`: 连接被取出使用的最长时间，超过时间会被强制回收。默认值是20000（20秒）。
+* `jdbcMaxWaitTime`: 这是一个底层配置，让连接池可以在长时间无法获得连接时，打印一条日志，并重新尝试获取一个连接。Default是20000（20秒）。
+* `jdbcStatementTimeout`: JDBC驱动程序将等待从数据库的响应的时间内的时间量。默认值为null，这意味着没有超时。
 
 
-## Example database configuration
+## Jdbc 批处理
+
+<a name="jdbcBatchProcessing"></a>另一个配置-- `jdbcBatchProcessing` --设置向数据库发送SQL语句时是否必须使用批处理模式。当关闭时，语句会被一个一个地执行。
+可用值: `true` (默认), `false`.
+
+批处理模式在流程引擎中的已知问题有：
+
+* 批处理模式对早于12版本的Oracle不起作用。
+* 当在MariaDB和DB2上使用批处理时，`jdbcStatementTimeout`配置会被忽略。
+
+
+## 示例数据库配置
 
 ```xml
 <property name="jdbcUrl" value="jdbc:h2:mem:camunda;DB_CLOSE_DELAY=1000" />
@@ -47,7 +47,7 @@ Known issues with batch processing:
 <property name="jdbcPassword" value="" />
 ```
 
-Alternatively, a `javax.sql.DataSource` implementation can be used (e.g., DBCP from Apache Commons):
+或者, 也可以使用 `javax.sql.DataSource` (示例，来自Apache Commons的DBCP)：
 
 ```xml
 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" >
@@ -64,21 +64,21 @@ Alternatively, a `javax.sql.DataSource` implementation can be used (e.g., DBCP f
     ...
 ```
 
-Note that Camunda does not ship with a library that allows to define such a data source. So you have to make sure that the libraries (e.g., from DBCP) are on your classpath.
+请注意，Camunda并没有自带允许定义这种数据源的库。所以你必须确保这些库（例如来自DBCP）在你的classpath上。
 
-The following properties can be set, regardless of whether you are using the JDBC or data source approach:
+无论你是使用JDBC还是数据源方法，都可以设置以下属性：
 
-* `databaseType`: It's normally not necessary to specify this property as it is automatically analyzed from the database connection meta data. Should only be specified in case automatic detection fails. Possible values: {h2, mysql, oracle, postgres, mssql, db2, mariadb}. This setting will determine which create/drop scripts and queries will be used. See the 'supported databases' section for an overview of which types are supported.</li>
-* `databaseSchemaUpdate`: Allows to set the strategy to handle the database schema on process engine boot and shutdown.
-  * `true` (default): Upon building the process engine, a check is performed whether the Camunda tables exist in the database. If they don't exist, they are created. It must be ensured that the version of the DB schema matches the version of the process engine library, unless performing a [Rolling Update]({{< ref "/update/rolling-update.md" >}}). Updates of the database schema have to be done manually as described in the [Update and Migration Guide]({{< ref "/update/_index.md" >}}).
-  * `false`: Does not perform any checks and assumes that the Camunda table exist in the database. It must be ensured that the version of the DB schema matches the version of the process engine library, unless performing a [Rolling Update]({{< ref "/update/rolling-update.md" >}}). Updates of the database schema have to be done manually as described in the [Update and Migration Guide]({{< ref "/update/_index.md" >}}).
-  * `create-drop`: Creates the schema when the process engine is being created and drops the schema when the process engine is being closed.
+* `databaseType`: 通常没有必要指定这个属性，因为它可以从url中自动分析出来的。只有在自动分析失败的情况下才应该指定。可能的值有{h2, mysql, oracle, postgres, mssql, db2, mariadb}。这个设置将决定哪些创建/删除脚本和查询将被使用。参见 "支持的数据库" 一节，以了解支持哪些类型的数据库。</li>
+* `databaseSchemaUpdate`: 允许设置策略来处理进程引擎启动和关闭时的数据库模式。
+  * `true` (默认): 在建立流程引擎时，要检查数据库中是否存在Camunda表。如果它们不存在，就会被创建。除非正在执行[滚动更新]({{< ref "/update/rolling-update.md" >}})，否则必须确保数据库模式的版本与流程引擎库的版本一致。数据库模式的更新必须按照[更新和迁移指南]({{< ref "/update/_index.md" >}})中的描述手动完成。
+  * `false`: 不执行任何检查，并假设数据库中存在Camunda表。除非正在执行[滚动更新]({{< ref "/update/rolling-update.md" >}})，否则必须确保数据库模式的版本与流程引擎库的版本一致。数据库模式的更新必须按照[更新和迁移指南]({{< ref "/update/_index.md" >}})中的描述手动完成。
+  * `create-drop`: 在创建流程引擎时创建表，并在关闭流程引擎时删除表。
 
-{{< note title="Supported Databases" class="info" >}}
-  For information on supported databases please refer to [Supported Environments]({{< ref "/introduction/supported-environments.md#databases" >}})
+{{< note title="支持的数据库" class="info" >}}
+  有关支持数据库的信息，请参阅[支持的环境]({{< ref "/introduction/supported-environments.md#databases" >}})
 {{< /note >}}
 
-Here are some sample JDBC urls:
+以下是一些示例JDBC URL：
 
 * H2: `jdbc:h2:tcp://localhost/camunda`
 * MySQL: `jdbc:mysql://localhost:3306/camunda?autoReconnect=true&sendFractionalSeconds=false`
@@ -89,12 +89,12 @@ Here are some sample JDBC urls:
 * MariaDB: `jdbc:mariadb://localhost:3306/camunda`
 
 
-## Additional Database Schema Configuration
+## 其他数据库架构配置
 
 ### Business Key
 
-Since the release of Camunda Platform 7.0.0-alpha9, the unique constraint for the business key is removed in the runtime and history tables and the database schema create and drop scripts.
-If you rely on the constraint, you can add it manually to your schema by issuing following sql statements:
+自从 Camunda Platform 7.0.0-alpha9 发布后，在运行时和历史表以及数据库模式创建和删除脚本中，业务键的唯一约束被删除。
+如果你依赖该约束，你可以手动将以下sql语句应用到你的数据库中。
 
 DB2
 
@@ -164,13 +164,13 @@ History:
 alter table ACT_HI_PROCINST add constraint ACT_UNIQ_HI_BUS_KEY UNIQUE (PROC_DEF_ID_, BUSINESS_KEY_);
 ```
 
-## Isolation Level Configuration
+## 隔离级别配置
 
-Most database management systems provide four different isolation levels to be set. For instance the levels defined by ANSI/USO SQL are (from low to high isolation):
+大多数数据库管理系统提供了四种不同的隔离级别可供设置。例如，由ANSI/USO SQL定义的级别是（从低到高的隔离）有：
 
-* READ UNCOMMITTED 
-* READ COMMITTED
-* REPEATABLE READS
-* SERIALIZABLE 
+* 读未提交（READ UNCOMMITTED ）
+* 不可重复读（READ COMMITTED）
+* 可重复读（REPEATABLE READS）
+* 串行化（SERIALIZABLE）
 
-The required isolation level to run Camunda with is **READ COMMITTED**, which may have a different name according to your database system. Setting the level to REPEATABLE READS is known to cause deadlocks, so one needs to be careful, when changing the isolation level.
+运行Camunda所需的隔离级别是 **不可重复读（READ COMMITTED）** ，根据你的数据库系统不同，它可能有不同的名称。将隔离级别设置为 REPEATABLE READS 会导致死锁，所以在改变隔离级别时需要谨慎。
