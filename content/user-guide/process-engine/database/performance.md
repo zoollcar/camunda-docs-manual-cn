@@ -9,14 +9,14 @@ menu:
 
 ---
 
-This page explains specific performance-related topics of database queries. It does not attempt to provide tools and guidance for general performance analysis and optimization of Camunda Platform installations. 
+此页面介绍了数据库查询性能相关内容。而不是Camunda平台安装的一般性能分析或者优化提供工具及指导。
 
-As the impact of the settings discussed here largely depends on the setup and workload of Camunda Platform, the recommendations may or may not help in your case. Performance improvements are not guaranteed.
+由于这里讨论的设置的影响在很大程度上取决于Camunda平台的设置和工作量级，这些建议对你的情况可能有帮助，也可能没有帮助。不能保证性能会提高。
 
 # 任务查询
 
-The task query is one of the heaviest used and most powerful queries of the process engine API. Due to its rich feature set, it can also become complex in SQL and may perform badly. 
+任务查询是流程引擎API中使用量最大、功能最强的查询之一。由于其丰富的功能集，它在SQL中也可能变得复杂，并可能表现得很糟糕。
 
-## Disabling CMMN and Standalone Tasks
+## 禁用CMMN和独立任务（Standalone Tasks）
 
-To perform transparent access checks, the task query joins the authorization table (`ACT_RU_AUTHORIZATION`). For any kind of process-related filters, it joins the process definition table (`ACT_RE_PROCDEF`). By default, the query uses a left join for these operations. If CMMN and standalone tasks (tasks that are neither related to a BPMN process, nor a CMMN case) are not used, the engine configuration flags `cmmnEnabled` and `standaloneTasksEnabled` can be set to `false`. Then, the left joins are replaced by inner joins which perform better on some databases. See the [configuration properties reference]({{< ref "/reference/deployment-descriptors/tags/process-engine.md#configuration-properties" >}}) for details on these settings.
+为了执行透明的访问检查，任务查询加入了授权表（`ACT_RU_AUTHORIZATION`）。对于任何一种与流程相关的过滤器，它加入流程定义表（`ACT_RE_PROCDEF`）。默认情况下，查询对这些操作使用左连接（left join）。如果不使用CMMN和独立任务（既不与BPMN流程相关，也不与CMMN案例相关的任务），引擎配置标志`cmmnEnabled`和`standaloneTasksEnabled`可以设置为`false`。然后，左联接被内联接取代，内联接在某些数据库中表现会更好。参见[配置属性参考]({{< ref "/reference/deployment-descriptors/tags/process-engine.md#configuration-properties" >}})了解这些设置的详情。
