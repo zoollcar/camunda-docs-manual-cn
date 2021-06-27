@@ -11,20 +11,20 @@ menu:
 ---
 ---
 
-All process definitions are cached (after they have been parsed) to avoid polling the database every time a process definition is needed and because process definition data doesn't change. This reduces the latency of referencing the process definitions and thus improves the performance of the system.
+所有的流程定义都是缓存的（在它们被解析后），以避免每次需要流程定义时都查询数据库，因为流程定义数据不会改变。这减少了引用流程定义的延迟，从而提高了系统的性能。
 
-# Customize the maximum Capacity of the Cache
+# 自定义缓存的最大容量
 
-If one has many process definitions, the cache might occupy a large amount of memory and the capacity of the working memory may reach its limits. Therefore, after the maximum capacity is reached the least recently used process definition entry is evicted from the cache to satisfy the capacity condition. However, if one still meets out of memory issues, it can be necessary to lower the maximum capacity of the cache. 
+如果有很多流程定义，缓存可能会占用大量的内存，缓存容量可能达到极限。因此，在达到最大容量后，最近使用最少的流程定义条目会从高速缓存中被驱逐，以满足容量条件。然而，如果仍然遇到内存不足的问题，可能需要降低缓存的最大容量。
 
-By changing the maximum capacity, the configuration effects all of the following cache components:
+改变最大容量，会影响到以下所有的缓冲区组件：
 
- * Process definition
- * Case definition
- * Decision definition
- * Decision requirements definition
+ * 流程定义
+ * 案例定义
+ * 决策定义
+ * 决策需求定义
    
-In the process engine configuration one can specify the maximum capacity of the cache. The default value is *1000*. When the process engine is created, this property will be set and all resources will be scanned and deployed accordingly. As an example the maximum capacity could be set to *120* as follows:
+在流程引擎的配置中，可以指定缓存的最大容量。默认值是 *1000* 。当流程引擎被创建时，这个属性将被设置，所有的资源将被相应地扫描和部署。作为一个例子，最大容量可以被设置为*120*，如下所示：
 
 ```xml
 <bean id="processEngineConfiguration" class="org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
@@ -35,14 +35,14 @@ In the process engine configuration one can specify the maximum capacity of the 
 </bean>
 ```
 
-__Note:__ The same capacity is used for all of the components stated above and it is not possible to set the capacity size individually for each component. Furthermore, in the default cache implementation corresponds the capacity size to the maximum number of elements in the cache that are used. That means, the absolute amount of physical storage (e.g. mega bytes) you use up depends on the size needed for the respective process definitions.
+__注意:__ 上述的所有组件都将使用相同的容量，不能为每个组件单独设置容量大小。此外，在默认的缓存实现中，将容量大小与缓存中使用的最大元素数相对应。这意味着，你所使用的物理存储的绝对数量（如百万字节）取决于各自流程定义所需的大小。
 
 
-# Provide a custom Cache Implementation
+# 提供自定义缓存实现
 
-The default implementation of the cache evicts the least recently used entry as soon as the maximum capacity is exceeded. If it is necessary to choose the evicted cache entries by a different criteria, one can provide its own cache implementation.
+缓存的默认实现是在超过最大容量后立即释放最久未使用的条目。如果有必要通过不同的标准来选择被释放的缓存条目，可以提供自己的缓存实现。
 
-One can do this by implementing the Cache interface from *org.camunda.util.commons package*. Let's assume for example that the following class has been implemented:
+我们可以通过实现 *org.camunda.util.commons* 包中的Cache接口来做到这一点。例如，我们假设已经实现了下面这个类：
 
 ```java
 public class MyCacheImplementation<K, V> implements Cache<K, V> {
@@ -51,7 +51,7 @@ public class MyCacheImplementation<K, V> implements Cache<K, V> {
 }
 ```
 
-Next, one need to plug in *MyCacheImplementation* into a custom *CacheFactory*:
+接下来，我们需要将 *MyCacheImplementation* 插入到一个自定义的 *CacheFactory* 中：
 
 ```java
 public class MyCacheFactory extends CacheFactory {
@@ -63,7 +63,7 @@ public class MyCacheFactory extends CacheFactory {
 }
 ```
     
-The factory is used to provide the cache implementation for different cache components such as the process definition or the case definition. Once this is done, one can use the process engine configuration where one can specify a set of resources. When the process engine is created, all those resources will be scanned and deployed. In the given example the custom cache factory could now be deployed as follows:
+这个工厂类被用来为不同的缓存组件提供缓存实现，如流程定义或案例定义。一旦完成这些，就可以使用流程引擎配置，在这里可以指定一组资源。当流程引擎被创建时，所有这些资源将被扫描和部署。在给定的例子中，自定义缓存工厂现在可以按以下方式部署：
 
 ```xml
 <bean id="processEngineConfiguration" class="org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
