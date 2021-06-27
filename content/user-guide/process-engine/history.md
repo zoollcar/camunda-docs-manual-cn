@@ -11,46 +11,47 @@ menu:
 ---
 
 
-The History Event Stream provides audit information about executed process instances.
+历史事件流提供关于已执行的流程实例的审批信息。
 
-{{< img src="../img/process-engine-history.png" title="Process Engine History" >}}
+{{< img src="../img/process-engine-history.png" title="流程引擎历史" >}}
 
-The process engine maintains the state of running process instances inside the database. This includes *writing* (1.) the state of a process instance to the database as it reaches a wait state and *reading* (2.) the state as process execution continues. We call this database the *runtime database*. In addition to maintaining the runtime state, the process engine creates an audit log providing audit information about executed process instances. We call this event stream the *history event stream* (3.). The individual events which make up this event stream are called *History Events* and contain data about executed process instances, activity instances, changed process variables and so forth. In the default configuration, the process engine will simply write (4.) this event stream to the *history database*. The `HistoryService` API allows querying this database (5.). The history database and the history service are optional components; if the history event stream is not logged to the history database or if the user chooses to log events to a different database, the process engine is still able to work and it is still able to populate the history event stream. This is possible because the BPMN 2.0 Core Engine component does not read state from the history database. It is also possible to configure the amount of data logged, using the `historyLevel` setting in the process engine configuration.
+流程引擎维护数据库内运行的流程实例的状态。这包括在流程实例达到等待状态时将其*写*(1)到数据库中，并在流程继续执行时*读*(2)该状态。我们称这个数据库为 *运行时数据库（runtime database）* 。除了维护运行时状态外，流程引擎还创建了一个审批日志，提供关于已执行流程实例的审批信息。我们称这个事件流为 *历史事件流（history event stream）* （3）。构成这个事件流的各个事件被称为 *历史事件（History Events）* ，包含关于已执行的流程实例、活动实例、改变的流程变量等的数据。
+在默认配置中，流程引擎将简单地把这个事件流写入（4.）*历史数据库*。历史服务（HistoryService）的API允许查询（5）这个数据库。历史数据库和历史服务是可选的组件；如果历史事件流没有被记录到历史数据库中，或者如果用户选择将事件记录到不同的数据库，流程引擎仍然能工作，它仍然能够填充历史事件流。这是可能的，因为BPMN 2.0核心引擎组件不从历史数据库读取状态。也可以配置流程引擎的 "historyLevel" 配置项，来配置记录的数据量。
 
-Since the process engine does not rely on the presence of the history database for generating the history event stream, it is possible to provide different backends for storing the history event stream. The default backend is the `DbHistoryEventHandler` which logs the event stream to the history database. It is possible to exchange the backend and provide a custom storage mechanism for the history event log.
-
-
-# Choose a History Level
-
-The history level controls the amount of data the process engine provides via the history event stream. The following settings are available out of the box:
-
-* `NONE`: no history events are fired.
-* `ACTIVITY`: the following events are fired:
-    * Process Instance START, UPDATE, END, MIGRATE: fired as process instances are being started, updated, ended and migrated
-    * Case Instance CREATE, UPDATE, CLOSE: fired as case instances are being created, updated and closed
-    * Activity Instance START, UPDATE, END, MIGRATE: fired as activity instances are being started, updated, ended and migrated
-    * Case Activity Instance CREATE, UPDATE, END: fired as case activity instances are being created, updated and ended
-    * Task Instance CREATE, UPDATE, COMPLETE, DELETE, MIGRATE: fired as task instances are being created, updated (i.e., re-assigned, delegated etc.), completed, deleted and migrated.
-* `AUDIT`: in addition to the events provided by history level `ACTIVITY`, the following events are fired:
-    * Variable Instance CREATE, UPDATE, DELETE, MIGRATE: fired as process variables are created, updated, deleted and migrated. The default history backend (DbHistoryEventHandler) writes variable instance events to the historic variable instance database table. Rows in this table are updated as variable instances are updated, meaning that only the last value of a process variable will be available.
-* `FULL`: in addition to the events provided by history level `AUDIT`, the following events are fired:
-    * Form property UPDATE: fired as form properties are being created and/or updated.
-    * The default history backend (DbHistoryEventHandler) writes historic variable updates to the database. This makes it possible to inspect the intermediate values of a process variable using the history service.
-    * User Operation Log UPDATE: fired when a user performs an operation like claiming a user task, delegating a user task etc.
-    * Incidents CREATE, DELETE, RESOLVE, MIGRATE: fired as incidents are being created, deleted, resolved and migrated
-    * Historic Job Log CREATE, FAILED, SUCCESSFUL, DELETED: fired as a job is being created, a job execution failed or was successful or a job was deleted
-    * Decision Instance EVALUATE: fired when a decision is evaluated by the DMN engine.
-    * Batch START, END: fired as batches are being started and ended
-    * Identity links ADD, DELETE: fired when an identity link is being added, deleted or when an assignee of a user task is set or changed and when the owner of a user task is set or changed.
-    * Historic External Task Log CREATED, DELETED, FAILED, SUCCESSFUL: fired as an external task has been created, deleted or an external task execution has been reported to fail or succeed.
-* `AUTO`: The level `auto` is useful if you are planning to run multiple engines on the same database. In that case, all engines have to use the same history level. Instead of manually keeping your configurations in sync, use the level `auto` and the engine determines the level already configured in the database automatically. If none is found, the default value `audit` is used. Keep in mind: If you are planning to use custom history levels, you have to register the custom levels for every configuration, otherwise an exception is thrown.
-
-If you need to customize the amount of history events logged, you can provide a custom implementation {{< javadocref page="?org/camunda/bpm/engine/impl/history/producer/HistoryEventProducer.html" text="HistoryEventProducer" >}} and wire it in the process engine configuration.
+由于流程引擎不依赖历史数据库的存在来生成历史事件流，因此可以提供不同的后端实现来存储历史事件流。默认的后端实现是  "DbHistoryEventHandler" ，它将事件流记录到历史数据库。可以替换后端实现，为历史事件日志提供一个自定义的存储机制。
 
 
-# Set the History Level
+# 选择历史记录级别
 
-The history level can be provided as a property in the process engine configuration. Depending on how the process engine is configured, the property can be set using Java code:
+历史级别控制流程引擎通过历史事件流提供的数据量。以下设置是开箱即用的：
+
+* `NONE`: 不会记录历史事件。
+* `ACTIVITY`: 以下事件将被记录：
+    * 流程实例 START, UPDATE, END, MIGRATE: 当流程实例被 started, updated, ended 和 migrated 时触发。
+    * 案例实例 CREATE, UPDATE, CLOSE: 当案例实例被 created, updated 和 closed 时触发。
+    * 活动实例 START, UPDATE, END, MIGRATE: 当活动实例被 started, updated, ended 和 migrated 时触发。
+    * 案例活动实例 CREATE, UPDATE, END: 当案例活动实例被 created, updated 和 ended 时触发。
+    * 任务实例 CREATE, UPDATE, COMPLETE, DELETE, MIGRATE: 当任务实例被 created, updated (i.e., re-assigned, delegated etc.), completed, deleted 和 migrated 时触发。
+* `AUDIT`: 除了`ACTIVITY`级别提供的事件，还记录了以下事件：
+    * 流程变量 CREATE, UPDATE, DELETE, MIGRATE: 当流程变量被 created, updated, deleted 和 migrated时触发，默认历史记录后端（DbHistoryEventHandler）将变量实例事件写入历史变量实例数据表中。因为在更新流程变量时，此表中的行会更新，所以只有流程变量的最后一个值将可用。
+* `FULL`: 除了`AUDIT`级别提供的事件，还记录了以下事件：
+    * 表单属性 UPDATE：当表单属性被 created 或 updated 时被触发。
+    * 默认的历史后端（DbHistoryEventHandler）将历史变量的更新情况写入数据库。这使得使用历史服务查看一个流程变量的中间值成为可能。
+    * 用户操作日志 UPDATE: 当用户执行操作时触发，例如承接（claim）用户任务、委派（delegating）用户任务等。
+    * 事件 CREATE, DELETE, RESOLVE, MIGRATE: 当事件被 created, deleted, resolved 和 migrated 时记录。
+    * 历史Job日志 CREATE, FAILED, SUCCESSFUL, DELETED: 当Job被 created, execution, successful 或 deleted 时记录。
+    * 决策实例评估：当DMN引擎进行决策评估时记录。
+    * 批处理 START, END: 当批处理被 started 或 ended 时触发。
+    * 身份 links ADD, DELETE: 当 身份link 被 added, deleted 以及设置或改变用户任务的受让人、拥有人时被记录。
+    * 历史外部任务日志 CREATED, DELETED, FAILED, SUCCESSFUL: 作为外部任务被 created, deleted 或外部任务执行者报告了成功或失败时会记录。
+* `AUTO`: 如果你打算在同一个数据库中运行多个引擎，那么 `AUTO` 级别是很有用的。在这种情况下，所有的引擎都必须使用相同的历史级别。与其手动保持配置同步，不如使用 `auto` 级别，引擎会自动确定数据库中已经配置的级别。如果没有找到，则使用默认值 `audit` 。请记住。如果你打算使用自定义历史级别，你必须为每个配置注册自定义级别，否则会出现异常。
+
+如果你需要自定义历史事件的记录量，你可以提供一个自定义的 {{< javadocref page="?org/camunda/bpm/engine/impl/history/producer/HistoryEventProducer.html" text="HistoryEventProducer" >}} 实现并将其应用到流程引擎配置中。
+
+
+# 设置历史记录级别
+
+历史记录级别可以作为流程引擎配置中的一个属性提供。根据流程引擎的配置方式，该属性可以使用Java代码进行设置：
 
 ```java
 ProcessEngine processEngine = ProcessEngineConfiguration
@@ -59,58 +60,58 @@ ProcessEngine processEngine = ProcessEngineConfiguration
   .buildProcessEngine();
 ```
 
-It can also be set using Spring XML or a deployment descriptor (bpm-platform.xml, processes.xml). When using the Camunda JBoss Subsystem, the property can be set through JBoss configuration (standalone.xml, domain.xml).
+也可以使用Spring XML或部署描述符（bpm-platform.xml, processes.xml）来设置。当使用Camunda JBoss子系统时，该属性可以通过JBoss配置（standalone.xml, domain.xml）来设置：
 
 ```xml
 <property name="history">audit</property>
 ```
 
-Note that when using the default history backend, the history level is stored in the database and cannot be changed later.
+请注意，当使用默认的历史后台实现时，历史级别被存储在数据库中，以后不能更改。
 
 {{< note title="History levels and Cockpit" class="info" >}}
-[The Camunda Platform Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) web application works best with History Level set to `FULL`. "Lower" History Levels will disable certain history-related features.
+[Camunda Platform Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) 应用程序在历史级别设置为 "FULL" 时工作得最好。较低的历史级别将禁用某些与历史有关的功能。
 {{< /note >}}
 
-# The Default History Implementation
+# 默认历史后台实现执行方式
 
-The default history database writes History Events to the appropriate database tables. The database tables can then be queried using the `HistoryService` or using the REST API.
-
-
-## History Entities
-
-There are the following History entities, which - in contrast to the runtime data - will also remain present in the DB after process and case instances have been completed:
-
-* `HistoricProcessInstances` containing information about current and past process instances.
-* `HistoricVariableInstances` containing information about the latest state a variable held in a process instance.
-* `HistoricCaseInstances` containing information about current and past case instances.
-* `HistoricActivityInstances` containing information about a single execution of an activity.
-* `HistoricCaseActivityInstances` containing information about a single execution of a case activity.
-* `HistoricTaskInstances` containing information about current and past (completed and deleted) task instances.
-* `HistoricDetails` containing various kinds of information related to either a historic process instances, an activity instance or a task instance.
-* `HistoricIncidents` containing information about current and past (i.e., deleted or resolved) incidents.
-* `UserOperationLogEntry` log entry containing information about an operation performed by a user. This is used for logging actions such as creating a new task, completing a task, etc.
-* `HistoricJobLog` containing information about the job execution. The log provides details about the lifecycle of a job.
-* `HistoricDecisionInstance` containing information about a single evaluation of a decision, including the input and output values.
-* `HistoricBatch` containing information about current and past batches.
-* `HistoricIdentityLinkLog` containing information about current and past (added, deleted, assignee is set or changed and owner is set or changed) identity links.
-* `HistoricExternalTaskLog` containing information about the external log. The log provides details about the lifecycle of an external task.
+默认的历史后台实现将历史事件写到适当的数据库表中。然后可以使用 `HistoryService`或使用REST API来查询这些数据库表。
 
 
-## State of HistoricProcessInstances
+## 历史实体
 
-For every process instance process engine will create single record in history database and will keep updating this record during process execution. Every HistoricProcessInstance record can get one of the following states assigned:
+有以下历史实体，与运行时数据相反，它们在流程和案例实例完成后，将留在数据库中。
 
-*  ACTIVE - running process instance
-*  SUSPENDED - suspended process instances
-*  COMPLETED - completed through normal end event
-*  EXTERNALLY_TERMINATED - terminated externally, for instance through REST API
-*  INTERNALLY_TERMINATED - terminated internally, for instance by terminating boundary event
+* `HistoricProcessInstances` 包含有关当前和过去的流程实例的信息。
+* `HistoricVariableInstances` 包含有关在流程实例中保持的最新状态的信息。
+* `HistoricCaseInstances` 包含有关当前和过去案例实例的信息。
+* `HistoricActivityInstances` 包含有关一项执行活动的信息。
+* `HistoricCaseActivityInstances` 包含关于单个执行案例活动的信息。
+* `HistoricTaskInstances` 包含有关当前和过去（已完成和删除）任务实例的信息。
+* `HistoricDetails` 包含与历史流程实例，活动实例或任务实例相关的各种信息。
+* `HistoricIncidents` 包含有关当前和过去的信息（即，删除或解决的）事件。
+* `UserOperationLogEntry` 日志条目包含有关用户执行操作的信息。例如创建新任务，完成任务等操作。
+* `HistoricJobLog` 包含有关Job执行的信息。日志记录有关Job生命周期的详细信息。
+* `HistoricDecisionInstance` 包含关于决策的单个评估的信息，包括输入和输出值。
+* `HistoricBatch` 包含有关当前和过去批处理的信息。
+* `HistoricIdentityLinkLog` 包含有关当前和过去的identity links变更信息(added, deleted, 受让人、拥有人的设置或改变)。
+* `HistoricExternalTaskLog` 包含有关外部任务执行信息。提供了有关外部任务的生命周期的详细信息。
 
-Among them following states can be triggered externally, for example through REST API or Cockpit: ACTIVE, SUSPENDED, EXTERNALLY_TERMINATED.
 
-## Query History
+## 历史流程实例
 
-The HistoryService exposes the methods `createHistoricProcessInstanceQuery()`,
+对于每个流程实例，流程引擎将在历史数据库中创建单个记录，并在流程执行期间继续更新此记录。每个历史流程实例记录都可以获得分配的以下状态：
+
+*  ACTIVE - 运行中的流程实例
+*  SUSPENDED - 暂停的流程实例
+*  COMPLETED - 通过正常结束事件完成的
+*  EXTERNALLY_TERMINATED - 外部终止，例如通过REST API
+*  INTERNALLY_TERMINATED - 内部终止，例如通过终止边界事件
+
+以下状态可以被例如 REST API 或 Cockpit 的外部行为触发：ACTIVE, SUSPENDED, EXTERNALLY_TERMINATED。
+
+## 查询历史记录
+
+HistoryService 具有如下查询方法 `createHistoricProcessInstanceQuery()`,
 `createHistoricVariableInstanceQuery()`, `createHistoricCaseInstanceQuery()`,
 `createHistoricActivityInstanceQuery()`, `createHistoricCaseActivityInstanceQuery()`,
 `createHistoricDetailQuery()`,
@@ -120,10 +121,11 @@ The HistoryService exposes the methods `createHistoricProcessInstanceQuery()`,
 `createHistoricJobLogQuery()`,
 `createHistoricDecisionInstanceQuery()`,
 `createHistoricBatchQuery()`,
-`createHistoricExternalTaskLogQuery` and `createHistoricIdentityLinkLogQuery()`
-which can be used for querying history.
+`createHistoricExternalTaskLogQuery` 和 `createHistoricIdentityLinkLogQuery()`
 
-Below are a few examples which show some of the possibilities of the query API for history. Full description of the possibilities can be found in the Javadocs, in the `org.camunda.bpm.engine.history` package.
+它们可用于查询历史记录。
+
+下面是几个例子，展示了历史查询API的一些可能性。对这些可能性的完整描述可以在 `org.camunda.bpm.engine.history` 包的Javadocs中找到。
 
 **HistoricProcessInstanceQuery**
 
@@ -311,19 +313,19 @@ historyService.createHistoricExternalTaskLogQuery()
   .list();
 ```
 
-## History Report
+## 历史报告
 
-You can use the reports section to retrieve custom statistics and reports. Currently, we support the following kinds of reports:
+你可以使用报告部分来检索自定义统计信息和报告。目前，我们支持以下类型的报告：
 
-* [Instance Duration Report]({{< relref "#instance-duration-report" >}})
-* [Task Report]({{< relref "#task-report" >}})
-* [Finished Instance Report]({{< relref "#finished-instance-report" >}})
+* [实例持续时间报告]({{< relref "#实例持续时间报告" >}})
+* [任务报告]({{< relref "#任务报告" >}})
+* [完成实例报告]({{< relref "#完成实例报告" >}})
 
 
 
-### Instance Duration Report
+### 实例持续时间报告
 
-Retrieves a report about the duration of completed process instances, grouped by a specified period. These reports include the maximum, minimum and average duration of all completed process instances, which were started in the specified period. The following code snippet retrieves a report for every month since the engine was started:
+查询关于已完成流程实例的持续时间的报告，按指定的时期分组。这些报告包括所有已完成的流程实例的最大、最小和平均持续时间，这些实例是在指定时期开始的。下面的代码片段查询了自引擎启动以来每个月的报告：
 
 ```java
 historyService
@@ -331,18 +333,18 @@ historyService
   .duration(PeriodUnit.MONTH);
 ```
 
-The supported periods so far are `MONTH` and `QUARTER` from `org.camunda.bpm.engine.query.PeriodUnit`.
+当前支持的时间刻度是 `MONTH` 和定于于 `org.camunda.bpm.engine.query.PeriodUnit` 的 `QUARTER` .
 
-To narrow down the report query, one can use the following methods from ``HistoricProcessInstanceReport``:
+要裁剪报告，可以使用以下方法 ``HistoricProcessInstanceReport``:
 
-* ``startedBefore``: Only takes historic process instances into account that were started before a given date.
-* ``startedAfter``: Only takes historic process instances into account that were started after a given date.
-* ``processDefinitionIdIn``: Only takes historic process instances into account for given process definition ids.
-* ``processDefinitionKeyIn``: Only takes historic process instances into account for given process definition keys.
+* ``startedBefore``: 只考虑在给定日期之前启动的历史流程实例。
+* ``startedAfter``: 只考虑在给定日期之后启动的历史流程实例。
+* ``processDefinitionIdIn``: 只考虑给定流程定义Id对应的所有流程实例。
+* ``processDefinitionKeyIn``: 只考虑一组给定的流程定义Id对应的流程实例。
 
-where `startedBefore` and `startedAfter` use `java.util.Date` (deprecated) or `java.util.Calendar` objects for the input.
+`startedBefore` 和 `startedAfter` 使用 `java.util.Date` (弃用) 或 `java.util.Calendar` 对象作为输入。
 
-For instance, one could query for all historic process instances which were started before now and get their duration:
+例如，人们可以查询从现在之前启动的所有历史进程实例并获得他们的持续时间：
 
  ```java
 Calendar calendar = Calendar.getInstance();
@@ -351,11 +353,11 @@ historyService.createHistoricProcessInstanceReport()
   .duration(PeriodUnit.MONTH);
  ```
 
-### Task Report
+### 任务报告
 
-Retrieves a report of completed tasks. For the task report there are two possible report types: count and duration.
+检索已完成任务的报告。对于任务报告，有两种可能的报告类型：计数和持续时间：
 
-If you use the method `countByProcessDefinitionKey` or `countByTaskName` in the end of your report query, the report contains a list of completed task counts where an entry contains the task name, the definition key of the task, the process definition id, the process definition key, the process definition name and the count of how many tasks were completed for the specified key in a given period. The methods `countByProcessDefinitionKey` and `countByTaskName` then group the count reports according the criterion 'definition key' or 'task name'. To retrieve a task count report grouped by the task name, one could execute the following query:
+如果你在报告查询的最后使用`countByProcessDefinitionKey`或`countByTaskName`方法，报告包含一个已完成任务计数的列表，其中一个条目包含任务名称、任务的定义键、流程定义ID、流程定义键、流程定义名称和指定键在特定时期完成多少任务的计数。方法`countByProcessDefinitionKey`和`countByTaskName`然后根据'定义键'或'任务名称'的标准来分组计数报告。要检索按任务名称分组的任务计数报告，可以执行以下查询。
 
 ```java
 historyService
@@ -363,7 +365,7 @@ historyService
   .countByTaskName();
 ```
 
-If the report type is set to duration, the report contains a minimum, maximum and average duration value of all completed task instances in a given period.
+如果报告类型被设定为持续时间，报告包含在特定时期内所有完成的任务实例的最小、最大和平均持续时间值。
 
 ```java
 historyService
@@ -371,11 +373,11 @@ historyService
   .duration(PeriodUnit.MONTH);
 ```
 
-The supported period times and the confinement of the query works analogously to [Instance Duration Report]({{< relref "#instance-duration-report" >}}).
+支持的周期时间和查询的局限性与[实例期限报告]({{< relref "#实例持续时间报告" >}})类似。
 
-### Finished Instance Report
+### 完成实例报告
 
-Retrieves a report of finished process, decision or case instances. The report helps the user to tune the history time to live for definitions. They can see a summary of the historic data which can be cleaned after history cleanup. The output fields are definition id, key, name, version, count of the finished instances and count of the 'cleanable' instances.
+检索已完成的流程、决定或案例实例的报告。该报告帮助用户调整定义的历史生存时间。他们可以看到历史数据的摘要，可以在历史清理后进行清理。输出的字段是definition id, key, name, version, 完成的实例计数和"可清理"的实例的实例计数。
 
 ```java
 historyService
@@ -391,28 +393,20 @@ historyService
   .list();
 ```
 
-## Partially Sorting History Events by Their Occurrence
+## 根据历史事件的发生情况进行部分排序
 
-Sometimes you want to sort history events in the order in which they
-occurred. Please note that timestamps cannot be used for that.
+有时你想按照历史事件发生的顺序来排序。请注意这里不能使用时间戳排序。
 
-Most history events contain a timestamp which marks the point in time at which the action signified
-by the event occurred. However, this timestamp can, in general, not be used for sorting the history
-events. The reason is that the process engine can be run on multiple cluster nodes:
+大多数历史事件都包含一个时间戳，它标志着事件所代表的行为发生的时间。然而，一般来说，这个时间戳不能用来对历史事件进行排序。因为流程引擎可以在多个集群节点上运行。
 
-* on a single machine, the clock may change due to network sync at runtime,
-* in a cluster, events happening in a single process instance may be generated on different nodes
-  among which the clock may not be synced accurately down to nanoseconds.
+* 在一台机器上，时钟可能会由于运行时的网络同步而改变， 
+* 在一个集群中，发生在一个流程实例中的事件可能会在不同的节点上产生，其中的时钟可能无法精确地同步到纳秒级。
 
-To work around this, the Camunda engine generates sequence numbers which can be used to *partially*
-sort history events by their occurrence.
+为了解决这个问题，Camunda引擎产生了序列号，可以用来对历史事件的发生时间进行 *部分* 的排序。
 
-At a BPMN level this means that instances of concurrent activities (example: activities on different
-parallel branches after a parallel gateway) cannot be compared to each other. Instances of
-activities that are part of happens-before relation at the BPMN level will be ordered in respect to
-that relation.
+在BPMN层面上，这意味着并发活动的实例（例如：在一个并行网关之后的不同并行分支上的活动）不能相互比较。属于happens-before关系的活动实例（在BPMN层面具有向后依赖顺序的活动实例）将根据该关系排序。
 
-Example:
+例如：
 
 ```java
 List<HistoricActivityInstance> result = historyService
@@ -423,57 +417,51 @@ List<HistoricActivityInstance> result = historyService
   .list();
 ```
 
-Please note the returned list of historic activity instances in the example is
-only partially sorted, as explained above. It guarantees that related
-activity instances are sorted by their occurrence. The ordering of unrelated
-activity instances is arbitrary and is not guaranteed.
+请注意，在这个例子中，返回的历史活动实例的列表只是部分排序，如上所述。它保证了相关的活动实例是按它们的发生率排序的。不相关的活动实例的排序是随机的，不被保证。
 
 
-# User Operation Log
+# 用户操作日志
 
-The user operation log contains entries for many API operations and can be used for auditing purposes. It provides data on what kind of operations are performed as well as details on the changes involved in the operation. Operations are logged when the operation is performed in the context of a logged in user. To use the operation log, the process engine history level must be set to `FULL`.
+用户操作日志包含许多API操作的条目，可用于审计目的。它提供了关于执行的操作的数据以及关于操作中所涉及的更改的详细信息。在登录用户会话中执行操作时记录操作。要使用操作日志，必须将流程引擎历史级别设置为 “FULL”。
 
-## Write Log Entries Regardless of User Authentication Context
+## 不考虑用户登录状态，记录用户操作日志
 
-If it is desired that operations are logged regardless whether they are performed in the context of a logged in user or not, then the process engine configuration flag named `restrictUserOperationLogToAuthenticatedUsers` can be set to `false`.
+如果希望无论是否在用户登录的情况下都记录日志，那么可以将流程引擎的 "restrictUserOperationLogToAuthenticatedUsers" 配置项设为 "false"。
 
-## Access the User Operation Log
+## 访问用户操作日志
 
-The user operation log can be accessed via the Java API. The history service can be used to execute a `UserOperationLogQuery` by calling `historyService.createUserOperationLogQuery().execute()`. The query can be restricted with various filtering options. The query is also [exposed in the REST API]({{< ref "/reference/rest/history/user-operation-log/get-user-operation-log-query.md" >}}).
+用户操作日志可以通过Java API访问。调用`historyService.createUserOperationLogQuery().execute()`，历史服务可以用 `UserOperationLogQuery` 来执行。该查询可以通过各种过滤器进行限制。该查询也[在REST API中访问]({{< ref "/reference/rest/history/user-operation-log/get-user-operation-log-query.md" >}}).
 
 
-## User Operation Log Entries
+## 用户操作日志条目
 
-The log consists of *operations* and *entries*. An operation corresponds to one performed action and consists of multiple entries, at least one. Entries contain the detailed changes being part of the operation. When making a user operation log query, the returned entities are of type `UserOperationLogEntry`, corresponding to entries. All entries of one operation are linked by an operation id.
+日志由 *操作* 和 *条目* 组成。一个操作对应于一个执行的动作，由一个或多个条目组成。条目作为操作详细执行情况。当进行用户操作日志查询时，返回的实体是 "UserOperationLogEntry" 类型，对应于 *条目* 。一个操作的所有条目都由一个相同的操作ID标出。
 
-A user operation log entry has the following properties:
+用户操作日志条目具有以下属性：
 
-* **Operation ID**: A generated id that uniquely identifies a performed operation. Multiple log entries that are part of one operation reference the same operation ID.
-* **Operation Type**: The name of the performed operation. Available operation types are listed in the interface {{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html" text="org.camunda.bpm.engine.history.UserOperationLogEntry" >}}. Note that one operation can consist of multiple types, for example a cascading API operation is one user operation, but is split into multiple types of operations.
-* **Entity Type**: An identifier of the type of the entity that was addressed by the operation. Available entity types are listed in the class {{< javadocref page="?org/camunda/bpm/engine/EntityTypes.html" text="org.camunda.bpm.engine.EntityTypes" >}}. Like the operation type, one operation may address more than one type of entity.
-* **Category**: The name of the category the operation is associated with. Available categories are listed in the interface {{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html" text="org.camunda.bpm.engine.history.UserOperationLogEntry" >}}. For example, all task related runtime operations like claiming and completing tasks fall into the category {{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html#CATEGORY_TASK_WORKER" text="TaskWorker" >}}.
-* **Annotation**: An arbitrary text annotation set by a user for auditing reasons. Multiple log entries that belong to an operation have the same annotation.
-* **Entity IDs**: A job log entry contains the entity IDs that serve to identify the entities addressed by the operation. For example, an operation log entry on a task contains the id of the task as well as the id of the process instance the task belongs to. As a second example, a log entry for suspending all process instances of a process definition does not contain individual process instance IDs but only the process definition ID.
-* **User ID**: The ID of the user who performed the operation.
-* **Timestamp**: The time at which the operation was performed.
-* **Changed Property**: A user operation may change multiple properties. For example, suspension of a process instance changes the suspension state property. A log entry is created for each changed property involved in an operation.
-* **Old Property Value**: The previous value of the changed property. A  `null` value either indicates that the property was previously `null` or is not known.
-* **New Property Value**: The new value of the changed property.
+* **Operation ID**: 操作ID，唯一地识别执行操作的生成的ID。一个操作的多个条目都会引用相同的操作ID。
+* **Operation Type**: 执行操作的类型。可用的操作类型在{{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html" text="org.camunda.bpm.engine.history.UserOperationLogEntry" >}}中列出。请注意，一个操作可以由多种类型组成，例如，cascading API 操作是一个用户操作，但被分割成多种类型的操作。
+* **Entity Type**: 操作所涉及的实体类型的标识符。可用的实体类型在{{< javadocref page="?org/camunda/bpm/engine/EntityTypes.html" text="org.camunda.bpm.engine.EntityTypes" >}}类中列出。与操作类型一样，一个操作可以处理一个以上的实体类型。
+* **Category**: 该操作所关联的类别的名称。可用的类别在{{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html" text="org.camunda.bpm.engine.history.UserOperationLogEntry" >}}中列出。例如，所有与任务相关的运行时操作，如申请和完成任务，都属于{{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html#CATEGORY_TASK_WORKER" text="TaskWorker" >}}类别 。
+* **Annotation**: 用户因为审核等原因而设置的文本注释。属于一个操作的多个日志条目具有相同的注释。
+* **Entity IDs**: 一个作业日志条目包含实体ID，用于识别作业所涉及的实体。例如，一个任务的操作日志条目包含该任务的ID以及该任务所属的流程实例的ID。作为第二个例子，暂停一个流程定义的所有流程实例的日志条目不包含单个流程实例的ID，而只包含流程定义的ID。
+* **User ID**: 执行该操作的用户的ID。
+* **Timestamp**: 执行操作的时间。
+* **Changed Property**: 用户操作改变的属性。用户操作可以改变多个属性，例如，流程实例的暂停更改了暂停状态属性。为操作中涉及的每个已更改的属性创建日志条目。
+* **Old Property Value**: 更改属性的先前值。如果是`null`，则表示属性以前是`NULL`或未设置。
+* **New Property Value**: 更改属性的新值。
 
-## Annotation of User Operation Logs
+## 用户操作日志的注释
 
-User Operation Logs are helpful to audit manual operations. To make it obvious why a certain 
-operation was performed, sometimes it is not enough to only log technical information (e. g. 
-timestamp, operation type, etc.) but also add an annotation that puts the operation in the right 
-business context.
+用户操作日志对审计人工操作很有帮助。为了让人明白为什么要执行某个操作，有时只记录技术信息（如时间戳、操作类型等）是不够的，还要添加注释，把操作放在正确的业务背景中。
 
-You can directly pass an annotation for the following operations:
+你可以直接为以下操作传递一个注释：
 
-* [Process Instance Modification][op-log-set-annotation-instance-mod]
+* [流程实例修改][op-log-set-annotation-instance-mod]
 
-You can also set an annotation to an operation log which is already present:
+你还可以对一个已存在的操作日志设置注释：
 
-An annotation can be set and cleared via Java API:
+可以通过Java API设置和清除注释：
 
 ```java
 String operationId = historyService.createUserOperationLogQuery()
@@ -486,14 +474,13 @@ historyService.setAnnotationForOperationLogById(operationId, annotation);
 historyService.clearAnnotationForOperationLogById(operationId);
 ```
 
-**Please note:** Annotations are present on all entries that belong to an operation log.
+**请注意:** 注释存在于属于操作日志的所有条目上。
 
-Please also see the REST API reference for [setting][op-log-set-annotation-rest] and 
-[clearing][op-log-clear-annotation-rest] annotations.
+也请参见REST API参考中的[设置][op-log-set-annotation-rest]和[清除][op-log-clear-annotation-rest]注释。
 
-## Glossary of Operations Logged in the User Operation Log
+## 记录在用户操作日志中的操作词汇表
 
-The following describes the operations logged in the user operation log and the entries that are created as part of it:
+下面描述了在用户操作日志中记录的操作，以及作为其一部分创建的条目。
 
 <table class="table table-striped">
   <tr>
@@ -508,7 +495,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-        <li><strong>assignee</strong>: The id of the user who was assigned to the task</li>
+        <li><strong>assignee</strong>: 被分配给任务的用户的ID</li>
       </ul>
     </td>
   </tr>
@@ -518,7 +505,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-        <li><strong>assignee</strong>: The id of the user who claimed the task</li>
+        <li><strong>assignee</strong>: 承接任务的用户的ID</li>
       </ul>
     </td>
   </tr>
@@ -528,7 +515,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-        <li><strong>delete</strong>: The new delete state, <code>true</code></li>
+        <li><strong>delete</strong>: 新的删除状态, <code>true</code></li>
       </ul>
     </td>
   </tr>
@@ -536,18 +523,18 @@ The following describes the operations logged in the user operation log and the 
     <td></td>
     <td>Create</td>
 	<td>TaskWorker</td>
-    <td><i>No additional property is logged</i></td>
+    <td><i>没有记录额外的属性</i></td>
   </tr>
   <tr>
     <td></td>
     <td>Delegate</td>
 	<td>TaskWorker</td>
     <td>
-      When delegating a task, three log entries are created, containing one of the following properties:
+      委派任务时，创建了三个日志条目，其中包含以下属性之一：
       <ul>
-        <li><strong>delegation</strong>: The resulting delegation state, <code>PENDING</code></li>
-        <li><strong>owner</strong>: The original owner of the task</li>
-        <li><strong>assignee</strong>: The user this task has been assigned to</li>
+        <li><strong>delegation</strong>: 由此产生的委托，<code>待办的</code></li>
+        <li><strong>owner</strong>: 任务的原始所有者</li>
+        <li><strong>assignee</strong>: 已分配给此任务的用户</li>
       </ul>
     </td>
   </tr>
@@ -557,7 +544,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-      <li><strong>delete</strong>: The new delete state, <code>true</code></li>
+      <li><strong>delete</strong>: 新的删除状态, <code>true</code></li>
       </ul>
     </td>
   </tr>
@@ -567,7 +554,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-        <li><strong>delegation</strong>: The resulting delegation state, <code>RESOLVED</code></li>
+        <li><strong>delegation</strong>: 由此产生的委托 <code>已完成的</code></li>
       </ul>
     </td>
   </tr>
@@ -577,7 +564,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-        <li><strong>owner</strong>: The new owner of the task</li>
+        <li><strong>owner</strong>: 任务的新拥有者</li>
       </ul>
     </td>
   </tr>
@@ -587,7 +574,7 @@ The following describes the operations logged in the user operation log and the 
 	<td>TaskWorker</td>
     <td>
       <ul>
-        <li><strong>priority</strong>: The new priority of the task</li>
+        <li><strong>priority</strong>: 任务的新优先事项</li>
       </ul>
     </td>
   </tr>
@@ -1504,22 +1491,22 @@ The following describes the operations logged in the user operation log and the 
 </table>
 
 
-# Provide a Custom History Backend
+# 使用自定义历史记录后端
 
-In order to understand how to provide a custom history backend, it is useful to first look at a more detailed view of the history architecture:
+为了理解如何提供一个自定义的历史记录后台，首先看一下历史架构的更详细的介绍是很有用的：
 
 {{< img src="../img/process-engine-history-architecture.png" title="History Architecture" >}}
 
-Whenever the state of a runtime entity is changed, the core execution component of the process engine fires History Events. In order to make this flexible, the actual creation of the History Events as well as populating the history events with data from the runtime structures is delegated to the History Event Producer. The producer is handed in the runtime data structures (such as an ExecutionEntity or a TaskEntity), creates a new History Event and populates it with data extracted from the runtime structures.
+每当运行时实体的状态被改变时，流程引擎的核心执行组件就会触发历史事件。为了使其灵活，历史事件的实际创建以及用运行时结构的数据填充历史事件的工作被委托给历史事件生产者。生产者被交给运行时数据结构（如ExecutionEntity或TaskEntity），创建一个新的历史事件，并用从运行时结构中提取的数据填充它。
 
-The event is next delivered to the History Event Handler which constitutes the *History Backend*. The drawing above contains a logical component named *event transport*. This is supposed to represent the channel between the process engine core component producing the events and the History Event Handler. In the default implementation, events are delivered to the History Event Handler synchronously and inside the same JVM. It is however conceptually possible to send the event stream to a different JVM (maybe running on a different machine) and making delivery asynchronous. A good fit might be a transactional message Queue (JMS).
+该事件接下来被传递到构成*历史后端*的历史事件处理程序。上面的图包含了一个名为*事件传输*的逻辑组件。这应该是代表产生事件的过程引擎核心组件和历史事件处理程序之间的通道。在默认的实现中，事件被同步地传递给历史事件处理程序，并且在同一个JVM中。然而，从概念上讲，有可能将事件流发送到不同的JVM（可能运行在不同的机器上），并使交付成为异步的。一个很好的选择是事务性的消息队列（JMS）。
 
-Once the event has reached the History Event Handler, it can be processed and stored in some kind of datastore. The default implementation writes events to the History Database so that they can be queried using the History Service.
+一旦事件到达历史事件处理程序，它可以被处理并存储在某种数据存储中。默认的实现是将事件写入历史数据库，这样就可以用历史服务来查询它们。
 
-Exchanging the History Event Handler with a custom implementation allows users to plug in a custom History Backend. To do so, two main steps are required:
+将历史事件处理程序换成一个自定义的实现，允许用户插入一个自定义的历史后端。要做到这一点，需要两个主要步骤。
 
-* Provide a custom implementation of the {{< javadocref page="?org/camunda/bpm/engine/impl/history/handler/HistoryEventHandler.html" text="HistoryEventHandler" >}} interface.
-* Wire the custom implementation in the process engine configuration.
+* 提供自定义的 {{< javadocref page="?org/camunda/bpm/engine/impl/history/handler/HistoryEventHandler.html" text="HistoryEventHandler" >}} 接口实现。
+* 在流程引擎配置中配置自定义的实现。
 
 {{< note title="Composite History Handling" class="info" >}}
   Note that if you provide a custom implementation of the HistoryEventHandler and wire it to the process engine, you override the default DbHistoryEventHandler. The consequence is that the process engine will stop writing to the history database and you will not be able to use the history service for querying the audit log. If you do not want to replace the default behavior but only provide an additional event handler, you can use the class `org.camunda.bpm.engine.impl.history.handler.CompositeHistoryEventHandler` that dispatches events to a collection of handlers.
@@ -1530,7 +1517,7 @@ Note that providing your custom `HistoryEventHandler` in a Spring Boot Starter e
 {{< /note >}}
 
 
-# Implement a Custom History Level
+# 实现自定义历史级别
 
 To provide a custom history level the interface `org.camunda.bpm.engine.impl.history.HistoryLevel` has to be implemented. The custom history level implementation
 then has to be added to the process engine configuration, either by configuration or a process engine plugin.
@@ -1607,7 +1594,7 @@ public boolean isHistoryEventProduced(HistoryEventType eventType, Object entity)
 }
 ```
 
-# History Cleanup
+# 历史清理
 
 When used intensively, the process engine can produce a huge amount of historic data. *History Cleanup* is a feature that removes this data based on configurable time-to-live settings.
 
