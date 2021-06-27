@@ -11,14 +11,14 @@ menu:
 ---
 
 
-The process engine is a piece of passive Java code which works in the Thread of the client. For instance, if you have a web application allowing users to start a new process instance and a user clicks on the corresponding button, some thread from the application server's http-thread-pool will invoke the API method `runtimeService.startProcessInstanceByKey(...)`, thus *entering* the process engine and starting a new process instance. We call this "borrowing the client thread".
+流程引擎是一段被动的Java代码，在客户端的线程中工作。例如，如果你有一个允许用户启动一个新的流程实例的Web应用，并且用户点击了相应的按钮，应用服务器的http线程池的一些线程将调用API方法`runtimeService.startProcessInstanceByKey(...)`，从而 *进入* 流程引擎并启动一个新的流程实例。我们把这称为 "借用客户线程"。
 
-On any such *external* trigger (i.e., start a process, complete a task, signal an execution), the engine runtime will advance in the process until it reaches wait states on each active path of execution. A wait state is a task which is performed *later*, which means that the engine persists the current execution to the database and waits to be triggered again. For example in case of a user task, the external trigger on task completion causes the runtime to execute the next bit of the process until wait states are reached again (or the instance ends). In contrast to user tasks, a timer event is not triggered externally. Instead it is continued by an *internal* trigger. That is why the engine also needs an active component, the [job executor]({{< ref "/user-guide/process-engine/the-job-executor.md" >}}), which is able to fetch registered jobs and process them asynchronously.
+在任何这样的 *外部* 触发器上（即启动一个流程、完成一个任务、发出一个执行信号），引擎运行时将在流程中前进，直到它在某个活动的执行路径上到达等待状态。等待状态是指 *稍后* 执行的任务，这意味着引擎会将当前的执行持久化到数据库中，并等待再次被触发。例如，在用户任务的情况下，任务完成时的外部触发会导致运行时执行流程的下一个位，直到再次到达等待状态（或实例结束）。与用户任务不同的是，定时器事件不是由外部触发的。相反，它是由一个 *内部* 的触发器继续的。这就是为什么引擎还需要一个活跃的组件，[job执行器]({{< ref "/user-guide/process-engine/the-job-executor.md" >}})，它能够获取注册的Job并异步处理它们。
 
 
-# Wait States
+# 等待状态
 
- We talked about wait states as transaction boundaries where the process state is stored to the database, the thread returns to the client and the transaction is committed. The following BPMN elements are always wait states:
+我们谈到了作为事务边界的等待状态，在这里，流程状态被存储到数据库，线程返回到客户端，事务被提交。以下的BPMN元素始终是等待状态。
 
 
 <div class="row"><div class="col-xs-12 col-md-6">
@@ -37,80 +37,71 @@ On any such *external* trigger (i.e., start a process, complete a task, signal a
 </div>
 
 
-The [Event Based Gateway]({{< ref "/reference/bpmn20/gateways/event-based-gateway.md" >}}):
+[基于事件的网关]({{< ref "/reference/bpmn20/gateways/event-based-gateway.md" >}}):
 
 <div data-bpmn-diagram="../bpmn/event-based-gateway"></div>
 
-A special type of the [Service Task]({{< ref "/reference/bpmn20/tasks/service-task.md">}}): [External Task]({{< ref "/user-guide/process-engine/external-tasks.md" >}})
+一种特殊类型的[服务任务]({{< ref "/reference/bpmn20/tasks/service-task.md">}}): [外部任务]({{< ref "/user-guide/process-engine/external-tasks.md" >}})
 
 <a href="../external-tasks">{{< bpmn-symbol type="service-task" >}}</a>
 
-Keep in mind that [Asynchronous Continuations]({{< relref "#asynchronous-continuations" >}}) can add transaction boundaries to other tasks as well.
+请记住，[异步延续]({{< relref "#asynchronous-continuations" >}})也可以为其他任务添加事务边界。
 
 
-# Transaction Boundaries
+# 交易边界
 
-The transition from one such stable state to another stable state is always part of a single transaction, meaning that it succeeds as a whole or is rolled back on any kind of exception occuring during its execution. This is illustrated in the following example:
+从一个稳定状态到另一个稳定状态的转换总是单一事务的一部分，这意味着它作为一个整体成功，或者在执行过程中发生任何类型的异常时被回滚。这在下面的例子中得到了说明：
 
 {{< img src="../img/transactions-1.png" title="Transaction Boundaries" >}}
 
-We see a segment of a BPMN process with a user task, a service task and a timer event. The timer event marks the next wait state. Completing the user task and validating the address is therefore part of the same unit of work, so it should succeed or fail atomically. That means that if the service task throws an exception we want to roll back the current transaction, so that the execution tracks back to the user task and the user task is still present in the database. This is also the default behavior of the process engine.
+我们看到一个BPMN流程的片段，有一个用户任务、一个服务任务和一个定时器事件。计时器事件标志着下一个等待状态。因此，完成用户任务和验证地址是同一个工作单元的一部分，所以它应该原子式地成功或失败。这意味着，如果服务任务抛出一个异常，我们要回滚当前的事务，这样执行就会追踪到用户任务，并且用户任务仍然存在于数据库中。这也是流程引擎的默认行为。
 
-In **1**, an application or client thread completes the task. In that same thread the engine runtime is now executing the service task and advances until it reaches the wait state at the timer event (**2**). Then it returns the control to the caller (**3**) potentially committing the transaction (if it was started by the engine).
+在 **1** ，一个应用程序或客户端线程完成了任务。在同一个线程中，引擎运行时现在正在执行服务任务，并一直推进到定时器事件的等待状态（ **2** ）。然后，它将控制权返回给调用者（ **3** ），可能会提交该事务（如果它是由引擎启动的）。
 
 
-# Asynchronous Continuations
+# 异步延续
 
-## Why Asynchronous Continuations?
+## 为什么要异步延续?
 
-In some cases the synchronous behavior is not desired. Sometimes it is useful to have custom control over transaction boundaries in a process.
-The most common motivation is the requirement to scope *logical units of work*. Consider the following process fragment:
+在某些情况下，同步行为是不需要的。有时对流程中的事务边界进行自定义控制是很有用的。
+最常见的动机是对 *逻辑工作单元* 的范围的要求。考虑一下下面的流程片段：
 
 {{< img src="../img/transactions-2.png" title="Asynchronous Continuations" >}}
 
-We are completing the user task, generating an invoice and then sending that invoice to the customer. It can be argued that the generation of the invoice is not part of the same unit of work: we do not want to roll back the completion of the usertask if generating an invoice fails.
-Ideally, the process engine would complete the user task (**1**), commit the transaction and return
-control to the calling application (**2**). In a background thread (**3**), it would generate the invoice.
-This is the exact behavior offered by asynchronous continuations: they allow us to scope transaction
-boundaries in the process.
+我们正在完成用户任务，生成发票，然后将发票发送给客户。可以说，发票的生成不属于同一个工作单元：如果生成发票失败，我们不希望回滚用户任务的完成。
+理想情况下，流程引擎将完成用户任务（**1**），提交事务并将控制权返回给调用的应用程序（**2**）。在一个后台线程（**3**）中，它将生成发票。
+这正是异步延续提供的行为：它们允许我们在流程中确定事务边界的范围。
 
 
-## Configure Asynchronous Continuations
+## 配置异步延续
 
-Asynchronous Continuations can be configured *before* and *after* an activity. Additionally, a
-process instance itself may be configured to be started asynchronously.
+异步延续可以在活动 *之前* 和 *之后* 被配置。此外，流程实例本身也可以被配置为异步启动。
 
-An asynchronous continuation before an activity is enabled using the `camunda:asyncBefore` extension
-attribute:
+使用 `camunda:asyncBefore` 扩展属性可以启用活动前的异步延续：
 
 ```xml
 <serviceTask id="service1" name="Generate Invoice" camunda:asyncBefore="true" camunda:class="my.custom.Delegate" />
 ```
 
-An asynchronous continuation after an activity is enabled using the `camunda:asyncAfter` extension
-attribute:
+使用`camunda:asyncAfter`扩展属性启用一个活动后的异步延续：
 
 ```xml
 <serviceTask id="service1" name="Generate Invoice" camunda:asyncAfter="true" camunda:class="my.custom.Delegate" />
 ```
 
-Asynchronous instantiation of a process instance is enabled using the `camunda:asyncBefore`
-extension attribute on a process-level start event.
-On instantiation, the process instance will be created and persisted in the database, but execution
-will be deferred. Also, execution listeners will not be invoked synchronously. This can be helpful
-in various situations such as [heterogeneous clusters]({{< ref "/user-guide/process-engine/the-job-executor.md#cluster-setups" >}}),
-when the execution listener class is not available on the node that instantiates the process.
+流程实例的异步实例化是使用流程级启动事件上的`camunda:asyncBefore`扩展属性启用的。
+在实例化时，流程实例将被创建并持久化在数据库中，但执行将被推迟。另外，执行监听器将不会被同步调用。这在很多情况下是有帮助的，例如，在[异构集群]({{< ref "/user-guide/process-engine/the-job-executor.md#cluster-setups" >}})中执行监听器类在实例化流程的节点上不可用。
 
 ```xml
 <startEvent id="theStart" name="Invoice Received" camunda:asyncBefore="true" />
 ```
 
 
-## Asynchronous Continuations of Multi-Instance Activities
+## 异步延续多实例活动
 
-A [multi-instance activity]({{< ref "/reference/bpmn20/tasks/task-markers.md#multiple-instances" >}}) can be configured for asynchronous continuation like other activities. Declaring asynchronous continuation of a multi-instance activity makes the multi-instance body asynchronous, that means, the process continues asynchronously *before* the instances of that activity are created or *after* all instances have ended.
+[多实例活动]({{< ref "/reference/bpmn20/tasks/task-markers.md#multiple-instances" >}})可以像其他活动一样被配置为异步延续。声明多实例活动的异步延续使多实例体成为异步的，也就是说，在该活动的实例被创建之 *前* 或所有实例都被结束之 *后* ，该流程会异步地继续。
 
-Additionally, the inner activity can also be configured for asynchronous continuation using the `camunda:asyncBefore` and `camunda:asyncAfter` extension attributes on the `multiInstanceLoopCharacteristics` element:
+此外，内部活动也可以使用 "multiInstanceLoopCharacteristics" 元素上的 "camunda:asyncBefore" 和 "camunda:asyncAfter" 扩展属性配置为异步延续。
 
 ```xml
 <serviceTask id="service1" name="Generate Invoice" camunda:class="my.custom.Delegate">
@@ -120,88 +111,74 @@ Additionally, the inner activity can also be configured for asynchronous continu
 </serviceTask>
 ```
 
-Declaring asynchronous continuation of the inner activity makes each instance of the multi-instance activity asynchronous. In the above example, all instances of the parallel multi-instance activity will be created but their execution will be deferred. This can be useful to take more control over the transaction boundaries of the multi-instance activity or to enable true parallelism in case of a parallel multi-instance activity.
+声明内部活动的异步延续使得多实例活动的每个实例都是异步的。在上面的例子中，并行的多实例活动的所有实例将被创建，但是它们的执行将被推迟。这对于更多地控制多实例活动的事务边界或在并行的多实例活动中启用真正的并行性是很有用的。
 
+## 理解异步延续
 
-## Understand Asynchronous Continuations
-
-To understand how asynchronous continuations work, we first need to understand how an activity is
-executed:
+为了理解异步连续的工作方式，我们首先需要了解活动是如何被执行的：
 
 {{< img src="../img/process-engine-activity-execution.png" title="Asynchronous Continuations" >}}
 
-The above illustration shows how a regular activity which is entered and left by a sequence flow is
-executed:
+上面的图示显示了一个由序列流进入和离开的常规活动是如何执行的：
 
-1. The "TAKE" listeners are invoked on the sequence flow entering the activity.
-2. The "START" listeners are invoked on the activity itself.
-3. The behavior of the activity is executed: the actual behavior depends on the type of the
-   activity: in case of a `Service Task` the behavior consists of invoking [Delegation Code]({{< ref "/user-guide/process-engine/delegation-code.md" >}}), in case of a `User Task`, the behavior consists of creating a `Task` instance in the task list etc...
-4. The "END" listeners are invoked on the activity.
-5. The "TAKE" listeners of the outgoing sequence flow are invoked.
+1. "TAKE" 监听器在进入活动的序列流上被调用。
+2. "START" 监听器被活动本身调用。
+3. 活动的行为被执行：实际的行为取决于活动的类型。
+   如果是 "服务任务"，其行为包括调用[授权代码]({{< ref "/user-guide/process-engine/delegation-code.md" >}})，如果是 "用户任务"，其行为包括在任务列表中创建一个 "任务" 实例等等。
+4. "END" 监听器在活动中被调用。
+5. "TAKE" 监听器在离开序列流上被调用。
 
-Asynchronous Continuations allow putting break points between the execution of the sequence flows
-and the execution of the activity:
+异步延续允许在序列流的执行和活动的执行之间设置保存点。
 
 {{< img src="../img/process-engine-async.png" title="" >}}
 
-The above illustration shows where the different types of asynchronous continuations break the
-execution flow:
+上面的图例显示了不同类型的异步延续会在哪里保存流程执行。
 
-* An asynchronous continuation BEFORE an activity breaks the execution flow between the invocation
-  of the incoming sequence flow's TAKE listeners and the execution of the activity's START
-listeners.
-* An asynchronous continuation AFTER an activity breaks the execution flow between the invocation of
-  the activity's END listeners and the outgoing sequence flow's TAKE listeners.
+* 在活动之前的异步延续打破了调用传入序列流的TAKE监听器和执行活动的START监听器之间的执行流程。
+* 活动之后的异步延续打破了活动的END监听器的调用和流出的序列流的TAKE监听器之间的执行流程。
 
-Asynchronous continuations directly relate to transaction boundaries: putting an asynchronous
-continuation before or after an activity creates a transaction boundary before or after the activity:
+异步延续与事务边界直接相关：把异步延续放在一个活动之前或之后，在该活动之前或之后创建一个事务边界。
 
 {{< img src="../img/process-engine-async-transactions.png" title="" >}}
 
-What's more, asynchronous continuations are always executed by the [Job
-Executor]({{< ref "/user-guide/process-engine/the-job-executor.md" >}}).
+更重要的是，异步延续总是由[Job执行器]({{< ref "/user-guide/process-engine/the-job-executor.md" >}})执行。
 
 
-# Rollback on Exception
+# 异常回滚
 
-We want to emphasize that in case of a non handled exception, the current transaction gets rolled back and the process instance is in the last wait state (save point). The following image visualizes that.
+我们想强调的是，如果出现未处理的异常，当前事务会被回滚，流程实例回滚到最后的等待状态（保存点）。下面的图片直观地表明了这一点。
 
 {{< img src="../img/transactions-3.png" title="Rollback" >}}
 
-If an exception occurs when calling `startProcessInstanceByKey` the process instance will not be saved to the database at all.
+如果在调用 `startProcessInstanceByKey` 时发生异常，流程实例将根本不会被保存到数据库。
 
 
-# Reasoning for This Design
+# 这样设计的理由
 
-The above sketched solution normally leads to discussion, as people expect the process engine to stop in case the task caused an exception. Also, other BPM suites often implement every task as a wait state. However, this approach has a couple of **advantages**:
+上述异常的解决方案通常会引起讨论，因为人们希望在任务引起异常的情况下，流程引擎能够停止。另外，其他BPM平台通常将每个任务实现为等待状态。然而，我们这种方法有以下几个 **优点** ：
 
- * In test cases you know the exact state of the engine after the method call, which makes assertions on process state or service call results easy.
- * In production code the same is true; allowing you to use synchronous logic if required, for example because you want to present a synchronous user experience in the front-end.
- * The execution is plain Java computing which is very efficient in terms of performance.
- * You can always switch to 'asyncBefore/asyncAfter=true' if you need different behavior.
+ * 在测试案例中，你知道方法调用后引擎的确切状态，这使得对流程状态或服务调用结果的断言变得容易。
+ * 在生产代码中也是如此；如果需要的话，允许你使用同步逻辑，例如因为你想在前端呈现一个同步的用户提示。
+ * 执行是普通的Java计算，在优化性能方面非常有效。
+ * 如果你需要不同的行为，你可以随时切换到 'asyncBefore/asyncAfter=true' 。
 
-However, there are consequences which you should keep in mind:
+然而，有一些后果你应该记住：
 
- * In case of exceptions, the state is rolled back to the last persistent wait state of the process instance. It might even mean that the process instance will never be created! You cannot easily trace the exception back to the node in the process causing the exception. You have to handle the exception in the client.
- * Parallel process paths are not executed in parallel in terms of Java Threads, the different paths are executed sequentially, since we only have and use one Thread.
- * Timers cannot fire before the transaction is committed to the database. Timers are explained in more detail later, but they are triggered by the only active part of the Process Engine where we use own Threads: The Job Executor. Hence they run in an own thread which receives the due timers from the database. However, in the database the timers are not visible before the current transaction is visible. So the following timer will never fire:
+ * 在出现异常的情况下，状态会回滚到流程实例的最后一个持久性等待状态。这甚至可能意味着流程实例将永远不会被创建! 你不能轻易地将异常追溯到流程中导致异常的节点。你必须在客户端处理这个异常。
+ * 并行的流程路径不是以Java线程的方式并行执行的，不同的路径是按顺序执行的，因为我们只有并使用一个线程。
+ * 计时器在事务提交到数据库之前不能启动。计时器在后面会有更详细的解释，但它们是由我们唯一使用单独线程的活动部分：Job执行器。它们在一个自己的线程中运行，从数据库中接收到期的计时器。然而，在数据库中，计时器在当前事务可见之前是不可见的。因此，下面的计时器将永远不会启动：
 
 {{< img src="../img/NotWorkingTimerOnServiceTimeout.png" title="Not Working Timeout" >}}
 
 
-# Transaction Integration
+# 事务集成
 
-The process engine can either manage transactions on its own ("Standalone" transaction management)
-or integrate with a platform transaction manager.
+流程引擎既可以自己管理事务（"独立"事务管理），也可以与平台事务管理器集成。
 
 
-## Standalone Transaction Management
+## 独立的事务管理器
 
-If the process engine is configured to perform standalone transaction management, it always opens a
-new transaction for each command which is executed. To configure the process engine to use
-standalone transaction management, use the
-`org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration`:
+如果流程引擎被配置为执行独立的事务管理，它总是为每个被执行的命令打开一个新事务。要配置流程引擎使用独立的事务管理，请使用`org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration`。
 
 ```java
 ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration()
@@ -209,70 +186,43 @@ ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration()
   .buildProcessEngine();
 ```
 
-The use cases for standalone transaction management are situations where the process engine does not
-have to integrate with other transactional resources such as secondary datasources or messaging
-systems.
+独立事务管理的用例是流程引擎不必与其他事务性资源（如二级数据源或消息系统）集成的情况。
 
 {{< note title="" class="info" >}}
-  In the Tomcat distribution the process engine is configured using standalone transaction management.
+在Tomcat发行版中，流程引擎是使用独立的事务管理来配置的。
 {{< /note >}}
 
 
-## Transaction Manager Integration
+## 事务管理器集成
 
-The process engine can be configured to integrate with a transaction manager (or transaction
-management systems). Out of the box, the process engine supports integration with Spring and JTA
-transaction management. More information can be found in the following chapters:
+流程引擎可以被配置为与事务管理器（或事务管理系统）集成。开箱即用，流程引擎支持与Spring和JTA事务管理的集成。更多信息可以在下面的章节中找到。
 
 * [Section on Spring Transaction Management][tx-spring]
 * [Section on JTA Transaction Management][tx-jta]
 
-The use cases for transaction manager integration are situations where the process engine needs to
-integrate with
+例如，当流程引擎需要与以下方面集成时，需要集成事务管理器：
 
-* Transaction focused programming models such as Java EE or Spring (think about transaction scoped
-  JPA entity managers in Java EE),
-* Other transactional resources such as secondary datasources, messaging systems or other
-  transactional middleware like the web services stack.
+* 注重事务的编程模型，如Java EE或Spring（Java EE中的事务范围JPA实体管理器）。
+* 其他事务性资源，如二级数据源、消息传递系统或其他事务性中间件，如Web服务栈。
   
 {{< note title="" class="warning" >}}
-  When you configure a transaction manager, make sure that it actually manages the data source that
-  you have configured for the process engine. If that is not the case, the data source works in auto-commit mode. 
-  This can lead to inconsistencies in the database, because transaction commits and rollbacks are no longer performed.
+  当你配置一个事务管理器时，确保它实际管理着你为流程引擎配置的数据源。如果不是这样的话，数据源就会在自动提交模式下工作。 
+  这可能导致数据库中的不一致，因为不再执行事务提交和回滚。
 {{< /note >}}
 
 
 [tx-spring]: {{< ref "/user-guide/spring-framework-integration/transactions.md" >}}
 [tx-jta]: {{< ref "/user-guide/cdi-java-ee-integration/jta-transaction-integration.md" >}}
 
-## Transactions and the Process Engine Context
+## 事务与流程引擎上下文
 
-When a Process Engine Command is executed, the engine
-will create a Process Engine Context. The Context caches database
-entities, so that multiple operations on the same entity do not
-result in multiple database queries. This also means that the changes
-to these entities are accumulated and are flushed to the database
-as soon as the Command returns. However, it should be noted that the 
-current transaction may be committed at a later time.
+当一个流程引擎命令被执行时，引擎将创建一个流程引擎上下文。Context缓存了数据库实体，因此对同一实体的多次操作不会导致多次数据库查询。这也意味着对这些实体的改变会被累积起来，并在命令返回后立即被刷新到数据库。然而，应该注意的是，当前的事务可能会在以后的时间提交。
 
-If a Process Engine Command is nested into another Command, i.e. a Command
-is executed within another command, the default behaviour is to reuse the 
-existing Process Engine Context. This means that the nested Command will 
-have access to the same cached entities and the changes made to them.
+如果一个流程引擎命令被嵌套到另一个命令中，即一个命令在另一个命令中执行，默认行为是重复使用现有的流程引擎上下文。这意味着嵌套的命令将可以访问相同的缓存实体和对它们所做的更改。
 
-When the nested Command is to be executed in a new transaction, a new Process
-Engine Context needs to be created for its execution. In this case, the nested 
-Command will use a new cache for the database entities, independent of the 
-previous (outer) Command cache. This means that, the changes in the cache of
-one Command are invisible to the other Command and vice versa. When the nested
-Command returns, the changes are flushed to the database independently of the 
-Process Engine Context of the outer Command.
+当嵌套的命令要在一个新的事务中执行时，需要为其执行创建一个新的流程引擎上下文。在这种情况下，嵌套命令将为数据库实体使用一个新的缓存，独立于先前（外部）命令缓存。这意味着，一个命令的缓存中的变化对另一个命令是不可见的，反之亦然。当嵌套命令返回时，这些变化被刷入数据库，与外部命令的流程引擎上下文无关。
 
-The `ProcessEngineContext` utility class can be used to declare to
-the Process Engine that a new Process Engine Context needs to be created
-in order for the database operations in a nested Process Engine Command
-to be separated in a new transaction. The following `Java` code example 
-shows how the class can be used:
+`ProcessEngineContext` 工具类可以用来向流程引擎声明，需要创建一个新的流程引擎上下文，以便在一个新的事务中分离嵌套流程引擎命令中的数据库操作。下面的`Java`代码例子显示了如何使用该类：
 
 ```java
 try {
@@ -291,22 +241,21 @@ try {
 }
 ```
 
-# Optimistic Locking
+# 乐观锁
 
-The Camunda Engine can be used in multi threaded applications. In such a setting, when multiple threads interact with the process engine concurrently, it can happen that these threads attempt to do changes to the same data. For example: two threads attempt to complete the same User Task at the same time (concurrently). Such a situation is a conflict: the task can be completed only once.
+Camunda引擎可以用于多线程的应用中。在这样的环境中，当多个线程与流程引擎并发互动时，可能会发生这些线程试图对相同的数据做改变。例如：两个线程试图在同一时间（并发地）完成同一个用户任务。这种情况是一种冲突：任务只能完成一次。
 
-Camunda Engine uses a well known technique called "Optimistic Locking" (or Optimistic Concurrently Control) to detect and resolve such situations.
+Camunda引擎使用一种众所周知的技术 "乐观锁"（或乐观并发控制）来检测和解决这种情况。
 
-This section is structured in two parts: The first part introduces Optimistic Locking as a concept. You can skip this section in case you are already familiar with Optimistic Locking as such. The second part explains the usage of Optimistic Locking in Camunda.
+本节的结构分为两部分。第一部分介绍了乐观锁的概念。如果你已经熟悉乐观锁的概念，可以跳过这一部分。第二部分解释了乐观锁定在Camunda中的应用。
 
-## What is Optimistic Locking?
+## 什么是乐观锁？
 
-Optimistic Locking (also Optimistic Concurrency Control) is a method for concurrency control, which is used in
-transaction based systems. Optimistic Locking is most efficient in situations in which data is read more frequently than it is changed. Many threads can read the same data objects at the same time without excluding each other. Consistency is then ensured by detecting conflicts and preventing updates in situations in which multiple threads attempt to change the same data objects concurrently. If such a conflict is detected, it is ensured that only one update succeeds and all others fail.
+乐观锁定（也称为乐观并发控制）是一种并发控制的方法，在基于事务的系统中使用。在数据被读取的频率高于数据被改变的频率的情况下，乐观锁是最有效的。许多线程可以在同一时间读取相同的数据对象而不互相排斥。在多个线程试图同时改变同一数据对象的情况下，通过检测冲突和防止更新来确保一致性。如果检测到这样的冲突，就可以确保只有一个更新成功，其他的都失败。
 
-### Example
+### 案例
 
-Assume we have a database table with the following entry:
+假设我们有一个数据库表，其条目如下：
 
   <table border="1" width="400" align="center" class="table table-condensed">
     <tr>
@@ -332,89 +281,88 @@ Assume we have a database table with the following entry:
     </tr>
   </table>
 
-The above table shows a single row holding user data. The user has a unique Id (primary key), a version, a name and a current address.
+上表显示的是持有用户数据的单行。该用户有一个唯一的ID（主键），一个版本，一个名字和一个当前地址。
 
-We now construct a situation in which 2 transactions attempt to update this entry, one attempting to change the address, the other one attempting to delete the user. The intended behavior is that once of the transactions succeeds and the other is aborted with an error indicating that a concurrency conflict was detected. The user can then decide to retry the transaction based on the latest state of the data:
+我们现在设想这样一个情况，有两个事务试图更新这个条目，一个试图改变地址，另一个试图删除用户。预期的行为是，其中一个事务成功，另一个事务被中止，并出现一个错误，表明检测到并发冲突。然后，用户可以根据数据的最新状态决定是否重试该事务。
 
 {{< img src="../img/optimisticLockingTransactions.png" title="Transactions with Optimistic Locking" >}}
 
-As you can see in the picture above, `Transaction 1` reads the user data, does something with the data, deletes the user and then commits.
-`Transaction 2` starts at the same time and reads the same user data, and also works on the data. When `Transaction 2` attempts to update the user address a conflict is detected (since `Transaction 1` has already deleted the user).
+正如你在上图中看到的，`Transaction 1` 读取用户数据，对数据做一些处理：删除用户，然后提交。
+`Transaction 2` 在同一时间启动，读取相同的用户数据，并对数据进行处理。当 `Transaction 2` 试图更新用户地址时，发现有冲突（因为 `Transaction 1` 已经删除了用户）。
 
-The conflict is detected because the current state of the user data is read when `Transaction 2` performs the update. At that time, the concurrent `Transaction 1` has already marked the row to be deleted. The database now waits for `Transaction 1` to end. After it is ended, `Transaction 2 ` can proceed. At this time, the row does not exist anymore and the update succeeds but reports to have changed `0` rows. An application can react to this and rollback `Transaction 2` to prevent other changes made by that transaction to become effective.
+检测到冲突是因为当 `Transaction 2` 执行更新时，用户数据的当前状态被读取。在那个时候，并发的 `Transaction 1` 已经标记了要删除的行。数据库现在等待 `Transaction 1` 的结束。在它结束后，`Transaction 2` 可以继续执行。在这个时候，该行已经不存在了，更新成功，但是报告说已经改变了`0`行。应用程序可以对此做出反应，回滚`Transaction 2`，以防止该交易的其他更改生效。
 
-The application (or the user using it) can further decide whether `Transaction 2` should be retried. In our example, the transaction would then not find the user data and report that the user has been deleted.
+应用程序（或使用它的用户）可以进一步决定是否应该重试 `Transaction 2`。在我们的例子中，该事务将不会找到用户数据，并报告说用户已被删除。
 
-### Optimistic Locking vs. Pessimistic Locking
+### 乐观锁 vs 悲观锁
 
-Pessimistic Locking works with read locks. A read lock locks a data object on read, preventing other concurrent transactions from reading it as well. This way, conflicts are prevented from occurring.
+悲观锁与读取锁一起使用。读取锁在读取时锁定一个数据对象，防止其他并发事务也读取它。这样，冲突就不会发生了。
 
-In the example above, `Transaction 1` would lock the user data once it reads it. When attempting to read is as well, `Transaction 2` is blocked from making progress. Once `Transaction 1` completes, `Transaction 2` can progress and reads the latest state. This way conflicts are prevented as transactions always exclusively work on the latest state of data.
+在上面的例子中，`Transaction 1` 一旦读取用户数据，就会锁定它。当`Transaction 2`试图读取时，`Transaction 2`会被阻止，无法继续。一旦 `Transaction 1` 完成，`Transaction 2` 就可以继续并读取最新的状态。这种方式可以防止冲突，因为事务总是只在数据的最新状态上工作。
 
-Pessimistic Locking is efficient in situations where writes are as frequent as reads and with high contention.
+悲观锁在写和读一样频繁且竞争激烈的情况下是有效的。
 
-However, since pessimistic locks are exclusive, concurrency is reduced, degrading performance. Optimistic Locking, which detects conflicts rather than preventing them to occur, is therefore preferable in the context of high levels of concurrency and where reads are more frequent than writes. Also, Pessimistic Locking can quickly lead to deadlocks.
+然而，由于悲观锁是排他性的，并发性降低，性能下降。因此，乐观锁，检测冲突而不是防止冲突发生，在高并发水平和读比写更频繁的情况下，是更可取的。另外，悲观锁会很快导致死锁。
 
-### Further Reading
+### 进一步学习
 
-* [\[1\] Wikipedia: Optimistic concurrency control](https://en.wikipedia.org/wiki/Optimistic_concurrency_control)
-* [\[2\] Stackoverflow: Optimistic vs. Pessimistic Locking](http://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking)
+* [\[1\] 维基百科: 乐观锁](https://en.wikipedia.org/wiki/Optimistic_concurrency_control)
+* [\[2\] Stackoverflow: 乐观锁 vs 悲观锁](http://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking)
 
-## Optimistic Locking in Camunda
+## Camunda的乐观锁
 
-Camunda uses Optimistic Locking for concurrency control. If a concurrency conflict is detected, 
-an exception is thrown and the transaction is rolled back. Conflicts are detected when _UPDATE_ or _DELETE_ statements are executed. 
-The execution of delete or update statements return an affected rows count. 
-If this count is equal to zero, it indicates that the row was previously updated or deleted.
-In such cases a conflict is detected and an `OptimisticLockingException` is thrown.
+Camunda使用乐观锁来控制并发性。如果检测到并发性冲突，就会抛出一个异常，并回滚该事务。当 _UPDATE_ 或 _DELETE_ 语句被执行时，会检测冲突。
+删除或更新语句的执行会返回一个受影响的行数。
+如果这个计数等于0，表明该行以前被更新或删除。
+在这种情况下，会检测到冲突并抛出一个 "OptimisticLockingException"。
 
-### The OptimisticLockingException
+### OptimisticLockingException 异常
 
-The `OptimisticLockingException` can be thrown by API methods.
-Consider the following invocation of the `completeTask(...)` method:
+`OptimisticLockingException` 可以通过API请求抛出。
+考虑下面对 `completeTask(...)` 方法的调用：
 
 ```java
-taskService.completeTask(aTaskId); // may throw OptimisticLockingException
+taskService.completeTask(aTaskId); // 可能会抛出 OptimisticLockingException
 ```
-The above method may throw an `OptimisticLockingException` in case executing the method call leads to concurrent modification of data.
+上述方法可能会抛出一个 "OptimisticLockingException"，如果执行该方法调用导致并发修改数据。
 
-Job execution can also cause an `OptimisticLockingException` to be thrown. Since this is expected, the execution will be retried.
+Job的执行也可能导致抛出 "OptimisticLockingException"。因为这是预料之中的，所以执行将被重试。
 
-#### Handling Optimistic Locking exceptions
+#### 处理乐观锁异常
 
-In case the current Command is triggered by the Job Executor, `OptimisticLockingException`s are handled automatically using retries. Since this exception is expected to occur, it does not decrement the retry count.
+如果当前的命令是由Job执行器触发的，"OptimisticLockingException" 会自动使用重试来处理。由于这种异常预计会发生，它不会减少重试次数。
 
-If the current Command is triggered by an external API call, the Camunda Engine rolls back the current transaction to the last save point (wait state). Now the user has to decide how the exception should be handled, if the transaction should be retried or not. Also consider that even if the transaction was rolled back, it may have had non-transactional side effects which have not been rolled back.
+如果当前命令是由外部API调用触发的，Camunda引擎会将当前事务回滚到最后的保存点（等待状态）。现在，用户必须决定如何处理这个异常，是否应该重试事务。还要考虑到，即使事务被回滚，它也可能有非事务的副作用，而这些副作用并没有被回滚。
 
-To control the scope of transactions, explicit save points can be added before and after activities using Asynchronous Continuations.
+为了控制事务的范围，可以使用异步延续在活动前后添加显式保存点。
 
-### Common Places Where Optimistic Locking Exceptions Are Thrown
+### 抛出乐观锁异常的共同点
 
-There a some common places where an `OptimisticLockingException` can be thrown.
-For example
+有一些常见的地方可以抛出 "OptimisticLockingException"。
+例如：
 
-* Competing external requests: completing the same task twice, concurrently.
-* Synchronization points inside a process: Examples are parallel gateway, multi instance, etc.
+* 竞争的外部请求：同时完成同一任务两次。
+* 一个流程内部的同步点。例子有并行网关、多实例，等等。
 
-The following model shows a parallel gateway, on which the `OptimisticLockingException` can occur.
+下面的模型显示了一个并行网关，在这个网关上可能会发生`OptimisticLockingException`。
 
 {{< img src="../img/optimisticLockingParallel.png" title="Optimistic Locking in parallel gateway" >}}
 
-There are two user tasks after the opening parallel gateway. The closing parallel gateway, after the user tasks, merges the executions to one.
-In most cases, one of the user tasks will be completed first. Execution then waits on the closing parallel gateway until the second user task is completed.
+在打开并行网关后有两个用户任务。在两个用户任务完成后，会关闭并行网关，将执行的任务合并为一个。
+在大多数情况下，其中一个用户任务将首先完成。然后执行在关闭的并行网关上等待，直到第二个用户任务完成。
 
-However, it is also possible that both user tasks are completed concurrently. Say the user task above is completed. The transaction assumes he is the first on the closing parallel gateway.
-The user task below is completed concurrently and the transaction also assumes he is the first on the closing parallel gateway.
-Both transactions try to update a row, which indicates that they are the first on the closing parallel gateway. In such cases an `OptimisticLockingException` is thrown. One of the transactions is rolled back and the other one succeeds to update the row.
+然而，也有可能两个用户任务都是同时完成的。假设上面的用户任务已经完成。事务假定他是关闭的并行网关上的第一个。
+下面的用户任务同时完成，事务也认为他是关闭的并行网关上的第一个。
+两个事务都试图更新一行，这表明他们是关闭的并行网关上的第一个。在这种情况下，会抛出 "OptimisticLockingException"。其中一个事务被回滚，另一个成功地更新了该行。
 
-### Optimistic Locking and Non-Transactional Side Effects
+### 乐观锁与非事务副作用
 
-After the occurrence of an `OptimisticLockingException`, the transaction is rolled back. Any transactional work will be undone.
-Non-transactional work like creation of files or the effects of invoking non-transactional web services will not be undone. This can end in inconsistent state.
+在发生 "OptimisticLockingException" 后，事务被回滚。任何事务性工作都将被撤销。
+非事务性工作，如创建文件或调用非事务性网络服务的效果将不会被撤销。这可能会导致不一致的状态。
 
-There are several solutions to this problem, the most common one is eventual consolidation using retries.
+这个问题有几个解决方案，最常见的是在重试时合并。
 
-### Internal Implementation Details
+### 内部实现细节
 
-Most of the Camunda Engine database tables contain a column called `REV_`. This column represents the revision version.
-When reading a row, data is read at a given "revision". Modifications (UPDATEs and DELETEs) always attempt to update the revision which was read by the current command. Updates increment the revision. After executing a modification statement, the affected rows count is checked. If the count is `1` it is deduced that the version read was still current when executing the modification. In case the affected rows count is `0`, other transaction modified the same data while this transaction was running. This means that a concurrency conflict is detected and this transaction must not be allowed to commit. Subsequently, the transaction is rolled back (or marked rollback-only) and an `OptimisticLockingException` is thrown.
+大多数Camunda引擎的数据库表都包含一个叫做 "REV_" 的列。这一列表示修订版本。
+当读取一行时，数据是在给定的 "修订版" 下读取的。修改（UPDATEs和DELETEs）总是试图更新当前命令所读取的版本。更新会增加版本。在执行一个修改语句后，会检查受影响的行数。如果计数为`1`，则推断出在执行修改时读取的版本仍然是当前版本。如果受影响的行数是`0`，那么其他事务在这个事务运行时修改了相同的数据。这意味着检测到了一个并发冲突，这个事务不能被允许提交。随后，该事务被回滚（或标记为只回滚），并抛出一个`OptimisticLockingException`。
