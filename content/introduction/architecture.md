@@ -22,7 +22,7 @@ Camunda平台既可以作为一个独立的流程引擎服务器使用，也可�
 
 * [流程引擎公共API]({{< ref "/user-guide/process-engine/process-engine-api.md" >}})： 面向服务的API允许Java应用程序与流程引擎交互。流程引擎的不同部分（即流程存储库、运行时的流程交互、任务管理等）被分离到各个服务中。公共API具有[命令式访问模式](http://en.wikipedia.org/wiki/Command_pattern)的特点：进入流程引擎的流程要经过一个命令拦截器，该拦截器用于设置流程上下文。
 * **BPMN 2.0 核心引擎**: 这是流程引擎的核心。它有一个轻量级的图结构执行引擎（PVM - Process Virtual Machine），一个将BPMN 2.0 XML文件转化为Java对象的BPMN 2.0解析器，以及一套BPMN行为实现（为BPMN 2.0结构提供实现，如网关或服务任务）。
-* [Job 执行器]({{< ref "/user-guide/process-engine/the-job-executor.md" >}}): Job执行者负责处理异步的后台工作，如流程中的定时器或异步连续。
+* [Job 执行器]({{< ref "/user-guide/process-engine/the-job-executor.md" >}}): Job执行者负责处理异步的后台工作，如流程中的定时器或异步延续。
 * **持久层**: 流程引擎有一个持久层，负责将流程实例状态持久化到关系数据库中。我们使用MyBatis映射引擎来实现对象的关系映射。
 
 

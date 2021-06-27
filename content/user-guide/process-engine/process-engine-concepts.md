@@ -211,7 +211,7 @@ runtimeService.createExecutionQuery()
 
 例如:
 
-* 并行网关后有两个并行用户任务的进程：
+* 并行网关后有两个并行用户任务的流程：
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/parallelGateway_two_userTasks"></div>
 
@@ -221,7 +221,7 @@ ProcessInstance
   ship order
 ```
 
-* 在并行网关后有两个并行的多实例用户任务的进程：
+* 在并行网关后有两个并行的多实例用户任务的流程：
 
 <div data-bpmn-diagram="guides/user-guide/process-engine/activity-instances/parallelGateway_two_multiInstance_userTasks"></div>
 

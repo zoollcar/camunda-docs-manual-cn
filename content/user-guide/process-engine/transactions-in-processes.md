@@ -115,7 +115,7 @@ menu:
 
 ## 理解异步延续
 
-为了理解异步连续的工作方式，我们首先需要了解活动是如何被执行的：
+为了理解异步延续、的工作方式，我们首先需要了解活动是如何被执行的：
 
 {{< img src="../img/process-engine-activity-execution.png" title="Asynchronous Continuations" >}}
 
