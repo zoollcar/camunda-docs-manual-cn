@@ -11,7 +11,7 @@ menu:
 
 本节文档描述了如何在[CockroachDB数据库](https://www.cockroachlabs.com/)中使用Camunda流程引擎。
 
-CockroachDB是一个高度可扩展的SQL数据库，作为一个分布式系统运行。因此，与其他Camunda支持的数据库相比，它有不同的要求和行为。出于这个原因，我们调整了进程引擎的行为，并增加了一些额外的机制，以确保进程引擎能够在CockroachDB上正确运行。
+CockroachDB是一个高度可扩展的SQL数据库，作为一个分布式系统运行。因此，与其他Camunda支持的数据库相比，它有不同的要求和行为。出于这个原因，我们调整了流程引擎的行为，并增加了一些额外的机制，以确保流程引擎能够在CockroachDB上正确运行。
 
 # 连接到 CockroachDB
 

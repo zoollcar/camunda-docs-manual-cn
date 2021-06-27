@@ -267,7 +267,7 @@ ActivityInstance activityInstance = runtimeService.getActivityInstance(processIn
 ActivityInstance assessCreditWorthinessInstances = activityInstance.getActivityInstances("assessCreditWorthiness")[0];
 ```
 
-与活动实例相比，*过渡实例* 不代表正在执行的活动，而是代表即将进入或即将离开的活动。当异步继续的job存在但尚未被执行时就是这种情况。对于一个活动实例，可以用`getChildTransitionInstances` 方法查询子过渡实例，过渡实例的API与活动实例的API类似。
+与活动实例相比，*过渡实例* 不代表正在执行的活动，而是代表即将进入或即将离开的活动。当异步延续的job存在但尚未被执行时就是这种情况。对于一个活动实例，可以用`getChildTransitionInstances` 方法查询子过渡实例，过渡实例的API与活动实例的API类似。
 
 
 ## 嵌套实例化

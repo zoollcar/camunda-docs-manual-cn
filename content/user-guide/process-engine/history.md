@@ -344,7 +344,7 @@ historyService
 
 `startedBefore` 和 `startedAfter` 使用 `java.util.Date` (弃用) 或 `java.util.Calendar` 对象作为输入。
 
-例如，人们可以查询从现在之前启动的所有历史进程实例并获得他们的持续时间：
+例如，人们可以查询从现在之前启动的所有历史流程实例并获得他们的持续时间：
 
  ```java
 Calendar calendar = Calendar.getInstance();

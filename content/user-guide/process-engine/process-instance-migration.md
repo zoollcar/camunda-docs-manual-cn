@@ -501,7 +501,7 @@ MigrationPlan migrationPlan = processEngine.getRuntimeService()
 当迁移与上例相同的流程实例状态时，在 *Archive Application* 活动上的内部补偿事件将 **不会触发** ，只会触发外部补偿事件。
 
 {{< note title="积极补偿" class="info" >}}
-  目前还不支持迁移具有活动补偿处理程序的进程实例。
+  目前还不支持迁移具有活动补偿处理程序的流程实例。
 {{< /note >}}
 
 

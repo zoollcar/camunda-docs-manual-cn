@@ -282,7 +282,7 @@ ActivityInstance rootActivityInstance = runtimeService.getActivityInstance(proce
 
 Camunda流程引擎包括一个名为“Job执行器（Job Executor）”的组件。Job执行器是一个调度组件，负责执行异步的后台Job。用定时器事件的例子：每当流程引擎到达定时器事件时，它将停止执行，将当前状态持久化到数据库，并创建一个Job以在未来恢复执行。一个Job有一个到期时间，这个到期时间是使用BPMN XML中提供的定时器表达式计算的。
 
-当一个流程被部署时，流程引擎为流程中的每个活动创建一个Job定义，该定义将在运行时创建Job。这允许你在流程中查询关于计时器和异步继续的信息。
+当一个流程被部署时，流程引擎为流程中的每个活动创建一个Job定义，该定义将在运行时创建Job。这允许你在流程中查询关于计时器和异步延续的信息。
 
 
 ## 查询jobs
@@ -308,7 +308,7 @@ managementService.createJobDefinitionQuery()
   .list()
 ```
 
-返回结果中将包含目标流程中所有定时器和异步继续的信息。
+返回结果中将包含目标流程中所有定时器和异步延续的信息。
 
 也可以使用REST API查询Job定义。
 
@@ -320,9 +320,9 @@ managementService.createJobDefinitionQuery()
 * Job实例级别：单个Job可以通过`managementService.suspendJob(..)` API直接暂停，或者在暂停一个流程实例或Job定义时过渡性地暂停。
 * Job定义级别：某个定时器或活动的所有实例可以被暂停。
 
-通过对Job定义的暂停Job允许你暂停某个定时器或异步继续的所有实例。直观地说，这允许你暂停流程中的某个活动，其方式是所有的流程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
+通过对Job定义的暂停Job允许你暂停某个定时器或异步延续的所有实例。直观地说，这允许你暂停流程中的某个活动，其方式是所有的流程实例都会执行到它们达到这个活动，然后就因为活动被暂停而不再继续了。
 
-让我们假设有一个以 "orderProcess" 为关键字部署的流程，它包含一个名为 "processPayment" 的服务任务。该服务任务配置了一个异步继续，导致它被Job执行器执行。下面的例子显示了如何防止 "processPayment"服务被执行：
+让我们假设有一个以 "orderProcess" 为关键字部署的流程，它包含一个名为 "processPayment" 的服务任务。该服务任务配置了一个异步延续，导致它被Job执行器执行。下面的例子显示了如何防止 "processPayment"服务被执行：
 
 ```java
 List<JobDefinition> jobDefinitions = managementService.createJobDefinitionQuery()
