@@ -11,40 +11,33 @@ menu:
 ---
 
 
-All persistent entities managed by the process engine (Process Instances, Tasks, ...) have unique
-Ids. These Ids uniquely identify an individual task, process instance, etc. When these entities are
-persisted to the database, the ids are used as primary keys in the corresponding database tables.
+由流程引擎管理的所有持久性实体（流程实例、任务......）都有唯一的Ids。这些Ids唯一地标识一个单独的任务、流程实例等。当这些实体被持久化到数据库时，这些ID被用作相应数据库表中的主键。
 
-Out of the box, the process engine provides two Id generator implementations.
+开箱即用，流程引擎提供了两种Id生成器的实现：
 
 
-# The Database Id Generator
+# 数据库ID生成器
 
-The Database Id Generator is implemented using a sequence Generator on top of the `ACT_GE_PROPERTY`
-table.
+数据库标识生成器是在`ACT_GE_PROPERTY`表的基础上使用序列生成器实现的。
 
-This id generator is good for debugging and testing since it generates human readable ids.
+这个ID生成器有利于调试和测试，因为它生成了人类可读的ID。
 
 {{< note title="" class="warning" >}}
-  The Database Id Generator should **never** be used in production since it cannot handle high levels of concurrency.
+  数据库标识生成器 **不应该** 在生产环境中使用，因为它不具有高并发性。
 {{< /note >}}
 
 
-# The UUID Generator
+# UUID生成器
 
-The StrongUuidGenerator uses a UUID generator which uses the [Java UUID Generator (JUG)][1] library
-internally.
+StrongUuidGenerator使用一个UUID生成器，它在内部使用[Java UUID Generator(JUG)][1]库。
 
 {{< note title="" class="warning" >}}
-  Always use the StrongUuidGenerator for production setups.
+  在生产环境始终使用UUID生成器。
 {{< /note >}}
 
-In the [Camunda Platform Full Distributions][2], the
-StrongUuidGenerator is preconfigured and the default Id Generator used by the process engine.
+在[Camunda Platform Full Distributions][2]中，StrongUuidGenerator被预设为流程引擎所使用的默认Id 生成器。
 
-If you use an embedded process engine configuration and configure the process engine using Spring,
-you need to add the following lines to the Spring configuration to enable the
-`StrongUuidGenerator`:
+如果你使用嵌入式流程引擎配置并使用Spring配置流程引擎，你需要在Spring配置中添加以下几行，以启用 "StrongUuidGenerator"。
 
 ```xml
 <bean id="processEngineConfiguration" class="org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration">
@@ -58,7 +51,7 @@ you need to add the following lines to the Spring configuration to enable the
 </bean>
 ```
 
-Additionally, you need the following maven dependency:
+另外，您需要以下Maven依赖项：
 
 ```xml
 <dependency>
