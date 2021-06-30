@@ -1,11 +1,11 @@
 ---
 
-title: "Spring Boot Version Compatibility"
+title: "Spring Boot 版本兼容性"
 weight: 10
 
 menu:
   main:
-    name: "Version Compatibility"
+    name: "版本兼容性"
     identifier: "user-guide-spring-boot-version-compatibility"
     parent: "user-guide-spring-boot-integration"
 

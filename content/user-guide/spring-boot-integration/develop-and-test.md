@@ -1,11 +1,11 @@
 ---
 
-title: "Developing and Testing Spring Boot Applications"
+title: "部署和测试 Spring Boot 应用"
 weight: 70
 
 menu:
   main:
-    name: "Developing and Testing"
+    name: "部署和测试"
     identifier: "user-guide-spring-boot-develop-and-test"
     parent: "user-guide-spring-boot-integration"
 

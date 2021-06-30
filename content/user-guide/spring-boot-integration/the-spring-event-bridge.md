@@ -1,6 +1,6 @@
 ---
 
-title: 'Spring Eventing Bridge'
+title: 'Spring 事件总线'
 weight: 60
 
 menu:

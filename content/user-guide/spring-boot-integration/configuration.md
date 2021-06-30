@@ -1,11 +1,11 @@
 ---
 
-title: "Process Engine Configuration"
+title: "流程引擎配置"
 weight: 20
 
 menu:
   main:
-    name: "Configuration"
+    name: "配置"
     identifier: "user-guide-spring-boot-configuration"
     parent: "user-guide-spring-boot-integration"
 

@@ -1,11 +1,11 @@
 ---
 
-title: "Process applications"
+title: "流程应用程序"
 weight: 50
 
 menu:
   main:
-    name: "Process Applications"
+    name: "流程应用程序"
     identifier: "user-guide-spring-boot-process-applications"
     parent: "user-guide-spring-boot-integration"
 
