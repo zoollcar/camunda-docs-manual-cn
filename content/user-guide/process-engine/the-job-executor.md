@@ -356,7 +356,7 @@ Job执行器使用一个规避策略来避免集群中的获取冲突，并在�
 虽然所有失败的Job都会被重试，但有一种情况下，Job的重试次数不会被递减。这就是，如果一个Job由于乐观的锁定异常而失败。乐观锁定是流程引擎解决资源更新冲突的机制，例如，当一个流程实例的两个Job并行执行时（见下面关于[并发Job执行]({{< relref "#concurrent-job-execution" >}})的章节）。由于从操作者的角度来看，乐观锁定异常并不是什么特殊情况，而且最终会解决，所以不会导致重试递减。
 {{< /note >}}
 
-如果启用了Job的事件创建，那么一旦Job重试耗尽，就会创建一个事件。 （查看 [事件的激活与冻结]({{< ref "/user-guide/process-engine/incidents.md#de-activate-incidents" >}})）.
+如果启用了Job的事件创建，那么一旦Job重试耗尽，就会创建一个事件。 （查看 [事件的激活与冻结]({{< ref "/user-guide/process-engine/incidents.md#事件的激活与冻结" >}})）.
 与Job相关的事件和历史事件可以通过类似如下的Java API请求访问：
 ```java
 List<Incident> incidents = engineRule.getRuntimeService()
