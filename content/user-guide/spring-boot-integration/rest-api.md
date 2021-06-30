@@ -11,7 +11,7 @@ menu:
 
 ---
 
-To enable the [REST API]({{< ref "/reference/rest/_index.md">}}) you can use the following starter in your `pom.xml`:
+你可以使用如下 `pom.xml` 启用 [REST API]({{< ref "/reference/rest/_index.md">}}):
 
 ```xml
 <dependency>
@@ -21,16 +21,15 @@ To enable the [REST API]({{< ref "/reference/rest/_index.md">}}) you can use the
 </dependency>
 ```
 
-By default the application path is `engine-rest`, so without any further configuration you can access the api at `http://localhost:8080/engine-rest`.
+默认情况下，应用程序的路径是 "engine-rest"，所以不需要任何进一步的配置，你可以通过地址 `http://localhost:8080/engine-rest` 访问api。
 
-Because we use jersey, one can use spring boot's [common application properties](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html). 
-For example, to change the application path, use 
+因为我们使用Jersey，所以可以使用spring boot的[通用应用程序属性](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html). 
+例如，要更改应用程序路径，请使用：
 ```properties
 spring.jersey.application-path=myapplicationpath
 ```
 
-To modify the configuration or register additional resources, one can provide a bean which extends from 
-`org.camunda.bpm.spring.boot.starter.rest.CamundaJerseyResourceConfig`:
+为了修改配置或注册额外的资源，可以提供一个集成自 `org.camunda.bpm.spring.boot.starter.rest.CamundaJerseyResourceConfig` 的配置类:
 
 ```java
 @Component

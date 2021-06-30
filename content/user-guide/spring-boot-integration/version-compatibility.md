@@ -11,21 +11,20 @@ menu:
 
 ---
 
-Each version of the Camunda Spring Boot Starter is bound to a specific version of Camunda Platform and Spring Boot. 
-Only these default combinations are recommended (and supported) by Camunda.
-Other combinations must be thoroughly tested before being used in production.
+每个版本的Camunda Spring Boot Starter都与Camunda Platform和Spring Boot的特定版本绑定。
+Camunda只推荐（并支持）这些默认组合。
+其他组合在生产中使用前必须经过全面测试。
 
-{{< note title="Heads Up" class="info" >}}
-  Starting with version 7.13.0, Camunda Platform and its compatible Spring Boot Starter always share the same version.
-  Also, the Camunda Platform version used in the Spring Boot Starter doesn't have to be overridden anymore. Simply pick
-  the version of the Starter that resembles the version of Camunda Platform you want to use.
+{{< note title="小心" class="info" >}}
+  从7.13.0版本开始，Camunda Platform和其兼容的Spring Boot Starter总是共享相同的版本。
+  而且，Spring Boot Starter中使用的Camunda Platform版本也不必再被重写了。只需选择与你想使用的Camunda Platform版本相近的Starter版本即可。
 {{< /note >}}
 
 <table class="table table-striped">
   <tr>
-    <th>Spring Boot Starter version</th>
-    <th>Camunda Platform version</th>
-    <th>Spring Boot version</th>
+    <th>Spring Boot Starter 版本</th>
+    <th>Camunda Platform 版本</th>
+    <th>Spring Boot 版本</th>
   </tr>
   <tr>
     <td>1.0.0&#42;</td>
@@ -119,7 +118,7 @@ Other combinations must be thoroughly tested before being used in production.
   </tr>
 </table>
 
-\* For these versions, use the following Maven coordinates:
+\* 对于这些版本，请使用以下Maven 坐标：
 ```
 <dependency>
   <groupId>org.camunda.bpm.extension</groupId>
@@ -128,7 +127,7 @@ Other combinations must be thoroughly tested before being used in production.
 </dependency>
 ```
 
-\*\* For these versions, use the following Maven coordinates:
+\*\* 对于这些版本，请使用以下Maven 坐标：
 ```
 <dependency>
   <groupId>org.camunda.bpm.extension.springboot</groupId>
@@ -137,9 +136,7 @@ Other combinations must be thoroughly tested before being used in production.
 </dependency>
 ```
 
-\*\*\* For these versions, all listed Spring Boot versions are supported 
-while the oldest one is used by default. If you want to use a newer supported version,
-configure `dependencyManagement` in your application, e.g. add the following when using Maven:
+\*\*\* 对于这些版本，所有列出的Spring Boot版本都被支持，而默认使用最古老的版本。如果你想使用较新的支持版本，请在你的应用程序中配置`dependencyManagement`，例如，在使用Maven时添加以下内容。
 ```
 <dependencyManagement>
   <dependencies>

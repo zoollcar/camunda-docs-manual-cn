@@ -10,14 +10,14 @@ menu:
 
 ---
 
-The Camunda Engine can be used in a Spring Boot application by using provided Spring Boot starters.
-Spring boot starters allow to enable behavior of your spring-boot application by adding dependencies to the classpath.
+通过提供的 Spring Boot starters，Camunda引擎可以在Spring Boot应用程序中使用。
+Spring Boot starters 允许通过在classpath中添加依赖项来启用你的Spring-boot应用程序的行为。
 
-These starters will pre-configure the Camunda process engine, REST API and Web applications, so they can easily be used in a standalone process application.
+这些启动器将预先配置Camunda流程引擎、REST API和Web应用程序，因此它们可以很容易地用于独立的流程应用程序。
 
-If you are not familiar with [Spring Boot](http://projects.spring.io/spring-boot/), read the [getting started](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#getting-started) guide or use the [Camunda Platform Initializr](https://start.camunda.com/).
+如果你不熟悉 [Spring Boot](http://projects.spring.io/spring-boot/), 请阅读 [入门教程](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#getting-started) 或使用 [Camunda Platform 生成器](https://start.camunda.com/).
 
-To enable Camunda Platform auto configuration, add the following dependency to your ```pom.xml```:
+要启用Camunda平台自动配置，请将以下依赖添加到你的 ```pom.xml```文件中:
 
 ```xml
 <dependency>
@@ -27,17 +27,17 @@ To enable Camunda Platform auto configuration, add the following dependency to y
 </dependency>
 ```
 
-This will add the Camunda engine v.{{< minor-version >}}.0 to your dependencies.
+这将添加流程引擎 v.{{< minor-version >}}.0 到你的依赖。
 
-Other starters that can be used are: 
+可以使用的其他starter是：
 
 * [`camunda-bpm-spring-boot-starter-rest`](rest-api)
 * [`camunda-bpm-spring-boot-starter-webapp`](webapps)
 * [`camunda-bpm-spring-boot-starter-external-task-client`]({{< ref "/user-guide/ext-client/spring-boot-starter.md" >}})
 
-# Using Enterprise Edition
+# 使用企业版本
 
-To use Camunda Spring Boot Starter with Camunda EE you need to define the EE version of the webapp (`camunda-bpm-spring-boot-starter-webapp-ee` instead of `camunda-bpm-spring-boot-starter-webapp`), see also [Web Applications](webapps/):
+要在Camunda EE中使用Camunda Spring Boot Starter，你需要定义webapp的EE版本（`camunda-bpm-spring-boot-starter-webapp-ee`），而不是（`camunda-bpm-spring-boot-starter-webapp`），另见[Web Applications](webapps/) 。
 
 ```xml
 <dependency>
@@ -47,10 +47,10 @@ To use Camunda Spring Boot Starter with Camunda EE you need to define the EE ver
 </dependency>
 ```
 
-# Supported deployment scenarios
+# 支持的部署方案
 
-Following deployment scenario is supported by Camunda:
+Camunda支持以下部署方案。
 
-* executable JAR with embedded Tomcat and one embedded process engine (plus Webapps when needed)
+* 带有嵌入式Tomcat和一个嵌入式流程引擎的可执行JAR（必要时加上Webapps）。
 
-There are other possible variations that might also work, but are not tested by Camunda at the moment.
+还有其他可能的形式，但目前没有经过Camunda的测试。
