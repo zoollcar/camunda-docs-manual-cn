@@ -11,15 +11,15 @@ menu:
 ---
 
 
-The identity service is an API abstraction over various user/group repositories. The basic entities are
+身份服务是对各种用户/组库的API抽象。其基本实体是：
 
-* User: a user identified by a unique Id
-* Group: a group identified by a unique Id
-* Membership: the relationship between users and groups
-* Tenant: a tenant identified by a unique Id
-* Tenant Membership: the relationship between tenants and users/groups
+* User: 使用不同ID区分的不同用户
+* Group: 使用不同ID区分的不同组
+* Membership: 组与用户之间的关系
+* Tenant: 使用不同ID区分的不同租户
+* Tenant Membership: 租户与 用户/组 之间的关系
 
-Example:
+实例：
 
 ```java
 User demoUser = processEngine.getIdentityService()
@@ -28,14 +28,14 @@ User demoUser = processEngine.getIdentityService()
   .singleResult();
 ```
 
-Camunda Platform distinguishes between read-only and writable user repositories. A read-only user repository provides read-only access to the underlying user/group database. A writable user repository allows write access to the user database which includes creating, updating and deleting users and groups.
+Camunda平台区分了只读和可写的用户资源库。只读的用户资源库提供对基础用户/组数据库的只读访问。可写用户资源库允许对用户数据库进行写访问，包括创建、更新和删除用户和组。
 
-To provide a custom identity provider implementation, the following interfaces can be implemented:
+也提供一个自定义的身份提供者实现，可以实现如下接口：
 
 * {{< javadocref page="?org/camunda/bpm/engine/impl/identity/ReadOnlyIdentityProvider.html" text="org.camunda.bpm.engine.impl.identity.ReadOnlyIdentityProvider" >}}
 * {{< javadocref page="?org/camunda/bpm/engine/impl/identity/WritableIdentityProvider.html" text="org.camunda.bpm.engine.impl.identity.WritableIdentityProvider" >}}
 
-# Custom Whitelist for User, Group and Tenant IDs
+# 用户、组和租户ID的自定义白名单
 
 User, Group and Tenant IDs can be matched against a Whitelist Pattern to determine if the provided ID is acceptable or not. The default (global) Regular Expression pattern to match against is **"[a-zA-Z0-9]+|camunda-admin"** i.e. any combination of alphanumeric values or _'camunda-admin'_.
 
