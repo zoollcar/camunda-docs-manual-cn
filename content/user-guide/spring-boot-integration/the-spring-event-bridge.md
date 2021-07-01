@@ -11,27 +11,23 @@ menu:
 ---
 
 
-The process engine can be hooked-up to the Spring event bus. We call this the "Spring Eventing Bridge". This allows us to be notified of process events using standard Spring eventing mechanisms. By default, the Spring eventing is enabled by a engine plugin. The eventing is controlled by three `camunda.bpm.eventing` properties. These are:
+流程引擎可以连接到Spring事件总线。我们称其为 "Spring事件桥(Eventing Bridge)"。这使得我们可以使用标准的Spring事件机制来通知流程事件。默认情况下，Spring事件由一个引擎插件启用。该事件由三个`camunda.bpm.eventing`属性控制。它们是：
 
 ```
 camunda.bpm.eventing.execution=true
 camunda.bpm.eventing.history=true
 camunda.bpm.eventing.task=true
 ```
-The properties control three event streams for execution, task and history events respectively.
-Listeners can subscribe to streams of mutable or immutable event objects.
-The latter of those are particularly useful
-in asynchronous listener scenarios - e.g. when using `TransactionalEventListener`. 
-The mutable event stream objects can be modified multiple times between the creation and the reception 
-of the event the listener has asynchronously subscribed to. Immutable event objects reflect the data
-at the creation time of the event, regardless of the time they are finally received by the listener.
+这些属性分别控制执行、历史事件和任务的三个事件流。
+监听器可以订阅可变或不可变的事件对象的流。
+不可变监听器在使用异步监听器时特别有用--例如使用`TransactionalEventListener`时。
+可变事件流对象在创建和接收监听器异步订阅的事件之间可以被多次修改。不可变的事件对象反映了事件创建时的数据，不管它们最终被监听器接收的时间。
 
-On the execution event stream, `DelegateExecution`s (mutable) and `ExecutionEvent`s (immutable) can be received.
-The task event stream offers `DelegateTask`s (mutable) and `TaskEvent`s (immutable).
-On the history event stream, only `HistoryEvent`s (mutable) are published.
+在执行事件流中，可以接收 `DelegateExecution`（可变）和 `ExecutionEvent`（不可变）。
+任务事件流提供`DelegateTask`（可变）和`TaskEvent`（不可变）。
+在历史事件流只提供 `HistoryEvent`（可变）。
 
-The following example gives an overview of how process events can be received in Spring beans. In doing so, you can implement task and delegate listeners by
-providing Spring beans with annotated methods instead of implementing the `TaskListener` and `ExecutionListener` interfaces.
+下面的例子概述了如何在Spring Bean中接收流程事件。这样，你可以通过为Spring Bean提供注释方法来实现任务和委托监听器，而不是实现`TaskListener`和`ExecutionListener`接口。
 
 ```java
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -46,43 +42,39 @@ class MyListener {
 
   @EventListener
   public void onTaskEvent(DelegateTask taskDelegate) {
-    // handle mutable task event
+    // 处理可变的任务事件
   }
 
   @EventListener
   public void onTaskEvent(TaskEvent taskEvent) {
-    // handle immutable task event
+    // 处理不可变的任务事件
   }
 
   @EventListener
   public void onExecutionEvent(DelegateExecution executionDelegate) {
-    // handle mutable execution event
+    // 处理可变的执行事件
   }
 
   @EventListener
   public void onExecutionEvent(ExecutionEvent executionEvent) {
-    // handle immutable execution event
+    // 处理不可改的执行事件
   }
   
   @EventListener
   public void onHistoryEvent(HistoryEvent historyEvent) {
-    // handle history event
+    // 处理历史事件
   }
 
 }
 ```
 
 {{< note title="" class="info" >}}
-  If the method, annotated with `EventListener` returns a non-`void` result, Spring will
-  throw it as a new event on Spring event bus. This allows to build event handler chains
-  for processing. For more information on eventing, please consult the Spring manual.
+  如果用`EventListener`注释的方法返回一个非`void`的结果，Spring会将把它作为一个新的事件扔到Spring事件总线上。这允许建立事件处理程序链进行处理。关于事件处理的更多信息，请参考Spring手册。
 {{< /note >}}
 
-# Specifying event type
+# 指定事件类型
 
-Spring allows to specify the event delivered to the listener by providing a SpEL condition in the
-`@EventListener` annotation. For example, you could register a listener for a task event fired by
-creating of the user task with a specific task definition key. Here is the code example:
+Spring允许通过在 `@EventListener` 注解中提供SpEL条件来指定传递给监听器的事件。例如，你可以为一个任务事件注册一个监听器，该事件是通过创建具有特定任务定义key的用户任务而触发的。以下是代码示例。
 
 ```java
 @Component
@@ -90,15 +82,14 @@ class MyTaskListener {
 
   @EventListener(condition="#taskDelegate.eventName=='create' && #taskDelegate.taskDefinitionKey=='task_confirm'")
   public void onTaskEvent(DelegateTask taskDelegate) {
-  // handle task event fired by create of task_confirm task
+  // 处理被task_confirm任务触发的任务事件
   }
 }
 ```
 
-# Ordering event listeners
+# 订阅事件侦听器
 
-Event listeners for the same event type can be executed in a specified order. To do so, provide an `Order` annotation
-to the event listener:
+同一事件类型的事件监听器可以按指定顺序执行。要做到这一点，请为事件监听器提供一个`Order`注解。
 
 ```java
 @Component
@@ -107,13 +98,13 @@ class MyTaskListener {
   @Order(1)
   @EventListener
   public void firstListener(DelegateTask taskDelegate) {
-  // handle task event
+  // 处理任务事件
   }
 
   @Order(2)
   @EventListener
   public void secondListener(DelegateTask taskDelegate) {
-  // handle task event
+  // 处理任务事件
   }
 
 }

@@ -11,91 +11,79 @@ menu:
 
 ---
 
-# Developing
+# 开发
 
-Spring Boot provides [Developer Tools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) which feature options like automatic restart and live reload during the development of an application.
+Spring Boot提供[Developer Tools](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools) 提供了在应用程序开发期间自动重启和实时重新加载等功能。
 
-## Spring Developer Tools and Classloading
+## Spring Developer Tools 和 Classloading
 
-An additional process engine plugin (`ApplicationContextClassloaderSwitchPlugin`) will be loaded in case your application is in a development mode:
+如果你的应用程序处于开发模式，一个额外的流程引擎插件（`ApplicationContextClassloaderSwitchPlugin`）将被加载。
 
-* Spring Developer tools (`spring-boot-devtools` library) are on the class path and
-* the tools are enabled, e.g., the application is started in IDE
+* Spring Developer工具（`spring-boot-devtools`库）在classpath上 * 并且被启用，例如，应用程序在IDE中启动。
 
-The plugin ensures exchanging the application context classloader with the classloader used for the process engine to prevent issues during deserialization.
+该插件确保将应用程序上下文的classloader与用于流程引擎的classloader进行交换，以防止反序列化过程中出现问题。
 
-# Testing
+# 测试
 
-Spring offers extensive support for automated [testing](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testing-introduction). 
-This is covered through dedicated mocking packages, test runners and annotations.
-When testing Spring and Spring Boot applications, a significant amount of time is 
-required to load the `ApplicationContext`. That is why Spring caches an `ApplicationContext` 
-after a test is finished. This allows for it to be reused in later tests with the same configuration.
+Spring为自动[测试](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testing-introduction)提供强大的支持。
+可以通过专用的mock包、测试工具和注解 进行测试
+当测试Spring和Spring Boot应用程序时，需要大量的时间来加载`ApplicationContext`。这就是为什么Spring在测试结束后会缓存一个`ApplicationContext`。这使得它可以在以后的测试中以相同的配置重复使用。
 
-## Context Caching with Process Engines
+## 流程引擎的上下文缓存
 
-To use `ApplicationContext` caching with the Process Engine requires some additional configuration.
-This is because the Process Engine needs a statically defined name (if no name is defined, "default" is used), 
-which leads to Spring attempting to create multiple `ApplicationContext`s with Process Engines with the 
-same name. This will cause tests to behave incorrectly, or in the worst case, completely fail to load the `ApplicationContext`.
+要将流程引擎包含在 "ApplicationContext" 缓存中，需要一些额外的配置。
+这是因为流程引擎需要一个静态定义的名称（如果没有定义名称，则使用 "default"），这导致Spring试图为相同名称的流程引擎创建多个`ApplicationContext`。这将导致测试的行为不正确，或者在最坏的情况下，完全无法加载`ApplicationContext`。
 
-## Using unique Process Engine/Application names
+## 使用不同的 流程引擎/应用 名称
 
-To make context caching work properly with Process Engines and Process Applications,
-they need to have unique names for every different test configuration.
+为了使上下文缓存与流程引擎和流程应用正常工作，它们需要对每个不同的测试配置具有唯一的名称。
 
-When defining a new test configuration, the easiest way to ensure that the new ApplicationContext
-uses a new Process Engine (and Process Application) is to enable to following properties
-in your `@SpringBootTest` annotation:
+当定义一个新的测试配置时，确保新的ApplicationContext使用新的流程引擎（和流程应用）的最简单方法是在你的`@SpringBootTest`注解中启用以下属性。
 
 ```java
 @SpringBootTest(
-  // ...other parameters...
+  // ...其他参数...
   properties = {
     "camunda.bpm.generate-unique-process-engine-name=true",
-    // this is only needed if a SpringBootProcessApplication 
-    // is used for the test
+    // 这只在 SpringBootProcessApplication 中需要
+    // 用于测试
     "camunda.bpm.generate-unique-process-application-name=true",
     "spring.datasource.generate-unique-name=true",
-    // additional properties...
+    // 额外的属性...
   }
 )
 ```
 
-* The `camunda.bpm.generate-unique-process-engine-name=true` property will generate
-a unique name for the Process Engine (ex. 'processEngine2Sc4bg2s1g').
-* The `camunda.bpm.generate-unique-process-application-name=true` property will generate
-a unique name for the Process Application (ex. 'processApplication2Sc4bg2s1g'). This is useful
-if you want to deploy and test a Process Application multiple times with multiple configurations.
-* The `spring.datasource.generate-unique-name=true` property will generate a new datasource for
-each new `ApplicationContext`. Reused (cached) `ApplicationContext`s will use the same datasource.
+* `camunda.bpm.generate-unique-process-engine-name=true` 参数将生成流程引擎的唯一名称 (例如 'processEngine2Sc4bg2s1g').
+* `camunda.bpm.generate-unique-process-application-name=true` 参数将生成流程应用的唯一名称 (例如 'processApplication2Sc4bg2s1g')。如果你想用多种配置多次部署和测试一个流程应用程序，这会很有用。
+* `spring.datasource.generate-unique-name=true` 属性将为每个新的`ApplicationContext`生成一个新的数据源。重复使用（缓存）的`ApplicationContext` 将使用相同的数据源。
 
 {{< note title="" class="warning" >}} 
-Be aware that the `generate-unique-process-engine-name` and `process-engine-name` properties are mutually exclusive. Setting them both will result in an exception.
+请注意，`generate-unique-process-engine-name`和`process-engine-name`属性是互斥的。同时设置这两个属性将导致异常。
 {{< /note >}}
 
-If a static accessor needs to be used (e.g. processEngines.getProcessEngine(name)) in a given test, then the following properties can be used:
+如果在一个给定的测试中需要使用一个静态访问器（例如processEngines.getProcessEngine(name)），那么可以使用以下属性：
 
 ```java
 @SpringBootTest(
-  // other parameters
+  // 其他参数
   properties = {
     "camunda.bpm.process-engine-name=foo",
-    // this is only needed if a SpringBootProcessApplication 
-    // is used for the test
+    // 这只在 SpringBootProcessApplication 中需要
+    // 用于测试
     "camunda.bpm.generate-unique-process-application-name=true",
     "spring.datasource.generate-unique-name=true",
-    // additional properties
+    // 额外的属性
   }
 )
 ```
-Here, the `camunda.bpm.process-engine-name=foo` will set (a unique name) "foo" as the Process Engine name.
+这里的 `camunda.bpm.process-engine-name=foo` 将设置（一个唯一的名称）"foo" 作为流程引擎的名称。
 
-## Disabling Telemetry
+## 禁用 遥测报告（Telemetry）
 
-Telemetry reports are introduced with Camunda Platform 7.14.0. To prevent sending data generated during testing, we encourage you to disable the [telemetry reporter][engine-config-telemetryReporterActivate]. Please read more about the topic in the dedicated page for [Telemetry][telemetry-initial-report].
+遥测报告是由Camunda Platform 7.14.0引入的。为了防止发送测试期间产生的数据，我们鼓励你禁用[telemetry reporter][engine-config-telemetryReporterActivate]。请在[Telemetry][telemetry-initial-report]的专门页面上阅读更多关于该主题的内容。
 
-Example of disabling the reporter in Spring Boot setups:
+在Spring Boot设置中禁用遥测报告的例子。
 
 ```
 camunda.bpm:
@@ -106,21 +94,13 @@ camunda.bpm:
 [engine-config-telemetryReporterActivate]: {{< ref "/reference/deployment-descriptors/tags/process-engine.md#telemetryReporterActivate" >}}
 [telemetry-initial-report]: {{< ref "/introduction/telemetry.md#initial-data-report" >}}
 
-## Camunda Assertions
+## Camunda 断言
 
-The [Camunda Platform Assertions]({{< ref 
-"/user-guide/testing/_index.md#camunda-assertions" >}}) library is 
-integrated with the Camunda Spring Boot Starter in
-order to make testing processes in your Spring Boot application easier.
+[Camunda Platform Assertions]({{< ref "/user-guide/testing/_index.md#camunda-assertions" >}})库与Camunda Spring Boot Starter集成，可以使Spring Boot应用程序的测试过程更加简单。
 
-### Using Assertions with Context Caching
+### 使用带有上下文缓存的断言
 
-Out of the box, the Camunda Platform Assertions library tries to use the
-default engine or the (single) one that is available. Since when using
-Context Caching multiple engines are used in different contexts, binding
-the correct Process Engine to the Camunda Assertions library is required
-for both caching and assertions to work correctly. This can be done
-through the following initialization code in the test class:
+默认情况下，Camunda平台断言库会尝试使用默认引擎或可用的（单一）引擎。由于在使用上下文缓存时，在不同的上下文中使用多个引擎，为了使缓存和断言正常工作，需要将正确的流程引擎绑定到Camunda断言库中。这可以通过测试类中的以下初始化代码完成：
 
 ```java
   @Autowired
@@ -132,6 +112,4 @@ through the following initialization code in the test class:
   }
 ```
 
-This needs to be done in addition to the _Unique Process
-Engine/Application names_ requirement described in the
-[section above](#using-unique-process-engine-application-names).
+这需要在[上面一节](#使用不同的-流程引擎-应用-名称)中描述的 _不同的的流程引擎/应用程序名称_ 要求之上进行。
