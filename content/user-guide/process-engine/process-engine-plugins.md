@@ -11,21 +11,21 @@ menu:
 ---
 
 
-The process engine configuration can be extended through process engine plugins. A process engine plugin is an extension to the [process engine configuration]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md" >}}).
+流程引擎配置可以通过流程引擎插件扩展。流程引擎插件是[流程引擎配置]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md" >}})的扩展。
 
-A plugin must provide an implementation of the {{< javadocref page="?org/camunda/bpm/engine/impl/cfg/ProcessEnginePlugin.html" text="ProcessEnginePlugin" >}} interface.
+插件必须提供实现{{< javadocref page="?org/camunda/bpm/engine/impl/cfg/ProcessEnginePlugin.html" text="ProcessEnginePlugin" >}}接口。
 
 
-# Configure Process Engine Plugins
+# 配置流程引擎插件
 
-Process engine plugins can be configured
+可以在下列位置配置流程引擎插件：
 
-* in the [Camunda Platform Deployment Descriptors]({{< ref "/reference/deployment-descriptors/_index.md" >}}) (bpm-platform.xml/processes.xml),
-* in the [JBoss Application Server 7/Wildfly configuration file]({{< ref "/user-guide/runtime-container-integration/jboss.md" >}}) (standalone.xml/domain.xml),
-* using [Spring Beans XML]({{< ref "/user-guide/spring-framework-integration/_index.md#configure-a-process-engine-plugin-in-spring" >}}),
-* programatically.
+* 在 [Camunda平台 部署描述符]({{< ref "/reference/deployment-descriptors/_index.md" >}}) (bpm-platform.xml/processes.xml),
+* 在 [JBoss Application Server 7/Wildfly 配置文件]({{< ref "/user-guide/runtime-container-integration/jboss.md" >}}) (standalone.xml/domain.xml),
+* 在 [Spring Beans XML]({{< ref "/user-guide/spring-framework-integration/_index.md#configure-a-process-engine-plugin-in-spring" >}}),
+* 编程配置。
 
-The following is an example of how to configure a process engine plugin in a bpm-platform.xml file:
+下面是如何在bpm-platform.xml文件中配置一个流程引擎插件的例子。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,13 +57,13 @@ The following is an example of how to configure a process engine plugin in a bpm
 </bpm-platform>
 ```
 
-A process engine plugin class must be visible to the classloader which loads the process engine classes.
+流程引擎插件类必须对加载流程引擎类的类加载器可见。
 
 
-# List of Built-In Process Engine Plugins
+# 内置流程引擎插件列表
 
-The following is a list of built-in process engine plugins:
+下面是内置的流程引擎插件的列表：
 
-* [LDAP Identity Service Plugin]({{< ref "/user-guide/process-engine/identity-service.md#the-ldap-identity-service" >}})
-* [Administrator Authorization Plugin]({{< ref "/user-guide/process-engine/authorization-service.md#the-administrator-authorization-plugin" >}})
-* [Process Application Event Listener Plugin]({{< ref "/user-guide/process-applications/process-application-event-listeners.md" >}})
+* [LDAP Identity Service插件]({{< ref "/user-guide/process-engine/identity-service.md#the-ldap-identity-service" >}})
+* [Administrator Authorization 插件]({{< ref "/user-guide/process-engine/authorization-service.md#the-administrator-authorization-plugin" >}})
+* [Process Application 事件监听器插件]({{< ref "/user-guide/process-applications/process-application-event-listeners.md" >}})
