@@ -11,23 +11,23 @@ menu:
 ---
 
 
-A BPMN process diagram is a formidable place to visualize information around your process. We recommend to use JavaScript libraries to display process diagrams and enrich them with additional information.
+BPMN 流程图一个强大的地方，是可以将你的流程周围的信息可视化。 我们建议使用 JavaScript 库来显示流程图并用附加信息丰富它们。
 
-In our web applications [Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) and [Tasklist]({{< ref "/webapps/tasklist/_index.md" >}}), we use [bpmn.io](http://bpmn.io/), a toolkit for rendering BPMN 2.0 process models directly in the browser. It allows adding additional information to the diagram and includes ways for user interaction. Although bpmn.io is still under development, its API is rather stable.
+在我们的网络应用程序 [Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) 和 [Tasklist]({{< ref "/webapps/tasklist/_index.md" >}}) 中， 我们使用 [bpmn.io](http://bpmn.io/)，这是一个直接在浏览器中呈现 BPMN 2.0 流程模型的工具包。 它允许向图表添加附加信息，并包括用户交互的方式。 虽然 bpmn.io 还在开发中，但它的 API 已经相当稳定了。
 
-The previous JavaScript BPMN renderer can still be found at [camunda-bpmn.js](https://github.com/camunda/camunda-bpmn.js), but it is not actively developed anymore.
+之前的 JavaScript BPMN 渲染器仍然可以在 [camunda-bpmn.js](https://github.com/camunda/camunda-bpmn.js) 找到，但它不再积极开发了。
 
 {{< img src="../img/process-diagram-bpmn-js.png" title="Process Diagram Rendering" >}}
 
 
-# bpmn.io Diagram Renderer
+# bpmn.io 图表渲染器
 
-To render a process diagram, you need to retrieve the diagram XML via the {{< javadocref page="?org/camunda/bpm/engine/RepositoryService.html" text="Java-" >}} or [REST]({{< ref "/reference/rest/process-definition/get-xml.md" >}}) API. The following example shows how to render the process XML using bpmn.io. For more documentation regarding the annotation of the diagram and user interaction, please refer to the [bpmn.io](https://github.com/bpmn-io/bpmn-js) page.
+要呈现流程图，您需要通过 {{< javadocref page="?org/camunda/bpm/engine/RepositoryService.html" text="Java-" >}} 或 [REST]({ {< ref "/reference/rest/process-definition/get-xml.md" >}}) API。 以下示例显示如何使用 bpmn.io 呈现 流程XML。 有关图表注释和用户交互的更多文档，请参阅 [bpmn.io](https://github.com/bpmn-io/bpmn-js) 页面。
 
 ```javascript
 var BpmnViewer = require('bpmn-js');
 
-var xml = getBpmnXml(); // get the process xml via REST
+var xml = getBpmnXml(); // 通过 REST 获取 流程xml
 var viewer = new BpmnViewer({ container: 'body' });
 
 viewer.importXML(xml, function(err) {
@@ -40,4 +40,4 @@ viewer.importXML(xml, function(err) {
 });
 ```
 
-Alternatively, you can use the  [bpmn-viewer widget](https://github.com/camunda/camunda-bpm-platform/blob/master/webapps/camunda-commons-ui/lib/widgets/bpmn-viewer/cam-widget-bpmn-viewer.html) from the Camunda commons UI.
+除此之外，你可以使用 Camunda commons UI 中的 [bpmn-viewer 小部件](https://github.com/camunda/camunda-bpm-platform/blob/master/webapps/camunda-commons-ui/lib/widgets/bpmn-viewer/cam-widget-bpmn-viewer.html)。
