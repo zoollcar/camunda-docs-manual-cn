@@ -10,20 +10,20 @@ menu:
 
 ---
 
-Before a process (or case, or decision) can be executed by the process engine, it has to be deployed. A deployment is a logical entity that groups multiple resources that are deployed together. Deployments can be made programmatically via Java API or [REST API]({{< ref "/reference/rest/deployment/post-deployment.md" >}}), or declaratively for resources of a [Process Application]({{< ref "/user-guide/process-applications/_index.md" >}}). This section covers advanced deployment concepts.
+在流程引擎可以执行流程（或案例或决策）之前，必须对其进行部署。 部署是将部署在一起的多组资源的逻辑实体。 可以通过 Java API 或 [REST API]({{< ref "/reference/rest/deployment/post-deployment.md" >}}) 以编程方式进行部署，或者针对 [流程应用]({{ < ref "/user-guide/process-applications/_index.md" >}})使用声明方式。本节介绍高级部署概念。
 
-# Deployments in a Clustered Scenario
+# 集群场景中的部署
 
-Before the process engine starts to perform a deployment, it tries to acquire an exclusive lock on a row in the table `ACT_GE_PROPERTY`. When the process engine is able to acquire the lock successfully, it starts to deploy and holds the exclusive lock as long as the execution of the deployment take place.
+在流程引擎开始执行部署之前，它会尝试获取对“ACT_GE_PROPERTY”表中一行的排他锁。当流程引擎能够成功获取锁时，它开始部署并持有排它锁，只要部署执行发生。
 
-If a deployment of the same resources is performed on multiple nodes in a clustered scenario simultaneously, the acquired exclusive lock ensures that duplicate filtering works as expected. Otherwise, parallel deployments may result in multiple versions of the same process definition.
+如果在集群场景中同时在多个节点上部署相同的资源，则获取的排他锁确保重复过滤按预期工作。否则，并行部署可能会导致同一流程定义的多个版本。
 
-Additionally, the exclusive lock ensures that multiple definitions (e.g., process definitions) with the same key don't get the same version when they are deployed simultaneously, which can lead to failures and unexpected behavior. Note that there is no unique constraint in the database that checks the uniqueness of a definition.
+此外，排他锁确保具有相同密钥的多个定义（例如，流程定义）在同时部署时不会获得相同的版本，这可能导致失败和意外行为。请注意，数据库中没有检查定义唯一性的唯一约束。
 
-In consequence, the exclusive lock enforces a sequential order of deployments.
+因此，排他锁强制执行顺序部署。
 
-By default, the exclusive lock acquisition is enabled. If this is not desired, it is possible to disable it by setting the process engine configuration flag named `deploymentLockUsed` to false.
+默认情况下，排他锁获取是开启的。如果不需要，可以通过将名为 `deploymentLockUsed` 的流程引擎配置标志设置为 false 来禁用它。
 
-{{< note class="warning" title="H2 Database" >}}
-Note that the H2 database is not supported in a clustered scenario. The process engine creates no exclusive locks because H2 uses table level locks by default, which may cause deadlocks if the deploy command needs to get a new Id using the DbIdGenerator while performing a deployment.
-{{< /note >}}
+{{< note class="warning" title="H2 数据库" >}}
+请注意，集群方案不支持 H2 数据库。流程引擎不会创建排他锁，因为 H2 默认使用表级锁，如果执行部署时部署命令需要使用 DbIdGenerator 获取新 Id，这可能会导致死锁。
+{{</note >}}
