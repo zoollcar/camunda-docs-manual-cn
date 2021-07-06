@@ -25,7 +25,7 @@ menu:
 * [BPMN 2.0 实现参考]({{< ref "/reference/bpmn20/_index.md" >}}) 涵盖了Camunda平台中各个BPMN 2.0构造的实现。如果你想实现和执行BPMN流程，你应该阅读这个参考资料。
 {{< /note >}}
 
-在Camunda平台中，您可以将流程以BPMN 2.0 XML格式部署到流程引擎中。XML文件被解析并转化为一个流程定义图结构。该图结构由流程引擎执行。
+在Camunda平台中，你可以将流程以BPMN 2.0 XML格式部署到流程引擎中。XML文件被解析并转化为一个流程定义图结构。该图结构由流程引擎执行。
 
 ## 流程定义的查询
 
@@ -144,7 +144,7 @@ ProcessInstanceWithVariables instance = runtimeService.createProcessInstanceByKe
 
 上面的查询将选择 `invoice` 流程的所有流程实例，其中 `creditor` 是 `Nice Pizza Inc.`。
 
-您还可以[使用REST API查询流程实例]({{< ref "/reference/rest/process-instance/get-query.md" >}}).
+你还可以[使用REST API查询流程实例]({{< ref "/reference/rest/process-instance/get-query.md" >}}).
 
 
 ## 流程变量的交互

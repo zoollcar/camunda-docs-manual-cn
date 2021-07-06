@@ -62,7 +62,7 @@ menu:
 
 ## 通过 Java 委托类 & 参数注入
 
-您可以轻松地编写通用Java委托类，该类可以通过BPMN 2稍后配置.  0 XML在服务任务中。请参考 [User Guide]({{< ref "/user-guide/_index.md" >}}) 中的 [参数注入]({{< ref "/user-guide/process-engine/delegation-code.md#field-injection" >}}) 章节。
+你可以轻松地编写通用Java委托类，该类可以通过BPMN 2稍后配置.  0 XML在服务任务中。请参考 [User Guide]({{< ref "/user-guide/_index.md" >}}) 中的 [参数注入]({{< ref "/user-guide/process-engine/delegation-code.md#field-injection" >}}) 章节。
 
 
 ## 服务任务结果
@@ -78,7 +78,7 @@ menu:
 在上面的示例中，服务执行的结果 (返回值的 `doSomething()`对象上的方法调用 `myService`) 在服务执行完成后，将被设置为命名的流程变量 `myVar` 。
 
 {{< note title="结果变量和多实例" class="warning" >}}
-请注意，当您使用时 <code>camunda:resultVariable</code> 在多实例构造中，例如在多实例子处理中，每次任务完成时都会覆盖结果变量，这可能显示为随机行为。看 <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resultvariable" >}}">camunda:resultVariable</a> 有关详细信息。
+请注意，当你使用时 <code>camunda:resultVariable</code> 在多实例构造中，例如在多实例子处理中，每次任务完成时都会覆盖结果变量，这可能显示为随机行为。看 <a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resultvariable" >}}">camunda:resultVariable</a> 有关详细信息。
 {{< /note >}}
 
 # 外部任务

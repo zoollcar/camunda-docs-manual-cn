@@ -73,4 +73,4 @@ This work is available under a [Creative Commons Attribution-ShareAlike 4.0 Inte
 
 # 联系方式
 
-如果您有关于Camunda软件的许可或分销的具体问题，并且该问题没有在本页中得到解答，请联系开源合规团队，邮箱是[foss@camunda.com](mailto:foss@camunda.com).
+如果你有关于Camunda软件的许可或分销的具体问题，并且该问题没有在本页中得到解答，请联系开源合规团队，邮箱是[foss@camunda.com](mailto:foss@camunda.com).

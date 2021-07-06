@@ -100,7 +100,7 @@ Camunda平台应该可以与大多数JSR-223兼容的脚本引擎实现协同工
 在上面的例子中，脚本执行的结果（解析表达式`#{echo}`的值）在脚本完成后被设置到名为`myVar`的流程变量中。
 
 {{< note title="结果变量和多实例" class="warning" >}}
-请注意，当您在多实例构造中使用<code>camunda:resultVariable</code>时，例如在多实例子流程中，每次任务完成后，结果变量都会被覆盖，这可能会表现为随机行为。参见<a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resultvariable" >}}">camunda:resultVariable</a>了解详情。
+请注意，当你在多实例构造中使用<code>camunda:resultVariable</code>时，例如在多实例子流程中，每次任务完成后，结果变量都会被覆盖，这可能会表现为随机行为。参见<a href="{{< ref "/reference/bpmn20/custom-extensions/extension-attributes.md#resultvariable" >}}">camunda:resultVariable</a>了解详情。
 {{< /note >}}
 
 

@@ -22,7 +22,7 @@ BPMN 流程图一个强大的地方，是可以将你的流程周围的信息可
 
 # bpmn.io 图表渲染器
 
-要呈现流程图，您需要通过 {{< javadocref page="?org/camunda/bpm/engine/RepositoryService.html" text="Java-" >}} 或 [REST]({ {< ref "/reference/rest/process-definition/get-xml.md" >}}) API。 以下示例显示如何使用 bpmn.io 呈现 流程XML。 有关图表注释和用户交互的更多文档，请参阅 [bpmn.io](https://github.com/bpmn-io/bpmn-js) 页面。
+要呈现流程图，你需要通过 {{< javadocref page="?org/camunda/bpm/engine/RepositoryService.html" text="Java-" >}} 或 [REST]({ {< ref "/reference/rest/process-definition/get-xml.md" >}}) API。 以下示例显示如何使用 bpmn.io 呈现 流程XML。 有关图表注释和用户交互的更多文档，请参阅 [bpmn.io](https://github.com/bpmn-io/bpmn-js) 页面。
 
 ```javascript
 var BpmnViewer = require('bpmn-js');

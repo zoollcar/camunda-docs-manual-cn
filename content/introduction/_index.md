@@ -15,7 +15,7 @@ menu:
 
 本文档包含有关Camunda平台提供的功能的信息。
 
-要为您提供Camunda的概述，下图显示了最重要的组件以及一些典型的用户角色。
+要为你提供Camunda的概述，下图显示了最重要的组件以及一些典型的用户角色。
 
 {{< img src="img/architecture-overview.png" title="Camunda组件和角色" >}}
 
@@ -34,7 +34,7 @@ menu:
 
 # Web应用程序
 
-* [REST API]({{< ref "/reference/rest/_index.md" >}}) REST API允许您使用远程应用程序或JavaScript应用程序的流程引擎。 （注意：REST API的文档已成为自己的文档。）
+* [REST API]({{< ref "/reference/rest/_index.md" >}}) REST API允许你使用远程应用程序或JavaScript应用程序的流程引擎。 （注意：REST API的文档已成为自己的文档。）
 * [Camunda Tasklist]({{< ref "/webapps/tasklist/_index.md" >}}) 用于人工流管理和用户任务的Web应用程序，允许流程参与者检查其工作流任务并导航到任务表单，以便在任务上工作并提供数据输入。
-* [Camunda Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) 用于过程监视和操作的Web应用程序，允许您搜索流程实例，检查其状态并修复损坏的实例。
-* [Camunda Admin]({{< ref "/webapps/admin/_index.md" >}}) 允许您管理用户，组和授权的Web应用程序。
+* [Camunda Cockpit]({{< ref "/webapps/cockpit/_index.md" >}}) 用于过程监视和操作的Web应用程序，允许你搜索流程实例，检查其状态并修复损坏的实例。
+* [Camunda Admin]({{< ref "/webapps/admin/_index.md" >}}) 允许你管理用户，组和授权的Web应用程序。

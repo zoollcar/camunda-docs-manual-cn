@@ -470,7 +470,7 @@ public class CustomTenantIdProvider implements TenantIdProvider {
 
 ## 配置流程引擎
 
-流程引擎可以在配置文件中或通过 Java API 进行配置。每个引擎都应该有一个与租户有关的名字，这样就可以根据租户来识别它。例如，每个引擎可以用它所服务的租户来命名。详情见[过程引擎自启动]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md" >}})章节。
+流程引擎可以在配置文件中或通过 Java API 进行配置。每个引擎都应该有一个与租户有关的名字，这样就可以根据租户来识别它。例如，每个引擎可以用它所服务的租户来命名。详情见[流程引擎自启动]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md" >}})章节。
 
 ### 数据库隔离
 
@@ -589,7 +589,7 @@ ProcessEngineConfigurationImpl.cachedSqlSessionFactory = null
 
 * **清晰的 Java API**: 通过 [ProcessEngineService]({{< ref "/user-guide/runtime-container-integration/bpm-platform-services.md#processengineservice" >}}) 可以访问任何命名引擎。
 * **CDI 注入**: 命名的引擎Bean可以开箱即注入。内置的[CDI Bean生产者]({{< ref "/user-guide/cdi-java-ee-integration/built-in-beans.md" >}})专门用来动态地访问当前租户的引擎。
-* **通过JBoss/Wildfly 的 JNDI**: 在JBoss和Wildfly上，每一个容器管理的进程引擎都可以[通过JNDI查询]({{< ref "/user-guide/runtime-container-integration/jboss.md#look-up-a-process-engine-in-jndi" >}})。
+* **通过JBoss/Wildfly 的 JNDI**: 在JBoss和Wildfly上，每一个容器管理的流程引擎都可以[通过JNDI查询]({{< ref "/user-guide/runtime-container-integration/jboss.md#look-up-a-process-engine-in-jndi" >}})。
 
 Camunda网络应用程序Cockpit、Tasklist和Admin通过[在不同的流程引擎之间切换]({{< ref "/webapps/cockpit/dashboard.md#multi-engine" >}})提供租户特定的视图，开箱即用。
 

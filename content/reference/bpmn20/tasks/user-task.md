@@ -46,7 +46,7 @@ task.getDescription();
 
 每个任务都有一个字段，指示该任务的截止日期。查询API可用于查询到某个日期之前或之后截止的任务。
 
-有一个活动扩展名，允许您在任务定义中指定表达式，以在创建时设置任务的初始截止日期。表达式应该始终解析为 java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) 格式化) 或 null。 使用ISO8601格式化字符串时，您可以指定相对于创建任务的时间的时间或时间段。例如，您可以使用在此过程中以先前表单输入的日期，或者在以前的服务任务中计算。
+有一个活动扩展名，允许你在任务定义中指定表达式，以在创建时设置任务的初始截止日期。表达式应该始终解析为 java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) 格式化) 或 null。 使用ISO8601格式化字符串时，你可以指定相对于创建任务的时间的时间或时间段。例如，你可以使用在此过程中以先前表单输入的日期，或者在以前的服务任务中计算。
 
 ```xml
 <userTask id="theTask" name="Important task" camunda:dueDate="${dateVariable}"/>
@@ -58,7 +58,7 @@ task.getDescription();
 
 每个任务都有一个字段，指示该任务的跟进日期。查询API可用于查询需要在特定日期之前或之后进行操作的任务。
 
-有一个活动扩展名，允许您在任务定义中指定表达式，以在创建时设置任务的初始后续后续日期。表达式应该始终解析为 java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) 格式化) 或 null。 使用ISO8601格式化字符串时，您可以指定相对于创建任务的时间的时间或时间段。例如，您可以使用在此过程中以先前表单输入的日期，或者在以前的服务任务中计算。
+有一个活动扩展名，允许你在任务定义中指定表达式，以在创建时设置任务的初始后续后续日期。表达式应该始终解析为 java.util.Date, java.util.String ([ISO8601](http://en.wikipedia.org/wiki/ISO_8601) 格式化) 或 null。 使用ISO8601格式化字符串时，你可以指定相对于创建任务的时间的时间或时间段。例如，你可以使用在此过程中以先前表单输入的日期，或者在以前的服务任务中计算。
 
 ```xml
 <userTask id="theTask" name="Important task" camunda:followUpDate="${dateVariable}"/>
@@ -237,7 +237,7 @@ public class FakeLdapService {
 </userTask>
 ```
 
-传递给任务侦听器实现的委托任务允许您设置受让人和候选用户/组：
+传递给任务侦听器实现的委托任务允许你设置受让人和候选用户/组：
 
 ```java
 public class MyAssignmentHandler implements TaskListener {

@@ -645,7 +645,7 @@ authorization.addPermission(Permissions.DELETE);
 
 与运行时权限相比，历史权限不会在相关实例完成后立即删除。 而是会根据[基于Removal-Time的历史清理策略][Removal-Time-based History Cleanup Strategy] 删除历史权限。
 
-您可以使用[流程引擎配置标志][hist-inst-perm-config-flag]启用权限：
+你可以使用[流程引擎配置标志][hist-inst-perm-config-flag]启用权限：
 
 ```xml
 <property name="enableHistoricInstancePermissions">true</property>
@@ -660,7 +660,7 @@ authorization.addPermission(Permissions.DELETE);
 
 ### 历史任务（Tasks）权限
 
-授予历史任务权限后，您可以使用以下查询来检索与历史任务相关的实体：
+授予历史任务权限后，你可以使用以下查询来检索与历史任务相关的实体：
 
 * 历史任务实例查询 Historic Task Instance Query
 * 历史变量实例查询 Historic Variable Instance Query
@@ -670,7 +670,7 @@ authorization.addPermission(Permissions.DELETE);
 
 ### 历史流程实例权限
 
-当对历史流程实例授予授权时，您可以使用以下查询来检索与历史流程实例相关的实体：
+当对历史流程实例授予授权时，你可以使用以下查询来检索与历史流程实例相关的实体：
 
 * 历史流程实例查询 Historic Process Instance Query
 * 历史活动实例查询 Historic Activity Instance Query
@@ -691,7 +691,7 @@ Camunda 平台没有明确的“管理员”概念，它可以使用授予了对
 
 下载 Camunda平台发行版时，invoice示例应用程序会创建一个 ID 为“camunda-admin”的组，并将所有资源的所有授权授予该组。
 
-在没有演示应用程序的情况下，此任务由 [Camunda Admin Web Application]({{< ref "/webapps/admin/user-management.md#initial-user-setup" >}}) 执行。 如果第一次启动 Camunda webapplication 并且数据库中不存在用户，它会要求您执行“初始设置”。 在这个过程中，`camunda-admin` 组将被创建并被授予对所有资源的所有权限。
+在没有演示应用程序的情况下，此任务由 [Camunda Admin Web Application]({{< ref "/webapps/admin/user-management.md#initial-user-setup" >}}) 执行。 如果第一次启动 Camunda webapplication 并且数据库中不存在用户，它会要求你执行“初始设置”。 在这个过程中，`camunda-admin` 组将被创建并被授予对所有资源的所有权限。
 
 {{< note title="LDAP" class="info" >}}
 使用 LDAP 时不会创建组“camunda-admin”（因为 LDAP 只能以只读方式访问）。 另请参阅以下有关管理员授权插件的部分。
@@ -760,7 +760,7 @@ Camunda 平台没有明确的“管理员”概念，它可以使用授予了对
 
 可用值为：
 
-* `always`：始终启用对撤销授权的检查。这种模式等于 &lt; 7.5 行为。 *注意：*对于具有高潜在基数的资源（如任务或流程实例），检查撤销授权非常昂贵，并且可以使对流程引擎的授权访问在大多数数据库上有效地无法使用。因此，强烈建议您不要使用此模式。
+* `always`：始终启用对撤销授权的检查。这种模式等于 &lt; 7.5 行为。 *注意：*对于具有高潜在基数的资源（如任务或流程实例），检查撤销授权非常昂贵，并且可以使对流程引擎的授权访问在大多数数据库上有效地无法使用。因此，强烈建议你不要使用此模式。
 
 * `never`：从不检查撤销授权。此模式具有最佳性能并有效禁用撤销授权的使用。 *注意*：强烈建议使用此模式。
 

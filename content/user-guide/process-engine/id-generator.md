@@ -51,7 +51,7 @@ StrongUuidGenerator使用一个UUID生成器，它在内部使用[Java UUID Gene
 </bean>
 ```
 
-另外，您需要以下Maven依赖项：
+另外，你需要以下Maven依赖项：
 
 ```xml
 <dependency>

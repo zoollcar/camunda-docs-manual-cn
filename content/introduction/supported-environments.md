@@ -14,7 +14,7 @@ menu:
 你可以在任何可运行Java的环境中运行Camunda平台。但以下环境中运行可以得到了我们的质量保证。你可以在我们的[企业支持](http://camunda.com/bpm/enterprise/)页面中获得更多的信息。
 
 {{< note title="支持的运行环境" class="info" >}}
-  请注意，本节中列出的环境与Camunda平台的版本有关。请选择本文档的相应版本，以查看适合您的Camunda平台版本的环境。例如，[7.3版本的支持环境](http://docs.camunda.org/7.3/guides/user-guide/#introduction-supported-environments)。
+  请注意，本节中列出的环境与Camunda平台的版本有关。请选择本文档的相应版本，以查看适合你的Camunda平台版本的环境。例如，[7.3版本的支持环境](http://docs.camunda.org/7.3/guides/user-guide/#introduction-supported-environments)。
 {{< /note >}}
 
 
