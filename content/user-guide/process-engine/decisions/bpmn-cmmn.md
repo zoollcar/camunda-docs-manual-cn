@@ -1,25 +1,24 @@
 ---
 
-title: 'Invoke Decisions from Processes and Cases'
+title: '从流程和案例中调用决策'
 weight: 40
 
 menu:
   main:
-    name: "Decisions in BPMN & CMMN"
+    name: "BPMN 和 CMMN 中的决策"
     identifier: "user-guide-process-engine-decisions-bpmn"
     parent: "user-guide-process-engine-decisions"
     pre: "Invoke Decisions from BPMN Processes and CMMN Cases"
 ---
 
 
-# BPMN & CMMN Integration
+# BPMN 和 CMMN 集成
 
-This section explains how to invoke DMN decision from BPMN and CMMN.
+本节说明如何从 BPMN 和 CMMN 调用 DMN 决策。
 
-## BPMN Business Rule Task
+## BPMN 业务规则任务
 
-The BPMN business rule task can reference a [deployed] decision
-definition. The decision definition is evaluated when the task is executed.
+BPMN 业务规则任务可以引用 [部署的][deployed] 决策定义。 在执行任务时评估决策定义。
 
 ```xml
 <definitions id="taskAssigneeExample"
@@ -42,13 +41,12 @@ definition. The decision definition is evaluated when the task is executed.
 </definitions>
 ```
 
-For more information on how to reference a decision definition from a business
-rule task, please refer to the [BPMN 2.0 reference][business rule task].
+有关如何从业务规则任务中引用决策定义的更多信息，请参阅[BPMN 2.0 参考][business rule task]。
 
 ## DMN Decision Task
 
-The CMMN decision task references a [deployed] decision definition.
-The decision definition is invoked when the task is activated.
+CMMN 决策任务引用了一个[部署的][deployed] 决策定义。
+激活任务时调用决策定义。
 
 ```xml
 <definitions id="definitions"
@@ -68,32 +66,21 @@ The decision definition is invoked when the task is activated.
 </definitions>
 ```
 
-For more information on how to reference a decision definition from a decision
-task, please refer to the [CMMN 1.1 reference][decision task].
+有关如何从决策任务中引用决策定义的更多信息，请参阅 [CMMN 1.1 参考][decision task].
 
-# The Decision Result
+# 决策结果
 
-The output of the decision, also called decision result, is a complex object of
-type `DmnDecisionResult`. Generally, it is a list of key-value pairs. 
+决策的输出，也称为决策结果，是“DmnDecisionResult”类型的复杂对象。 通常，它是一个键值对列表。
 
-If the decision is implemented as [decision table] then each entry in the list represents one matched rule. The output entries of this
-rule are represented by the key-value pairs. The key of a pair is specified by
-the name of the output.
+如果决策被实现为[决策表][decision table]，那么列表中的每个条目代表一个匹配的规则。此规则的输出条目由键值对表示。Key由输出名称指定。
 
-Instead, if the decision is implemented as [decision literal expression] then the list contains only one entry. This entry represents the expression value and is mapped by the variable name.
+相反的，如果决策被实现为 [决策文字表达式][decision literal expression]，那么该列表仅包含一个条目。此条目表示表达式值并由变量名称映射组成。
 
-The type `DmnDecisionResult` provides methods from the `List` interface
-and some convenience methods like `getSingleResult()` or `getFirstResult()` to
-get the result of a matched rule. The rule results provide methods from the
-`Map` interface and also convenience methods like `getSingleEntry()` or
-`getFirstEntry()`.
+`DmnDecisionResult` 类型除了提供来自 `List` 接口的方法还实现了一些方便的方法，如 `getSingleResult()` 或 `getFirstResult()` 来获取匹配规则的结果。 规则结果提供了来自`Map` 接口的方法以及类似`getSingleEntry()` 或`getFirstEntry()` 的便捷方法。
 
-If the decision result contains only a single output value (e.g., evaluating a decision literal expression) then 
-the value can be retrieved from the result using the `getSingleEntry()` method
-which combines `getSingleResult()` and `getSingleEntry()`.
+如果决策结果仅包含单个输出值（例如，评估决策文字表达式），则可以使用结合了 getSingleResult() 和 getSingleEntry() 的 getSingleEntry() 方法从结果中检索该值。
 
-For example, the following code returns the output entry with name `result` of
-the only matched rule.
+例如，以下代码返回名称为“result”的唯一匹配规则的输出条目。
 
 ```java
 DmnDecisionResult decisionResult = ...;
@@ -103,28 +90,19 @@ Object value = decisionResult
   .getEntry("result");
 ```
 
-It also provides methods to get typed output entries like
-`getSingleEntryTyped()`. Please refer to the [User Guide][Typed Value API] for
-details about typed values. A complete list of all methods can be found in the
-{{< javadocref page="?org/camunda/bpm/dmn/engine/DmnDecisionResult"
-text="Java Docs" >}}.
+它还提供了获取类型化输出条目的方法，例如`getSingleEntryTyped()`。 有关类型值的详细信息，请参阅[用户指南][Typed Value API]。 在 {{< javadocref page="?org/camunda/bpm/dmn/engine/DmnDecisionResult" text="Java Docs" >}} 中可以找到所有方法的完整列表。
 
-The decision result is available in the local scope of the executing task as a
-transient variable named `decisionResult`. It can be passed into a variable by
-using a predefined or a custom mapping of the decision result, if necessary.
+决策结果在执行任务的本地范围内作为名为“decisionResult”的瞬态变量可用。 如有必要，可以使用决策结果的预定义或自定义映射将其传递到变量中。
 
-## Predefined Mapping of the Decision Result
+## 决策结果的预定义映射
 
-The engine includes predefined mappings of the decision result for common use
-cases. The mapping is similar to an [output variable mapping]. It extracts a
-value from the decision result which is saved in a process/case variable. The
-following mappings are available:
+该引擎包括针对常见用例的决策结果的预定义映射。 该映射类似于[输出变量映射][output variable mapping]。 它从保存在流程/案例变量中的决策结果中提取一个值。 以下映射可用：
 
 <table class="table table-striped">
   <tr>
-    <th>Mapper</th>
-    <th>Result</th>
-    <th>Is suitable for</th>
+    <th>映射器</th>
+    <th>结果类型</th>
+    <th>适用于</th>
   </tr>
   <tr>
     <td>singleEntry</td>
@@ -149,25 +127,17 @@ following mappings are available:
   </tr>
 </table>
 
-Only the `singleEntry` mapper returns a [typed value][Typed Value API] that
-wraps the value of the output entry and additional type information. The
-other mappers return collections which contain the value of the output entries
-as normal Java objects without additional type information.
+只有`singleEntry` 映射器返回一个[类型化值][Typed Value API]，它包装了输出条目的值和附加类型信息。 其他映射器将包含输出条目值的集合作为普通 Java 对象返回，而没有其他类型信息。
 
-Note that the mapper throws an exception if the decision result is not
-suitable. For example, the `singleEntry` mapper throws an exception if the
-decision result contains more than one matched rule.
+请注意，如果决策结果不合适，映射器会抛出异常。 例如，如果决策结果包含多个匹配的规则，`singleEntry` 映射器会抛出异常。
 
 {{< note title="Limitations of Serialization" class="warning" >}}
 
-If you are using one of the predefined mappers `singleResult`, `collectEntries`
-or `resultList` then you should consider the [limitations of serialization]({{<
-relref "#limitations-of-the-serialization-of-the-mapping-result" >}}).
+如果你使用的是预定义映射器 `singleResult`、`collectEntries` 或 `resultList` 之一，那么你应该考虑 [序列化的限制]({{< relref "#limitations-of-the-serialization-of-the-mapping-result" >}}).
 
 {{< /note >}}
 
-To specify the name of the process/case variable to store the result of the
-mapping, the `camunda:resultVariable` attribute is used.
+要指定用于存储映射结果的流程（BPMN）/案例（CMMN）变量的名称，请使用 `camunda:resultVariable` 属性。
 
 BPMN:
 ```xml
@@ -185,36 +155,28 @@ CMMN:
               camunda:resultVariable="result">
 ```
 
-{{< note title="Name of the Result Variable" class="warning" >}}
+{{< note title="结果变量的名称" class="warning" >}}
 
-The result variable should not have the name `decisionResult` since the
-decision result itself is saved in a variable with this name. Otherwise an
-exception is thrown while saving the result variable.
+结果变量不应使用名称“decisionResult”，因为决策结果本身保存在具有此名称的变量中。保存结果为此名称时会抛出异常。
 
 {{< /note >}}
 
-## Custom Mapping of the Decision Result
+## 决策结果的自定义映射
 
-Instead of a predefined mapping, a custom decision result mapping can be used
-to pass the decision result into variables.
+可以使用自定义决策结果映射来将决策结果传递给变量，而不是预定义的映射。
 
 {{< note title="Limitations of Serialization" class="warning" >}}
 
-If you pass a collection or a complex object to a variable then you should
-consider the [limitations of serialization]({{< relref "#limitations-of-the-serialization-of-the-mapping-result" >}}).
+如果将集合或复杂对象传递给变量，则应考虑 [序列化的限制]({{< relref "#limitations-of-the-serialization-of-the-mapping-result" >}}).
 
 
 {{< /note >}}
 
-### Custom Mapping to Process Variables
+### 自定义映射到流程变量
 
-If a business rule task is used to invoke a decision inside a BPMN process,
-then the decision result can be passed into process variables by using an
-[output variable mapping].
+如果业务规则任务用于调用 BPMN 流程内部的决策，则可以使用 [输出变量映射][output variable mapping] 将决策结果传递到流程变量中。
 
-For example, if the decision result has multiple output values which should be
-saved in separate process variables this can be done achieved by defining an
-output mapping on the business rule task.
+例如，如果决策结果有多个输出值，这些输出值应该保存在单独的流程变量中，这可以通过在业务规则任务上定义输出映射来实现。
 
 ```xml
 <businessRuleTask id="businessRuleTask" camunda:decisionRef="myDecision">
@@ -231,9 +193,7 @@ output mapping on the business rule task.
 </businessRuleTask>
 ```
 
-In addition to an output variable mapping, the decision result can also be
-processed by an [execution listener], which is attached to the business rule
-task.
+除了输出变量映射外，决策结果还可以由附加到业务规则任务的[执行侦听器][execution listener]处理。
 
 ```xml
 <businessRuleTask id="businessRuleTask" camunda:decisionRef="myDecision">
@@ -258,11 +218,9 @@ public class MyDecisionResultListener implements ExecutionListener {
 }
 ```
 
-### Custom Mapping to Case Variables
+### 自定义映射到大小写变量
 
-If a decision task is used to invoke a decision inside a CMMN case, the
-decision result can be passed to a case variable by using a case execution
-listener which is attached to the decision task.
+如果决策任务用于调用 CMMN 案例内的决策，则可以使用附加到决策任务的案例执行侦听器将决策结果传递给案例变量。
 
 ```xml
 <decisionTask id="decisionTask" decisionRef="myDecision">
@@ -289,51 +247,27 @@ public class MyDecisionResultListener implements CaseExecutionListener {
 }
 ```
 
-## Limitations of the Serialization of the Mapping Result
+## 映射结果序列化的限制
 
-The predefined mappings `singleResult`, `collectEntries` and `resultList` map
-the decision result to Java collections. The implementation of the collections
-depends on the used JDK and contains untyped values as Objects. When a collection
-is saved as process/case variable then it is serialized as object value because
-there is no suitable primitive value type. Depending on the used [object value
-serialization], this can lead to deserialization problems.
+预定义的映射`singleResult`、`collectEntries` 和`resultList` 将决策结果映射到Java 集合。集合的实现取决于使用的 JDK 并包含无类型值作为对象。当一个集合被保存为流程/案例变量时，它会被序列化为对象值，因为没有合适的原始值类型。根据使用的[对象值序列化][object value serialization]，这可能会导致反序列化问题。
 
-In case you are using the default built-in object serialization, the variable
-can not be deserialized if the JDK is updated or changed and contains an
-incompatible version of the collection class. Otherwise, if you are using
-another serialization like JSON then you should ensure that the untyped value
-is deserializable. For example, a collection of date values can not be
-deserialized using JSON because JSON has no registered mapper for date by
-default.
+如果你使用默认的内置对象序列化，如果 JDK 更新或更改并且包含不兼容的集合类版本，则无法反序列化该变量。否则，如果你使用其他序列化（如 JSON），则应确保无类型值是可反序列化的。例如，不能使用 JSON 反序列化一组日期值，因为 JSON 默认没有注册日期映射器。
 
-The same problems can occur by using a custom output variable mapping since
-`DmnDecisionResult` has methods that return the same collections as the
-predefined mappers. Additionally, it is not recommended to save a
-`DmnDecisionResult` or a `DmnDecisionResultEntries` as process/case variable because
-the underlying implementation can change in a new version of Camunda Platform.
+使用自定义输出变量映射可能会出现相同的问题，因为 DmnDecisionResult 具有返回与预定义映射器相同的集合的方法。此外，不建议将“DmnDecisionResult”或“DmnDecisionResultEntries”保存为流程/案例变量，因为在新版本的 Camunda 平台中底层实现可能会发生变化。
 
-To prevent any of these problems, you should use primitive variables only.
-Alternatively, you can use a custom object for serialization that you control
-by yourself.
+为了防止任何这些问题，你应该只使用原始变量。
+或者，你可以使用你自己控制的自定义对象进行序列化。
 
-# Accessing Variables from Decisions
+# 从决策中访问变量
 
-DMN Decision tables and Decision Literal Expressions contain multiple expressions which will be evaluated by the
-DMN engine. For more information about the expressions of a decision
-please see our [DMN 1.3 reference][decision table]. These expressions can
-access all process/case variables which are available in the scope of the
-calling task. The variables are provided through a read-only variable context.
+DMN 决策表和决策文字表达式包含多个将由 DMN 引擎评估的表达式。 有关决策表达式的更多信息，请参阅 [DMN 1.3 参考][decision table]。 这些表达式可以访问调用任务范围内可用的所有流程/案例变量。 这些变量是通过只读变量上下文提供的。
 
-As a shorthand, process/case variables can be directly referenced by name in
-expressions. For example, if a process variable `foo` exists, then this
-variable can be used in an input expression, input entry and output entry of a decision table 
-by its name.
+作为简写，可以在表达式中通过名称直接引用流程/案例变量。 例如，如果一个流程变量‘foo’存在，那么这个变量可以通过它的名字在决策表的输入表达式、输入条目和输出条目中使用。
 
 ```xml
 <input id="input">
   <!--
-    this input expression will return the value
-    of the process/case variable `foo`
+    此输入表达式将返回流程/案例变量 `foo` 的值
   -->
   <inputExpression>
     <text>foo</text>
@@ -341,18 +275,12 @@ by its name.
 </input>
 ```
 
-The returned value of the process/case variable in the expression will
-be a normal object and not a [typed value][Typed Value API]. If you want
-to use the typed value in your expression, you have to get the variable
-from the variable context. The following snippet does the same as the above
-example. It gets the variable `foo` from the variable context and returns
-its unwrapped value.
+表达式中流程/案例变量的返回值将是一个普通对象，而不是 [typed value][Typed Value API]。 如果要在表达式中使用类型化值，则必须从变量上下文中获取变量。 下面的代码片段与上面的示例相同。 它从变量上下文中获取变量 `foo` 并返回它的解包值。
 
 ```xml
 <input id="input">
   <!--
-    this input expression uses the variable context to
-    get the typed value of the process/case variable `foo`
+    此输入表达式使用变量上下文来获取流程/案例变量 `foo` 的类型值
   -->
   <inputExpression>
     <text>
@@ -362,39 +290,29 @@ its unwrapped value.
 </input>
 ```
 
-# Expression Language Integration
+# 表达式语言集成
 
-By default, the DMN engine uses [FEEL] as expression language for input
-expressions, input entries, output entries and literal expressions. 
-Please see the [DMN engine][expression languages] guide for more
-information about expression languages.
+默认情况下，DMN 引擎使用 [FEEL] 作为输入表达式、输入条目、输出条目和文字表达式的表达式语言。 有关表达式语言的更多信息，请参阅 [DMN 引擎][expression languages] 指南。
 
-## Accessing Beans
+## 访问 Bean
 
-If the DMN engine is invoked by the Camunda Platform, it uses the same
-JUEL configuration as the Camunda Platform engine. Therefore, it is also
-possible to access Spring and CDI Beans from JUEL expressions in decisions. 
-For more information on this integration, please see the corresponding
-section in the [Spring] and [CDI] guides.
+如果 DMN 引擎由 Camunda 平台调用，它使用与 Camunda 平台引擎相同的 JUEL 配置。 因此，也可以在决策中从 JUEL 表达式访问 Spring 和 CDI Beans。
+有关此集成的更多信息，请参阅 [Spring] 和 [CDI] 指南中的相应部分。
 
-{{< note title="Heads-up!" class="info" >}}
-Beans cannot be accessed when using FEEL as expression language.
+{{< note title="小心！" class="info" >}}
+使用 FEEL 作为表达式语言时，无法访问 Bean。
 {{< /note >}}
 
-## Extending the Expression Language
+## 其他的表达式语言
 
 {{< note title="Use of Internal API" class="warning" >}}
 
-These APIs are **not** part of the [public API]({{< ref "/introduction/public-api.md" >}}) and may change in later releases.
+这些 API **不是** [公共 API]({{< ref "/introduction/public-api.md" >}}) 的一部分，可能会在以后的版本中更改。
 
 {{< /note >}}
 
-It is possible to add own functions which can be used inside JUEL expressions.
-Therefore a new {{< javadocref
-page="?org/camunda/bpm/engine/impl/javax/el/FunctionMapper.html"
-text="FunctionMapper" >}} has to be implemented. The function mapper than
-has to be added to the process engine configuration after it was
-initialized.
+可以添加可以在 JUEL 表达式中使用的自己的函数。
+因此，必须实现一个新的 {{< javadocref page="?org/camunda/bpm/engine/impl/javax/el/FunctionMapper.html" text="FunctionMapper" >}}。 函数映射器必须在初始化后添加到流程引擎配置中。
 
 ```java
 ProcessEngineConfigurationImpl processEngineConfiguration = (ProcessEngineConfigurationImpl) processEngine
@@ -405,10 +323,9 @@ processEngineConfiguration
   .addFunctionMapper(new MyFunctionMapper());
 ```
 
-This can be done, for example, by creating a [process engine plugin].
+例如，可以通过创建 [流程引擎插件][process engine plugin] 来完成。
 
-Please **note** that these functions are available in all JUEL expressions
-in the platform, not only in DMN decisions.
+请 **注意** 这些函数在平台中的所有 JUEL 表达式中都可用，而不仅仅是在 DMN 决策中。
 
 [decision table]: {{< ref "/reference/dmn/decision-table/_index.md" >}}
 [decision literal expression]: {{< ref "/reference/dmn/decision-literal-expression/_index.md" >}}

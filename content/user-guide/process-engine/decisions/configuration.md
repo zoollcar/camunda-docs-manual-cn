@@ -1,54 +1,54 @@
 ---
 
-title: 'Configure the DMN engine'
+title: '配置 DMN 引擎'
 weight: 10
 
 menu:
   main:
-    name: "Configuration"
+    name: "配置"
     identifier: "user-guide-process-engine-decisions-configuration"
     parent: "user-guide-process-engine-decisions"
     pre: "Configure the DMN engine"
 
 ---
 
-The configuration of the DMN engine is a part of the process engine configuration. It depends on whether you use an application managed or a shared, container managed process engine. Please refer to the [Process Engine Bootstrapping] for details.
+DMN引擎的配置是流程引擎配置的一部分。 这取决于你使用的是应用程序管理的还是共享的、容器管理的流程引擎。 有关详细信息，请参阅 [Process Engine Bootstrapping][Process Engine Bootstrapping]。
 
-This section shows how to configure the DMN engine:
+本节展示如何配置 DMN 引擎：
 
-* [Programmatically via Java API]({{< relref "#configure-the-dmn-engine-using-java-api" >}})
-* [Declarative via XML configuration]({{< relref "#configure-the-dmn-engine-using-spring-xml" >}})
+* [通过 Java API 编程]({{< relref "#configure-the-dmn-engine-using-java-api" >}})
+* [通过 XML配置 声明]({{< relref "#configure-the-dmn-engine-using-spring-xml" >}})
 
-In the examples the default expression language of the input expressions is set to `groovy`. A list of all possible configurations can be found in the [DMN Engine Configuration] section.
+在示例中，输入表达式的默认表达式语言设置为 `groovy`。 在 [DMN 引擎配置][DMN Engine Configuration] 部分可以找到所有可能配置的列表。
 
-# Configure the DMN Engine using Java API
+# 使用 Java API 配置 DMN 引擎
 
-First, you need to create a [ProcessEngineConfiguration]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md#bootstrap-a-process-engine-using-the-java-api" >}}) object for the process engine and a `DmnEngineConfiguration` object for the DMN engine. Now you can configure the DMN engine using the `DmnEngineConfiguration` object. When you are done, set the object on the `ProcessEngineConfiguration` and call `buildProcessEngine()` to create the process engine.
+首先，你需要创建一个 [ProcessEngineConfiguration]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md#使用java-api启动流程引擎" >}}) 用于流程引擎的对象和 DMN 引擎的“DmnEngineConfiguration”对象。 现在你可以使用“DmnEngineConfiguration”对象配置 DMN 引擎。 完成后，在“ProcessEngineConfiguration”上设置对象并调用“buildProcessEngine()”来创建流程引擎。
 
 ```java
-// create the process engine configuration
+// 创建流程引擎配置
 ProcessEngineConfigurationImpl processEngineConfiguration = // ...
     
-// create the DMN engine configuration    
+// 创建 DMN 引擎配置 
 DefaultDmnEngineConfiguration dmnEngineConfiguration = (DefaultDmnEngineConfiguration) 
   DmnEngineConfiguration.createDefaultDmnEngineConfiguration();
 
-// configure the DMN engine ...
-// e.g. set the default expression language for input expressions to `groovy`
+// 配置DMN引擎...
+// 例如 将输入表达式的默认表达式语言设置为 `groovy`
 dmnEngineConfiguration.setDefaultInputExpressionExpressionLanguage("groovy");
 
-// set the DMN engine configuration on the process engine configuration
+// 在流程引擎配置上设置 DMN 引擎配置
 processEngineConfiguration.setDmnEngineConfiguration(dmnEngineConfiguration);
 
-// build the process engine which includes the DMN engine
+// 构建包含 DMN 引擎的流程引擎
 processEngineConfiguration.buildProcessEngine();
 ```
 
-# Configure the DMN Engine using Spring XML
+# 使用 Spring XML 配置 DMN 引擎
 
-Follow the [instructions]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md#configure-process-engine-using-spring-xml" >}}) to create a base `camunda.cfg.xml` XML configuration for the process engine. 
+按照 [教程]({{< ref "/user-guide/process-engine/process-engine-bootstrapping.md#使用camunda-cfg-xml配置流程引擎" >}}) 创建基础 `camunda .cfg.xml` 流程引擎的 XML 配置。
 
-Add a new configuration bean of class `org.camunda.bpm.dmn.engine.impl.DefaultDmnEngineConfiguration`. Configure the DMN engine using the bean and set it as `dmnEngineConfiguration` property on the `processEngineConfiguration` bean. 
+添加类 `org.camunda.bpm.dmn.engine.impl.DefaultDmnEngineConfiguration` 的新配置 bean。 使用 bean 配置 DMN 引擎并将其设置为 `processEngineConfiguration` bean 上的 `dmnEngineConfiguration` 属性。
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans" 
@@ -61,8 +61,8 @@ Add a new configuration bean of class `org.camunda.bpm.dmn.engine.impl.DefaultDm
     <property name="dmnEngineConfiguration">
       <bean class="org.camunda.bpm.dmn.engine.impl.DefaultDmnEngineConfiguration">
         
-        <!-- configure the DMN engine ... --> 
-        <!-- e.g. set the default expression language for input expressions to `groovy` -->
+        <!-- 配置DMN引擎... --> 
+        <!-- 例如 将输入表达式的默认表达式语言设置为 `groovy` -->
         <property name="defaultInputExpressionExpressionLanguage" value="groovy" />
         
       </bean>

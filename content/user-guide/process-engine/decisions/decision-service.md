@@ -1,24 +1,21 @@
 ---
 
-title: 'Decision Service in the Process Engine'
+title: '流程引擎中的决策服务类'
 weight: 30
 
 menu:
   main:
-    name: "Decision Service"
+    name: "决策服务类"
     identifier: "user-guide-process-engine-decisions-service"
     parent: "user-guide-process-engine-decisions"
     pre: "Evaluate Decisions using the Services API"
 ---
 
-The decision service is a part of the process engine's [Services API]. It allows
-to evaluate a deployed decision definition independently from BPMN and CMMN.
+决策服务是流程引擎的 [Services API][Services API] 的一部分。 它允许独立于 BPMN 和 CMMN 评估已部署的决策定义。
 
-# Evaluating a Decision
+# 评估决策
 
-To evaluate a deployed decision, reference it by id or a combination of key and version. If
-a key is used but no version is specified then the latest version of decision
-definition with the given key is evaluated.
+要评估已部署的决策，请通过 id 或Key和版本的组合来引用它。 如果使用Key但未指定版本，则评估具有给定Key的决策定义的最新版本。
 
 ```java
 DecisionService decisionService = processEngine.getDecisionService();
@@ -39,79 +36,60 @@ DmnDecisionTableResult decisionResult = decisionService
   .evaluate(); 
 ```
 
-## The Decision Key
+## 决策定义Key
 
-The key of a decision definition is specified by the `id` attribute of the
-`decision` element in the DMN XML. The different naming is related to the
-[Versioning of Decisions]. Since a key can reference multiple versions of a
-decision definition, the id specifies exactly one version.
+决策定义Key由 DMN XML 中“decision”元素的“id”属性指定。不同的命名与[决策的版本化][Versioning of Decisions]有关。由于Key可以引用决策定义的多个版本，因此 id 仅指定一个版本。
 
-## Passing Data
+## 传递数据
 
-A decision may reference one or more variables. For example, a variable can be
-referenced in an input expression or an input entry of a decision table. The
-variables are passed to the decision service as key-value pairs. Each pair
-specifies the name and the value of a variable.
+决策可能会引用一个或多个变量。 例如，可以在输入表达式或决策表的输入条目中引用变量。 变量作为键值对传递给决策服务。 每对指定变量的名称和值。
 
-For more information on the different expressions see the [DMN 1.3 reference].
+有关不同表达式的更多信息，请参阅[DMN 1.3 参考][DMN 1.3 参考]。
 
-# Authorizations for Evaluating Decisions
+# 评估决策的授权
 
-The user needs the permission `CREATE_INSTANCE` on the resource
-`DECISION_DEFINITION` to evaluate decisions. The resource id of the
-authorization is the decision definition key.
+用户需要对资源`DECISION_DEFINITION` 的权限`CREATE_INSTANCE` 来评估决策。 授权的资源 id 是决策定义键。
 
-For more information about authorizations please refer to the [Authorization
-Service] section.
+有关授权的更多信息，请参阅 [授权服务][Authorization Service] 部分。
 
-# Working with the Decision Result
+# 使用决策结果
 
-The result of an evaluation is called decision result. The decision result is a complex object
-of type `DmnDecisionResult`. Think of it as a list of key-value pairs.
+评估的结果称为决策结果。 决策结果是一个类型为“DmnDecisionResult”的复杂对象。 将其视为键值对列表。
 
-If the decision is implemented as [decision table] then each entry in the list represents one matched rule. The output entries of this
-rule are represented by the key-value pairs. The key of a pair is specified by
-the name of the output.
+如果决策被实现为[决策表][decision table]，那么列表中的每个条目代表一个匹配的规则。 此规则的输出条目由键值对表示。 一对密钥由输出名称指定。
 
-Instead, if the decision is implemented as [decision literal expression] then the list contains only one entry. This entry represents the expression value and is mapped by the variable name.
+相反，如果决策被实现为 [决策文字表达式][decision literal expression]，那么该列表仅包含一个条目。 此条目表示表达式值并由变量名称映射。
 
-The decision result provides methods from interface `List<Map<String,
-Object>>` and some convenience methods.
+决策结果提供了接口`List<Map<String, Object>>`的方法和一些方便的方法。
 
 ```java
 DmnDecisionResult decisionResult = ...;
 
-// get the value of the single entry of the only matched rule
+// 获取唯一匹配规则的单个条目的值
 String singleEntry = decisionResult.getSingleResult().getSingleEntry();
 
-// get the value of the result entry with name 'result' of the only matched rule
+// 获取唯一匹配规则名称为“result”的结果条目的值
 String result = decisionResult.getSingleResult().getEntry("result");
 
-// get the value of the first entry of the second matched rule
+// 获取第二个匹配规则的第一个条目的值
 String firstValue = decisionResult.get(1).getFirstEntry();
 
-// get a list of all entries with the output name 'result' of all matched rules
+// 获取所有匹配规则的输出名称为“result”的所有条目的列表
 List<String> results = decisionResult.collectEntries("result");
 
-// shortcut to get the single output entry of the single rule result
-// - combine getSingleResult() and getSingleEntry()
+// 获取单个规则结果的单个输出条目的快捷方式
+// - 结合 getSingleResult() 和 getSingleEntry()
 String result = decisionResult.getSingleEntry();
 ```
 
-Note that the decision result also provides methods to get typed output entries.
-A complete list of all methods can be found in the {{< javadocref
-page="?org/camunda/bpm/dmn/engine/DmnDecisionResult" text="Java Docs" >}}.
+请注意，决策结果还提供了获取类型化输出条目的方法。
+在 {{< javadocref page="?org/camunda/bpm/dmn/engine/DmnDecisionResult" text="Java Docs" >}} 中可以找到所有方法的完整列表。
 
-If the decision is implemented as [decision table] then it can also be evaluated using one of the 
-{{< javadocref page="?org/camunda/bpm/engine/DecisionService.html##evaluateDecisionTableByKey(java.lang.String)"
-text="evaluateDecisionTable" >}} methods. In this case, the evaluation returns a {{< javadocref page="?org/camunda/bpm/dmn/engine/DmnDecisionTableResult.html" text="DmnDecisionTableResult" >}} which is semantically equal and provide the same methods as a
-`DmnDecisionResult`.
+如果决策被实施为[决策表][decision table]，那么它也可以使用{{< javadocref page="?org/camunda/bpm/engine/DecisionService.html##evaluateDecisionTableByKey(java.lang.String)" text="evaluateDecisionTable" >}}中的方法。 在这种情况下，结果返回一个 {{< javadocref page="?org/camunda/bpm/dmn/engine/DmnDecisionTableResult.html" text="DmnDecisionTableResult" >}}，它与` DmnDecisionResult` 在语义和方法上是相等的。
 
-# History of Evaluated Decisions
+# 评估决策的历史
 
-When a decision is evaluated, a new history entry of type
-`HistoricDecisionInstance` is created which contains the inputs and outputs of
-the decision. The history can be queried by the history service.
+评估决策时，会创建一个新的历史记录条目，类型为“HistoricDecisionInstance”，其中包含决策的输入和输出。 历史可以通过历史服务进行查询。
 
 ```java
 List<HistoricDecisionInstance> historicDecisions = processEngine
@@ -123,7 +101,7 @@ List<HistoricDecisionInstance> historicDecisions = processEngine
   .list();
 ```
 
-For more information about this, please refer to the [History for DMN Decisions].
+有关这方面的更多信息，请参阅[DMN 决策的历史][History for DMN Decisions]。
 
 [decision table]: {{< ref "/reference/dmn/decision-table/_index.md" >}}
 [decision literal expression]: {{< ref "/reference/dmn/decision-literal-expression/_index.md" >}}
