@@ -89,9 +89,9 @@ externalTaskService.setRetriesAsync(
 有时需要添加或更新已经运行的流程实例的变量。
 例如，当用户在流程开始时输入不正确的数据时，需要即时更正数据时。
 
-此批处理操作可帮助您将变量异步设置到流程实例的根范围。
+此批处理操作可帮助你将变量异步设置到流程实例的根范围。
 
-您可以 (1) 使用 `HistoricProcessInstanceQuery` 或 `ProcessInstanceQuery` 过滤流程实例，或者 (2) 直接传递一组流程实例 ID。
+你可以 (1) 使用 `HistoricProcessInstanceQuery` 或 `ProcessInstanceQuery` 过滤流程实例，或者 (2) 直接传递一组流程实例 ID。
 
 请参阅下面如何调用 Java API：
 
@@ -103,12 +103,12 @@ runtimeService.setVariablesAsync(processInstanceIds, variables);
 
 ### 已知的限制
 
-目前，无法通过批处理操作设置瞬时变量。 但是，您可以同步[设置瞬时变量][set transient variables]。
+目前，无法通过批处理操作设置瞬时变量。 但是，你可以同步[设置瞬时变量][set transient variables]。
 
 ## 设置移除时间
 
 有时需要推迟甚至阻止删除某些历史实例。
-移除时间可以与历史流程、决策和批次异步设置。
+移除时间可以与历史流程、决策和批处理异步设置。
 
 可以选择以下模式：
 

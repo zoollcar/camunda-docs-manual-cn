@@ -35,7 +35,7 @@ Camunda引擎使用 {{< javadocref page="?org/camunda/bpm/engine/ProcessEngineCo
 * `org.camunda.bpm.engine.impl.cfg.StandaloneProcessEngineConfiguration`  
 流程引擎是以独立的方式使用的。引擎本身将负责处理事务。默认情况下，只有在引擎启动时才会检查数据库（如果没有数据库模式或模式版本不正确，会抛出一个异常）。
 * `org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration`  
-这是一个用于单元测试的工具类。引擎本身将负责处理事务。默认使用H2内存数据库。该数据库将在引擎启动和关闭时被创建和删除。当使用这个时，可能不需要额外的配置（除了，当使用作业执行器（job executor）或邮件功能时）。
+这是一个用于单元测试的工具类。引擎本身将负责处理事务。默认使用H2内存数据库。该数据库将在引擎启动和关闭时被创建和删除。当使用这个时，可能不需要额外的配置（除了，当使用Job执行器（job executor）或邮件功能时）。
 * `org.camunda.bpm.engine.spring.SpringProcessEngineConfiguration`  
 当流程引擎被用于Spring环境时使用。更多信息请参见Spring集成部分。
 * `org.camunda.bpm.engine.impl.cfg.JtaProcessEngineConfiguration`  

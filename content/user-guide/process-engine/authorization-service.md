@@ -595,7 +595,7 @@ authorization.addPermission(Permissions.DELETE);
 * 创建批处理Job重试 Create Batch Set Job Retries
 * 创建批处理外部任务重试 Create Batch Set External Task Retries
 * 创建批量更新流程实例暂停 Create Batch Update Process Instances Suspend
-* 创建批次集移除时间 Create Batch Set Removal Time
+* 创建批处理集移除时间 Create Batch Set Removal Time
 * 创建批处理集变量 Create Batch Set Variables
 
 特定的“创建某某某”权限比一般的“创建”权限具有更高的优先级。
@@ -679,7 +679,7 @@ authorization.addPermission(Permissions.DELETE);
 * 历史详情查询 Historic Detail Query
 * 身份链接日志查询 Identity Link Log Query
 * 历史事件查询 Historic Incident Query
-* 作业日志查询 Job Log Query
+* Job日志查询 Job Log Query
 * 外部任务日志查询 External Task Log Query
 * 用户操作日志查询 User Operation Log Query
 

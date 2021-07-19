@@ -202,7 +202,7 @@ ProcessInstanceModificationBuilder#cancelActivityInstance(String activityInstanc
 ProcessInstanceModificationBuilder#cancelTransitionInstance(String activityInstanceId)
 ```
 
-过渡实例表示即将以异步延续的形式进入/离开一个活动的执行流。一个已经创建但尚未执行的异步延续作业被表示为一个过渡实例。这些实例可以通过`cancelTransitionInstance`来取消。参见[关于活动和过渡实例的细节]({{< relref "#activity-instance-based-api" >}})学习如何查询流程实例的过渡实例。
+过渡实例表示即将以异步延续的形式进入/离开一个活动的执行流。一个已经创建但尚未执行的异步延续Job被表示为一个过渡实例。这些实例可以通过`cancelTransitionInstance`来取消。参见[关于活动和过渡实例的细节]({{< relref "#activity-instance-based-api" >}})学习如何查询流程实例的过渡实例。
 
 
 ### 取消一个活动的所有活动实例

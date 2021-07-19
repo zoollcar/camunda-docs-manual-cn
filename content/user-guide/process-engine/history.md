@@ -444,7 +444,7 @@ List<HistoricActivityInstance> result = historyService
 * **Entity Type**: 操作所涉及的实体类型的标识符。可用的实体类型在{{< javadocref page="?org/camunda/bpm/engine/EntityTypes.html" text="org.camunda.bpm.engine.EntityTypes" >}}类中列出。与操作类型一样，一个操作可以处理一个以上的实体类型。
 * **Category**: 该操作所关联的类别的名称。可用的类别在{{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html" text="org.camunda.bpm.engine.history.UserOperationLogEntry" >}}中列出。例如，所有与任务相关的运行时操作，如申请和完成任务，都属于{{< javadocref page="?org/camunda/bpm/engine/history/UserOperationLogEntry.html#CATEGORY_TASK_WORKER" text="TaskWorker" >}}类别 。
 * **Annotation**: 用户因为审核等原因而设置的文本注释。属于一个操作的多个日志条目具有相同的注释。
-* **Entity IDs**: 一个作业日志条目包含实体ID，用于识别作业所涉及的实体。例如，一个任务的操作日志条目包含该任务的ID以及该任务所属的流程实例的ID。作为第二个例子，暂停一个流程定义的所有流程实例的日志条目不包含单个流程实例的ID，而只包含流程定义的ID。
+* **Entity IDs**: 一个Job日志条目包含实体ID，用于识别Job所涉及的实体。例如，一个任务的操作日志条目包含该任务的ID以及该任务所属的流程实例的ID。作为第二个例子，暂停一个流程定义的所有流程实例的日志条目不包含单个流程实例的ID，而只包含流程定义的ID。
 * **User ID**: 执行该操作的用户的ID。
 * **Timestamp**: 执行操作的时间。
 * **Changed Property**: 用户操作改变的属性。用户操作可以改变多个属性，例如，流程实例的暂停更改了暂停状态属性。为操作中涉及的每个已更改的属性创建日志条目。

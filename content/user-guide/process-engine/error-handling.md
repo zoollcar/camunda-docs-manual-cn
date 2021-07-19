@@ -47,7 +47,7 @@ menu:
 
 ## BPMN 2.0 错误事件
 
-BPMN 2.0 错误事件使您可以明确地对错误进行建模，从而解决业务错误的用例。 最突出的例子是“中间捕获错误事件”，它可以附加到一个活动的边界上。 定义边界错误事件对嵌入式子流程、调用活动或服务任务最有意义。 一个错误将导致替代流程被触发：
+BPMN 2.0 错误事件使你可以明确地对错误进行建模，从而解决业务错误的用例。 最突出的例子是“中间捕获错误事件”，它可以附加到一个活动的边界上。 定义边界错误事件对嵌入式子流程、调用活动或服务任务最有意义。 一个错误将导致替代流程被触发：
 
 {{< img src="../img/bpmn.boundary.error.event.png" title="Error Boundary Event" >}}
 
@@ -69,7 +69,7 @@ BPMN 2.0 transactions and compensations allow you to model business transaction 
 
 ## 重试失败的Job
 
-如果您使用 Jobs (`async`)，您可以利用 Cockpit 作为监控工具来处理失败的Job，在这种情况下，最终用户不会看到异常。 然后，当重试耗尽时，您通常会在驾驶舱中看到失败（请参阅 [失败的Job]({{< ref "/user-guide/process-engine/the-job-executor.md#failed-jobs" >}}) [Web 应用程序]({{< ref "/webapps/cockpit/_index.md" >}}) 的部分以获取更多信息）。
+如果你使用 Jobs (`async`)，你可以利用 Cockpit 作为监控工具来处理失败的Job，在这种情况下，最终用户不会看到异常。 然后，当重试耗尽时，你通常会在驾驶舱中看到失败（请参阅 [失败的Job]({{< ref "/user-guide/process-engine/the-job-executor.md#failed-jobs" >}}) [Web 应用程序]({{< ref "/webapps/cockpit/_index.md" >}}) 的部分以获取更多信息）。
 
 参考 [Web 应用]({{< ref "/webapps/cockpit/_index.md" >}}) 中的 [Cockpit中失败的Job]({{< ref "/webapps/cockpit/bpmn/failed-jobs.md" >}}) 章节获取更多细节。
 
@@ -84,11 +84,11 @@ for (Job failedJob : failedJobs) {
 
 ## 显式建模
 
-当然，您始终可以按照 [BPMN 2.0 中的重试在哪里](http://www.bpm-guide.de/2012/06/15/where-is-the-retry-in-bpmn-2-0/) 中指出的那样对重试机制进行显式建模：
+当然，你始终可以按照 [BPMN 2.0 中的重试在哪里](http://www.bpm-guide.de/2012/06/15/where-is-the-retry-in-bpmn-2-0/) 中指出的那样对重试机制进行显式建模：
 
 {{< img src="../img/retry.png" title="Retry Mechanism" >}}
 
-我们建议将其限制在您有充分理由希望在流程图中看到它的情况。 我们更喜欢异步延续，因为它不会使您的流程图膨胀，并且基本上可以用更少的运行时开销来做同样的事情，因为“遍历”建模循环涉及额外的操作，例如，编写审计日志。
+我们建议将其限制在你有充分理由希望在流程图中看到它的情况。 我们更喜欢异步延续，因为它不会使你的流程图膨胀，并且基本上可以用更少的运行时开销来做同样的事情，因为“遍历”建模循环涉及额外的操作，例如，编写审计日志。
 
 ## 使用用户任务
 
@@ -96,6 +96,6 @@ for (Job failedJob : failedJobs) {
 
 {{< img src="../img/error-handling-user-task.png" title="User Task Error Handling" >}}
 
-实际上，这是一种有效的方法，您可以将错误分配给操作员作为用户任务，并为他解决问题的选项建模。 然而，这是一种奇怪的混合：我们想要处理一个技术错误，但将其添加到我们的业务流程模型中。 我们在哪里停下来？ 我们现在是否必须在每个服务任务上对其进行建模？
+实际上，这是一种有效的方法，你可以将错误分配给操作员作为用户任务，并为他解决问题的选项建模。 然而，这是一种奇怪的混合：我们想要处理一个技术错误，但将其添加到我们的业务流程模型中。 我们在哪里停下来？ 我们现在是否必须在每个服务任务上对其进行建模？
 
 对于这种情况，使用失败的Job列表而不是使用“正常”任务列表感觉是一种更自然的方法，这就是为什么我们通常推荐另一种可能性并且不认为这是最佳实践的原因。
