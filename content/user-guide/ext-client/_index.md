@@ -11,41 +11,38 @@ menu:
 
 ---
 
-The **Camunda External Task Client** allows to set up remote Service Tasks for your workflow. There is a supported [Java](https://github.com/camunda/camunda-bpm-platform/clients/java)
-as well as [JavaScript](https://github.com/camunda/camunda-external-task-client-js) implementation.
+**Camunda 外部任务客户端** 允许为你的工作流设置远程服务任务。 支持 [Java](https://github.com/camunda/camunda-bpm-platform/clients/java)
+和 [JavaScript](https://github.com/camunda/camunda-external-task-client-js) 实例。
 
-## Features
-* Complete External Tasks
-* Extend the lock duration of External Tasks
-* Unlock External Tasks
-* Report BPMN errors and failures
-* Share variables with the Workflow Engine
+## 特性
+* 完整的外部任务
+* 扩展外部任务的锁定持续时间
+* 解锁外部任务
+* 报告BPMN错误和故障
+* 与流程引擎共享变量
 
-## Bootstrapping the Client
+## 启动客户端
 
 
 {{< img src="img/externalTaskCient.png" title="External Task Cient Architecture" >}}
 
 
-The client allows to handle service tasks of type "external". In order to configure and instantiate the client, all supported implementations offer a convenient interface.
-The communication between the client and the Camunda Workflow Engine is HTTP. Hence, the respective URL of the REST API is a mandatory information.
+客户端可以处理“外部（external）”类型的服务任务。 为了方便配置和实例化客户端，所有支持的实现都提供了一个方便的接口。
+客户端和 Camunda 流程引擎之间的通信是 HTTP。 因此，REST API 的相应 URL 是必填信息。
 
-### Request Interceptors
-To add additional HTTP headers to the performed REST API requests, the request interceptor method can be used. This becomes necessary,
-in the context of e.g. authentication.
+### 请求拦截器
+要向执行的 REST API 请求添加额外的 HTTP 标头，可以使用请求拦截器方法。 这在例如的上下文中变得必要。 验证。
 
-#### Basic Authentication
-In some cases it is necessary to secure the REST API of the Camunda Workflow Engine via Basic Authentication. For such
-situations a Basic Authentication implementation is provided by the client. Once configured with user credentials, the basic authentication header is added to each REST API request.
+#### 基本的身份验证
+在某些情况下，有必要通过基本身份验证来保护 Camunda 流程引擎的 REST API。 对于这种情况，客户端提供了基本身份验证实现。在配置用户凭据后，基本身份验证标头将添加到每个 REST API 请求中。
 
-#### Custom Interceptor
-Custom interceptors can be added while bootstrapping the client. For more details regarding the implementation please check the documentation related to the client of interest.
+#### 自定义拦截器
+可以在引导客户端时添加自定义拦截器。 有关实施的更多详细信息，请查看与对应客户端相关文档。
 
 
-### Topic Subscription
+### 主题订阅
 
-If a Service Task of the type "External" is placed inside a workflow, a topic name must be specified. The corresponding
-BPMN 2.0 XML could look as follows:
+如果将“外部（external）”类型的服务任务放置在工作流中，则必须指定主题名称。 相应的 BPMN 2.0 XML 可能如下所示：
 
 ```xml
 ...
@@ -56,120 +53,109 @@ BPMN 2.0 XML could look as follows:
 ...
 ```
 
-As soon as the Workflow Engine reached an External Task in a BPMN process, a corresponding activity instance is created, which is waiting to be fetched and locked by a client.
+一旦流程引擎到达 BPMN 流程中的外部任务，就会创建一个相应的活动实例，等待客户端获取和锁定。
 
-The client subscribes to the topic and fetches continuously for newly appearing External Tasks provided by the
-Workflow Engine. Each fetched External Task is marked with a temporary lock. Like this, no other clients can work on this
-certain External Task in the meanwhile. A lock is valid for the specified period of time and can be extended.
+客户端订阅主题并不断获取工作流引擎提供的新外部任务。 每个获取的外部任务都标有临时锁。如此一来，没有其他客户端可以同时处理这个外部任务。 锁定在指定的时间段内有效并且可以延长。
 
-When setting up a new topic subscription, it is mandatory to specify the topic name and a handler function.
-Once a topic has been subscribed, the client can start receiving work items by polling the process engine’s API.
+设置新主题订阅时，必须指定主题名称和处理程序函数。
+订阅主题后，客户端可以通过轮询流程引擎的 API 开始接收工作项。
 
-### Handler
-Handlers can be used to implement custom methods which are invoked whenever an External Task is fetched and locked successfully.
-For each topic subscription an External Task handler interface is provided.
+### 处理程序
+处理程序可用于实现自定义方法，只要外部任务被成功获取和锁定，就会调用这些方法。
+对于每个主题订阅，都提供了一个外部任务处理程序接口。
 
-The handlers are invoked sequentially for each fetched-and-locked external task.
+处理程序为每个获取并锁定的外部任务顺序调用。
 
-### Completing Tasks
-Once the custom methods specified in the handler are completed, the External Task can be completed. This means for the Workflow Engine that the execution will
-move on. For this purpose, all supported implementations have a `complete` method which can be called within the handler function. However, the
-External Task can only be completed, if it is currently locked by the client.
+### 完成任务（Task）
+一旦处理程序中指定的自定义方法完成后，外部任务就可以完成了。 对于流程引擎来说，这意味着执行将继续进行。 为此，所有支持的实现都有一个可以在处理程序函数中调用的“complete”方法。 但是，外部任务只有在当前被客户端锁定的情况下才能完成。
 
-### Extending the Lock Duration of Tasks
-Sometimes the completion of custom methods takes longer than expected. In this case the lock duration needs to be extended.
-This action can be performed by calling an `extendLock` method passing the new lock duration.
-The lock duration can only be extended, if the External Task is currently locked by the client.
+### 延长任务的锁定时间
+有时自定义方法的完成需要比预期更长的时间。 在这种情况下，需要延长锁定持续时间。
+可以通过调用 `extendLock` 方法并传递新锁定持续时间来执行此操作。
+如果外部任务当前被客户端锁定，则只能延长锁定持续时间。
 
-### Unlocking Tasks
-If an External Task is supposed to be unlocked so that other clients are allowed to fetch and lock this task again,
-an `unlock` method can be called. The External Task can only be unlocked, if the task is currently locked by the client.
+### 解锁任务（Task）
+如果需要解锁外部任务以便允许其他客户端再次获取和锁定此任务，则可以调用“unlock”方法。 只有在任务被当前客户端锁定时，才能解锁外部任务。
 
-### Reporting Failures
-If the client faces a problem that makes it impossible to complete the External Task successfully, this problem can be reported to
-the Workflow Engine. A failure can only be reported, if the External Task is currently locked by the client.
-You can find a detailed documentation about this action in the Camunda Platform [User Guide]({{<ref "/user-guide/process-engine/external-tasks.md#reporting-task-failure">}}).
+### 报告失败
+如果客户端遇到无法成功完成外部任务的问题，可以将此问题报告给工作流引擎。 如果外部任务当前被客户端锁定，则只能报告失败。
+你可以在 Camunda 平台 [用户指南]({{<ref "/user-guide/process-engine/external-tasks.md#reporting-task-failure">}}) 中找到有关此操作的详细文档。
 
-### Reporting BPMN Errors
-[Error boundary events]({{<ref "/reference/bpmn20/events/error-events.md#error-boundary-event">}})
-are triggered by BPMN errors. A BPMN error can only be reported, if the External Task is currently locked by the client.
-You can find a detailed documentation about this action in the Camunda Platform [User Guide]({{<ref "/user-guide/process-engine/external-tasks.md#reporting-bpmn-error">}}).
+### 报告BPMN错误
+[错误边界事件]({{<ref "/reference/bpmn20/events/error-events.md#error-boundary-event">}}) 由 BPMN 错误触发。 如果外部任务当前被客户端锁定，则只能报告 BPMN 错误。
+你可以在 Camunda 平台 [用户指南]({{<ref "/user-guide/process-engine/external-tasks.md#reporting-bpmn-error">}}) 中找到有关此操作的详细文档。
 
-### Variables
-Both external tasks clients are compatible with all data types the Camunda Engine [supports]({{<ref "/user-guide/process-engine/variables.md#supported-variable-values">}}).
-Variables can be accessed/altered using typed or the untyped API.
+### 变量
+两个外部任务客户端都与 Camunda引擎 [支持]({{<ref "/user-guide/process-engine/variables.md#supported-variable-values">}}) 的所有数据类型兼容。
+可以使用类型化的或无类型的 API 访问/更改变量。
 
 
-#### Process and Local Variables
-Variables can be treated as process or local variables.
-The former is set on the highest possible hierarchy of the variable scope and available to its child scopes in the entire process.
-If a variable, in contrast, is supposed to be set exactly on the provided execution scope, the local type can be used.
+#### 流程与局部变量
+变量可以分为流程或局部变量。
+前者设置在变量作用域的最高可能层次结构上，并在整个流程中对其子作用域可用。
+相反，如果应该在提供的执行范围内准确设置变量，则可以使用局部类型。
 
-**Note:** setting variables does not make sure that variables are persisted. Variables which were set locally on client-side
-are only available during runtime and get lost if they are not shared with the Workflow Engine by successfully completing
-the External Task of the current lock.
+**笔记：** 设置变量并不能确保变量被持久化。 在客户端本地设置的变量仅在运行时可用，如果未通过成功完成当前锁的外部任务与工作流引擎共享，则会丢失。
 
-
-#### Untyped Variables
-Untyped variables are stored by using the respective type of their values. It is possible to store/retrieve only a single variable or multiple variables at once.
+#### 无类型变量
+无类型变量通过使用其值的相应类型来存储。 可以存储/查询单个变量/多个变量。
 
 
-#### Typed Variables
-Setting typed variables requires the type to be specified explicitly. Typed variables can also be retrieved, the received object provides a variety of information besides type and
-value. Of course it is also possible to set and get multiple typed variables.
+#### 类型化变量
+设置类型变量需要明确指定类型。 也可以检索类型化变量，接收到的对象提供除类型和值之外的各种信息。 当然也可以设置和获取多个类型变量。
 
-##### Example: Using Typed JSON, XML and Object variables
+##### 示例：使用键入的JSON，XML和对象变量
 
 ```java
-// obtained via subscription
+// 通过订阅获得
 ExternalTaskService externalTaskService = ..;
 ExternalTask externalTask = ..;
 
 VariableMap variables = Variables.createVariables();
 
 JsonValue jsonCustomer = externalTask.getVariableTyped("customer");
-// deserialize jsonCustomer.getValue() to customer object
-// and modify ...
+// 反序列化 jsonCustomer.getValue() 为 customer object
+// 并修改 ...
 variables.put("customer", ClientValues.jsonValue(customerJsonString));
 
 XmlValue xmlContract = externalTask.getvariableTyped("contract");
-// deserialize xmlContract.getValue() to contract object
-// and modify ...
+// 反序列化 xmlContract.getValue() 为 contract object
+// 并修改 ...
 variables.put("contract", ClientValues.xmlValue(contractXmlString));
 
 TypedValue typedInvoice = externalTask.getVariableTyped("invoice");
 Invoice invoice = (Invoice) typedInvoice.getValue();
-// modify invoice object
+// 修改 invoice object
 variables.put("invoice", ClientValue.objectValue(invoice)
     .serializationDataFormat("application/xml").create();
 
 externalTaskService.complete(externalTask, variables);
 ```
 
-### Logging
+### 报告
 
-The client implementations support logging various events in the client lifecycle.
-Hence situations like the following can be reported:
+客户端实现支持记录客户端生命周期中的各种事件。
+因此，可以报告以下情况：
 
-* External Tasks could not be fetched and locked successfully
-* An exception occurred...
-   * while invoking a handler
-   * while deserializing variables
-   * while invoking a request interceptor
+* 无法成功获取和锁定外部任务
+* 出现异常在...
+   * 调用处理程序时
+   * 反序列化变量
+   * 调用请求拦截器
    * ...
 
-For more details, please check the documentation related to the client of interest.
+有关更多详细信息，请查看与感兴趣的客户相关的文档。
 
-## Examples
+## 实例
 
-Complete examples of how to set up the different External Task Clients can be found on GitHub ([Java](https://github.com/camunda/camunda-bpm-examples/tree/{{< minor-version >}}/clients/java),
+可以在 GitHub 上找到有关如何设置不同外部任务客户端的完整示例 ([Java](https://github.com/camunda/camunda-bpm-examples/tree/{{< minor-version >}}/clients/java),
 [JavaScript](https://github.com/camunda/camunda-external-task-client-js/tree/master/examples)).
 
-## External task throughput
+## 外部任务吞吐量
 
-For a high throughput of external tasks, you should balance between the number of external task instances, the number of clients and the duration of handling the work.
+对于外部任务的高吞吐量，你应该在外部任务实例的数量、客户端的数量和处理工作的持续时间之间取得平衡。
 
-A rule of thumb for long running tasks (maybe more than 30 secs) would be, to fetch-and-lock the tasks one by one (maskTasks = 1) and adjust the Long Polling interval to your needs (maybe 60 secs, asyncResponseTime = 60000).
-The Java client supports exponential backoff, default by 500 ms with factor 2, limited by 60000 ms. This could be shorted to your needs, too.
+长时间运行任务（可能超过 30 秒）的经验法则是，一个一个地获取并锁定任务（maskTasks = 1）并根据需要调整长轮询间隔（可能为 60 秒，asyncResponseTime = 60000）。
+Java 客户端支持指数退避，默认为 500 毫秒，因子为 2，限制为 60000 毫秒。 这也可以满足你的需求。
 
-As the external task clients do not use any threading internally, you should start as many clients as needed and balance the load with your operating system.
+由于外部任务客户端在内部不使用任何线程，你应该根据需要启动尽可能多的客户端并平衡你的操作系统的负载。
