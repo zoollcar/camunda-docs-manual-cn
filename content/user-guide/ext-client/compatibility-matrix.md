@@ -1,6 +1,6 @@
 ---
 
-title: 'Version Compatibility'
+title: '版本兼容性'
 weight: 300
 
 menu:
@@ -11,15 +11,15 @@ menu:
 
 ---
 
-Each version of the Camunda Platform is bound to a specific version of the **External Task Clients**.
+Camunda 平台的每个版本都绑定到 **外部任务客户端** 的特定版本。
 
-{{< note title="Heads Up" class="info" >}}
-  Starting with version 7.15.0, Camunda Platform and its compatible **Java** External Task Client always share the same version.
+{{< note title="注意" class="info" >}}
+  从 7.15.0 版本开始，Camunda 平台及其兼容的 **Java** 外部任务客户端始终使用相同的版本号。
 {{< /note >}}
 
 <table class="table table-striped">
   <tr>
-    <th>Camunda Platform version</th>
+    <th>Camunda平台版本</th>
     <th>NodeJs</th>
     <th>Java</th>
   </tr>
@@ -60,5 +60,4 @@ Each version of the Camunda Platform is bound to a specific version of the **Ext
   </tr>
 </table>
 
-Only these default combinations are recommended (and supported) by Camunda. Nevertheless, each version of the External
-Task Clients can be combined with newer patch versions of the Camunda Platform Workflow Engine.
+Camunda 仅推荐（并支持）这些默认组合。 尽管如此，外部任务客户端的每个版本都可以与 Camunda 平台工作流引擎的更新补丁版本结合使用。
