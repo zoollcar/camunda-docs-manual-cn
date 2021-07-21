@@ -5,7 +5,7 @@ weight: 300
 
 menu:
   main:
-    name: "Version Compatibility"
+    name: "版本兼容性"
     identifier: "external-task-client-compatibility-matrix"
     parent: "external-task-client"
 
