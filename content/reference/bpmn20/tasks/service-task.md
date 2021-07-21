@@ -56,7 +56,7 @@ menu:
 [User Guide]({{< ref "/user-guide/_index.md" >}}) 的
 [section]({{< ref "/user-guide/process-engine/expression-language.md#use-expression-language-as-delegation-code" >}}) 章节。
 
-也可以调用以Web服务形式实现的逻辑。 `camunda:connector` 是一个扩展，允许直接从工作流程调用REST/SOAP API。
+也可以调用以Web服务形式实现的逻辑。 `camunda:connector` 是一个扩展，允许直接从工作流调用REST/SOAP API。
 有关使用连接器的更多信息，请参阅相应的信息 [User Guide]({{< ref "/user-guide/_index.md" >}}) 中的 [section]({{< ref "/user-guide/process-engine/connectors.md#use-connectors" >}}) 章节。
 
 

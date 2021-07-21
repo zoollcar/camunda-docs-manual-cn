@@ -116,7 +116,7 @@ runtimeService.setVariablesAsync(processInstanceIds, variables);
   * `.absoluteRemovalTime(Date removalTime)`
 * **清除（Cleared）:** 重置移除时间（表示为 `null` 值）； 没有删除时间的实例不会被清理
   * `.clearedRemovalTime()`
-* **计算（Calculated）:** 根据工作流引擎的设置（基准时间 + TTL）重新计算移除时间
+* **计算（Calculated）:** 根据流程引擎的设置（基准时间 + TTL）重新计算移除时间
   * `.calculatedRemovalTime()`
 
 历史流程和决策实例可以是层次结构的一部分。 要为层次结构中的所有实例设置相同的删除时间，需要调用方法 `.hierarchical()`。

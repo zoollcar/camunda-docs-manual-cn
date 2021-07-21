@@ -11,7 +11,7 @@ menu:
 
 ---
 
-Camunda 为外部任务客户端提供了一个 Spring Boot Starter。 这允许您可以通过将以下 Maven 依赖项添加到您的 `pom.xml` 文件，轻松地将外部任务客户端添加到您的 Spring Boot 应用程序：
+Camunda 为外部任务客户端提供了一个 Spring Boot Starter。 这允许你可以通过将以下 Maven 依赖项添加到你的 `pom.xml` 文件，轻松地将外部任务客户端添加到你的 Spring Boot 应用程序：
 ```xml
 <dependency>
   <groupId>org.camunda.bpm.springboot</groupId>
@@ -22,21 +22,21 @@ Camunda 为外部任务客户端提供了一个 Spring Boot Starter。 这允许
 
 请查看我们的 [外部任务客户端 Spring Boot Starter 示例](https://github.com/camunda/camunda-bpm-examples/tree/{{<minor-version>}}#external-task-client-spring-boot).
 
-客户端可以订阅在您的 BPMN 流程模型中定义的一个或多个主题名。
-当执行在外部任务中等待时，客户端会执行您的自定义业务逻辑。
+客户端可以订阅在你的 BPMN 流程模型中定义的一个或多个主题名。
+当执行在外部任务中等待时，客户端会执行你的自定义业务逻辑。
 例如，检查客户的信用评分，如果成功，则外部任务可以标记为已完成并继续执行。
 
 ## 主题订阅
 
 允许实现自定义业务逻辑并与引擎交互的接口称为“ExternalTaskHandler”。 订阅由主题名称标识，并使用对“ExternalTaskHandler” bean 的引用进行配置。
 
-您可以通过定义一个返回类型为 `ExternalTaskHandler` 的 bean 并使用以下注释对该 bean 进行注释，从而为客户端订阅主题名称 `creditScoreChecker`：
+你可以通过定义一个返回类型为 `ExternalTaskHandler` 的 bean 并使用以下注释对该 bean 进行注释，从而为客户端订阅主题名称 `creditScoreChecker`：
 
 ```java
 @ExternalTaskSubscription("creditScoreChecker")
 ```
 
-注释至少需要一个主题名称。 但是，您可以通过引用“application.yml”文件中的主题名称来应用更多配置选项：
+注释至少需要一个主题名称。 但是，你可以通过引用“application.yml”文件中的主题名称来使用更多配置选项：
 
 ```yaml
 camunda.bpm.client:
@@ -91,7 +91,7 @@ public class HandlerConfiguration {
   @ExternalTaskSubscription("creditScoreChecker")
   public ExternalTaskHandler creditScoreCheckerHandler() {
     return (externalTask, externalTaskService) -> {
-      // 在此添加您的业务逻辑
+      // 在此添加你的业务逻辑
       externalTaskService.complete(externalTask);
     };
   }
@@ -100,7 +100,7 @@ public class HandlerConfiguration {
   @ExternalTaskSubscription("loanGranter")
   public ExternalTaskHandler loanGranterHandler() {
     return (externalTask, externalTaskService) -> {
-      // 在此添加您的业务逻辑
+      // 在此添加你的业务逻辑
       externalTaskService.complete(externalTask);
     };
   }
@@ -112,9 +112,9 @@ public class HandlerConfiguration {
 
 如果没有进一步配置，Spring Boot 应用程序启动时会自动打开一个主题订阅，这意味着客户端立即启动以获取与主题名称相关的外部任务。
 
-可能存在应用程序启动时不应立即打开主题订阅的情况。 您可以通过 [`auto-open`](#auto-open) 标志来控制它。
+可能存在应用程序启动时不应立即打开主题订阅的情况。 你可以通过 [`auto-open`](#auto-open) 标志来控制它。
 
-SpringTopicSubscription 接口允许您在订阅初始化后立即以编程方式打开或关闭主题。 应用程序一启动就会触发初始化过程。
+SpringTopicSubscription 接口允许你在订阅初始化后立即以编程方式打开或关闭主题。 应用程序一启动就会触发初始化过程。
 
 当订阅被初始化时，会发出一个`SubscriptionInitializedEvent`，并且可以打开或关闭主题订阅：
 
@@ -391,9 +391,9 @@ camunda.bpm.client:
 
 #### 日志
 
-要记录客户端的内部工作，您可以将记录器 `org.camunda.bpm.client.spring` 的级别设置为 `DEBUG`。
+要记录客户端的内部工作，你可以将记录器 `org.camunda.bpm.client.spring` 的级别设置为 `DEBUG`。
 
-您可以在“application.yml”文件中设置日志级别，如下所示：
+你可以在“application.yml”文件中设置日志级别，如下所示：
 
 ```yaml
 logging.level.org.camunda.bpm.client.spring: DEBUG
@@ -403,7 +403,7 @@ logging.level.org.camunda.bpm.client.spring: DEBUG
 
 ### 请求拦截器
 
-每当客户端执行 HTTP 请求时，都会调用请求拦截器。 例如，您可以使用此扩展点来实现 OAuth 2.0 等自定义身份验证策略。
+每当客户端执行 HTTP 请求时，都会调用请求拦截器。 例如，你可以使用此扩展点来实现 OAuth 2.0 等自定义身份验证策略。
 
 你可以通过定义`ClientRequestInterceptor`类型的bean来注册一个或多个请求拦截器：
 
@@ -416,7 +416,7 @@ public class RequestInterceptorConfiguration implements ClientRequestInterceptor
 
 ### 退避策略
 
-默认情况下，客户端使用指数退避策略。您可以通过定义一个 `BackoffStrategy` 类型的 bean 来用自定义策略替换它：
+默认情况下，客户端使用指数退避策略。你可以通过定义一个 `BackoffStrategy` 类型的 bean 来用自定义策略替换它：
 
 ```java
 @Configuration
@@ -452,7 +452,7 @@ client.dateFormat=yyyy-MM-dd'T'HH:mm:ss.SSSZ
 client.serializationFormat=application/json
 ```
 
-确保在您的“application.yml”文件中引用上面定义的相应占位符：
+确保在你的“application.yml”文件中引用上面定义的相应占位符：
 
 ```yaml
 camunda.bpm.client:
@@ -464,7 +464,7 @@ camunda.bpm.client:
 
 ### 自定义客户端
 
-您可以以编程方式引导客户端，这会跳过客户端的内部创建：
+你可以以编程方式引导客户端，这会跳过客户端的内部创建：
 
 ```java
 @Configuration
@@ -482,7 +482,7 @@ public class CustomClientConfiguration {
 
 ## Beans
 
-您可以定义处理程序 bean，但更多的 bean 是在内部定义的，它们超出您的控制。
+你可以定义处理程序 bean，但更多的 bean 是在内部定义的，它们超出你的控制。
 但是，可以通过自动连接访问这些 bean。
 
 ### 客户端 Bean
@@ -525,5 +525,5 @@ creditScoreCheckerHandlerSubscription
 </dependency>
 ```
 
-要引导客户端，请使用类注释 `@EnableExternalTaskClient`。 您可以在 {{< javadocref page="?org/camunda/bpm/client/spring/annotation/EnableExternalTaskClient.html" text="Javadocs" >}} 中找到所有配置属性。
+要引导客户端，请使用类注释 `@EnableExternalTaskClient`。 你可以在 {{< javadocref page="?org/camunda/bpm/client/spring/annotation/EnableExternalTaskClient.html" text="Javadocs" >}} 中找到所有配置属性。
 
