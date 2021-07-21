@@ -53,6 +53,12 @@ Replace the following modules from the folder `$APP_SERVER_HOME/modules/` with t
 * `org/freemarker/freemarker`
 * `org/mybatis/mybatis`
 * `commons-codec/commons-codec`
+* `org/graalvm/js/js`
+* `org/graalvm/js/js-scriptengine`
+* `org/graalvm/regex/regex`
+* `org/graalvm/sdk/graal-sdk`
+* `org/graalvm/truffle/truffle-api`
+* `com/ibm/icu/icu4j`
 
 # 2. Update Optional Camunda Platform Modules
 
@@ -86,6 +92,8 @@ Additionally, also replace the following dependent modules:
 * `com/fasterxml/jackson/core/jackson-core`
 * `com/fasterxml/jackson/core/jackson-databind`
 * `com/jayway/jsonpath/json-path`
+* `net/minidev/accessors-smart`
+* `net/minidev/json-smart`
 
 # 3. Update Camunda Web Applications
 
