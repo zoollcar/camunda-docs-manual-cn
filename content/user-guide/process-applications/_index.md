@@ -11,19 +11,19 @@ menu:
 
 ---
 
-A process application is an ordinary Java application that uses the Camunda process engine for BPM and workflow functionality. Most such applications will start their own process engine (or use a process engine provided by the runtime container), deploy some BPMN 2.0 process definitions and interact with process instances derived from these process definitions. Since most process applications perform very similar bootstrapping, deployment and runtime tasks, we generalized this functionality into a Java Class which is named - *Surprise!* - `ProcessApplication`. The concept is similar to the `javax.ws.rs.core.Application` class in JAX-RS: adding the process application class allows you to bootstrap and configure the provided services.
+ Process Applications 是一个普通的 Java 应用程序，它使用 Camunda 流程引擎来实现 BPM 和工作流功能。 大多数此类应用程序将启动自己的流程引擎（或使用运行时容器提供的流程引擎），部署一些 BPMN 2.0 流程定义并与从这些流程定义派生的流程实例进行交互。 由于大多数 Process Applications 运行非常相似的引导、部署和运行时任务，因此我们将此功能概括为一个名为 - *Surprise!* - `ProcessApplication` 的 Java 类。 这个概念类似于 JAX-RS 中的 `javax.ws.rs.core.Application` 类：添加 Process Applications 类允许你引导和配置提供的服务。
 
-Adding a `ProcessApplication` class to your Java application provides your applications with the following services:
+将“ProcessApplication”类添加到你的 Java 应用程序可为你的应用程序提供以下服务：
 
-* **Bootstrap** embedded process engine(s) or look up container managed process engine(s). You can define multiple process engines in a file named `processes.xml` which is added to your application. The `ProcessApplication` class makes sure this file is picked up and the defined process engines are started and stopped as the application is deployed/undeployed.
-* **Automatic deployment** of classpath BPMN 2.0 resources. You can define multiple deployments (process archives) in the `processes.xml` file. The `ProcessApplication` class makes sure the deployments are performed upon deployment of your application. Scanning your application for process definition resource files (ending in *.bpmn20.xml or *.bpmn) is supported as well.
-* **Resolution of application-local Java Delegate implementations** and Beans in case of a multi-application deployment. The `ProcessApplication` class allows your Java Application to expose your local Java Delegate implementations or Spring/CDI beans to a shared, container managed process engine. This way you can start a single process engine that dispatches to multiple process applications that can be (re-)deployed independently.
+* **引导**嵌入式流程引擎或查找容器管理的流程引擎。你可以在添加到应用程序的“processes.xml”文件中定义多个流程引擎。 `ProcessApplication` 类确保在部署/取消部署应用程序时选择该文件并启动和停止定义的流程引擎。
+* **自动部署**类路径下的 BPMN 2.0 资源。你可以在“processes.xml”文件中定义多个部署（流程档案）。 `ProcessApplication` 类确保在部署应用程序时执行部署。也支持扫描你的应用程序以查找流程定义资源文件（以 *.bpmn20.xml 或 *.bpmn 结尾）。
+* **在多应用程序部署的情况下解决应用程序本地 Java 委托实现**和 Bean。 `ProcessApplication` 类允许你的 Java 应用程序将你的本地 Java 委托实现或 Spring/CDI bean 公开给一个共享的、容器管理的流程引擎。通过这种方式，你可以启动单个流程引擎，该引擎分派到可以独立（重新）部署的多个 Process Applications 。
 
-Transforming an existing Java Application into a process application is easy and non-intrusive. You simply have to add:
+将现有的 Java 应用程序转换为 Process Applications 很容易且非侵入性。 你只需添加：
 
-* A `ProcessApplication` class: The `ProcessApplication` class constitutes the interface between your application and the process engine. There are different base classes you can extend to reflect different environments (e.g., Servlet vs. EJB Container).
-* A `processes.xml` file to META-INF: The deployment descriptor file allows you to provide a declarative configuration of the deployment(s) that this process application makes to the process engine. It can be empty (see the [empty processes.xml section]({{< ref "/user-guide/process-applications/the-processes-xml-deployment-descriptor.md#empty-processes-xml" >}})) and serve as simple marker file. If it is not present then the engine will start up but auto-deployment will not be performed.
+* 一个 `ProcessApplication` 类：`ProcessApplication` 类构成了你的应用程序和流程引擎之间的接口。 你可以扩展不同的基类以反映不同的环境（例如，Servlet 与 EJB 容器）。
+* 创建 META-INF 下的 `processes.xml` 文件：部署描述符文件允许你提供此 Process Applications 对流程引擎进行的部署的声明性配置。 它可以是空的（参见 [empty processes.xml 部分]({{< ref "/user-guide/process-applications/the-processes-xml-deployment-descriptor.md#empty-processes-xml" >}} )) 并作为简单的标记文件。 如果它不存在，则引擎将启动，但不会执行自动部署。
 
-{{< note title="Tutorial" class="info" >}}
-  You might want to check out the [Getting Started Tutorial](http://docs.camunda.org/get-started) first as it explains the creation of a process application step by step or the [Project Templates for Maven]({{< ref "/user-guide/process-applications/maven-archetypes.md" >}}), which give you a complete running process application out of the box.
+{{< note title="教程" class="info" >}}
+ 你可能想先查看 [入门教程](http://docs.camunda.org/get-started)，因为它逐步解释了 Process Applications 的创建或 [Maven 的项目模板]({ {< ref "/user-guide/process-applications/maven-archetypes.md" >}})，它为你提供了一个完整的开箱即用的 Process Applications 。
 {{< /note >}}

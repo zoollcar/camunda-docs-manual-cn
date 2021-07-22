@@ -10,25 +10,25 @@ menu:
 
 ---
 
-You can delegate the bootstrapping of the process engine and process deployment to a process application class. The basic ProcessApplication functionality is provided by the `org.camunda.bpm.application.AbstractProcessApplication` base class. Based on this class there is a set of environment-specific sub classes that realize integration within a specific environment:
+你可以将流程引擎和流程部署的引导委托给 Process Application 类。基本的 ProcessApplication 功能由 `org.camunda.bpm.application.AbstractProcessApplication` 基类提供。 在这个类的基础上，有一组特定于环境的子类，它们实现了特定环境中的集成：
 
-* **ServletProcessApplication**: To be used for process applications in a Servlet Container like Apache Tomcat.
-* **EjbProcessApplication**: To be used in a Java EE application server like JBoss or IBM WebSphere Application Server.
-* **EmbeddedProcessApplication**: To be used when embedding the process engine in an ordinary Java SE application.
-* **SpringProcessApplication**: To be used for bootstrapping the process application from a Spring Application Context.
+* **ServletProcessApplication**: 用于 Apache Tomcat 等 Servlet 容器中的 Process Application 。
+* **EjbProcessApplication**: 用于 Java EE 应用服务器，如 JBoss 或 IBM WebSphere Application Server。
+* **EmbeddedProcessApplication**: 用于在普通 Java SE 应用程序中嵌入流程引擎中使用。
+* **SpringProcessApplication**: 用于从 Spring 应用程序上下文引导 Process Application 。
 
-In the following section, we walk through the different implementations and discuss where and how they can be used.
+在下一节中，我们将介绍不同的实现，并讨论可以在何处以及如何使用它们。
 
 
-# The ServletProcessApplication
+# ServletProcessApplication
 
-**Supported on:** Apache Tomcat, JBoss/Wildfly. The Servlet process application is supported on all containers. Read the [note about Servlet Process Application and EJB/Java EE containers]({{< relref "#using-the-servletprocessapplication-inside-an-ejb-java-ee-container-such-as-jboss" >}})
+**支持:** Apache Tomcat, JBoss/Wildfly. 所有容器都支持 Servlet Process Application。请参阅[关于 Servlet Process Application 和 EJB/Java EE 容器的说明]({{< relref "#在-jboss-等-ejb-java-ee-容器中使用-servletprocessapplication" >}})
 
-**Packaging**: WAR (or embedded WAR inside EAR)
+**打包格式**: WAR (或 EAR 中的 嵌入式 WAR)
 
-The `ServletProcessApplication` class is the base class for developing process applications based on the Servlet Specification (Java Web Applications). The servlet process application implements the `javax.servlet.ServletContextListener` interface which allows it to participate in the deployment lifecycle of your Web application
+`ServletProcessApplication` 类是基于 Servlet 规范（Java Web 应用程序）开发 Process Application 的基类。 servlet  Process Application 实现了`javax.servlet.ServletContextListener` 接口，该接口允许它参与你的 Web 应用程序的部署生命周期
 
-The following is an example of a Servlet Process Application:
+以下是 Servlet Process Application 的示例：
 
 ```java
 package org.camunda.bpm.example.loanapproval;
@@ -38,55 +38,55 @@ import org.camunda.bpm.application.impl.ServletProcessApplication;
 
 @ProcessApplication("Loan Approval App")
 public class LoanApprovalApplication extends ServletProcessApplication {
-  // empty implementation
+  // 空实现
 }
 ```
 
-Notice the `@ProcessApplication` annotation. This annotation fulfills two purposes:
+注意 `@ProcessApplication` 注释。 这个注解有两个作用：
 
-  * **provide the name of the ProcessApplication**: You can provide a custom name for your process application using the annotation: `@ProcessApplication("Loan Approval App")`. If no name is provided, a name is automatically detected. In case of a ServletProcessApplication, the name of the ServletContext is used.
-  * **trigger auto-deployment**. In a Servlet 3.0 container, the annotation is sufficient for making sure that the process application is automatically picked up by the servlet container and automatically added as a ServletContextListener to the Servlet Container deployment. This functionality is realized by a `javax.servlet.ServletContainerInitializer` implementation named `org.camunda.bpm.application.impl.ServletProcessApplicationDeployer` which is located in the camunda-engine module. The implementation works for both embedded deployment of the camunda-engine.jar as a web application library in the `WEB-INF/lib` folder of your WAR file, or for the deployment of the camunda-engine.jar as a shared library in the shared library (e.g., Apache Tomcat global `lib/` folder) directory of your application server. The Servlet 3.0 Specification foresees both deployment scenarios. In case of embedded deployment, the `ServletProcessApplicationDeployer` is notified once, when the web application is deployed. In case of deployment as a shared library, the `ServletProcessApplicationDeployer` is notified for each WAR file containing a class annotated with `@ProcessApplication` (as required by the Servlet 3.0 Specification).
+  * **provide the name of the ProcessApplication**: 你可以使用注释为 Process Application 提供自定义名称：`@ProcessApplication("Loan Approval App")`。 如果未提供名称，则会自动检测名称。 如果是 ServletProcessApplication，则使用 ServletContext 的名称。
+  * **trigger auto-deployment**. 在 Servlet 3.0 容器中，注释足以确保 Process Application 被 servlet 容器自动选取并作为 ServletContextListener 自动添加到 Servlet 容器部署中。此功能由位于 camunda-engine 模块中的名为“org.camunda.bpm.application.impl.ServletProcessApplicationDeployer”的“javax.servlet.ServletContainerInitializer”实现实现。该实现既适用于将 camunda-engine.jar 作为 Web 应用程序库嵌入到 WAR 文件的“WEB-INF/lib”文件夹中，也适用于将 camunda-engine.jar 作为共享库部署在应用服务器的共享库（例如，Apache Tomcat 全局`lib/` 文件夹）目录。 Servlet 3.0 规范预见了两种部署方案。如果是嵌入式部署，则在部署 Web 应用程序时会通知 `ServletProcessApplicationDeployer` 一次。在部署为共享库的情况下，对于每个包含用“@ProcessApplication”注释的类的 WAR 文件，都会通知“ServletProcessApplicationDeployer”（根据 Servlet 3.0 规范的要求）。
 
-This means that in case you deploy to a Servlet 3.0 compliant container (such as Apache Tomcat) annotating your class with `@ProcessApplication` is sufficient.
+这意味着，如果你部署到符合 Servlet 3.0 的容器（例如 Apache Tomcat），使用 `@ProcessApplication` 注释你的类就足够了。
 
 {{< note title="" class="info" >}}
-  There is a [project template for Maven]({{< ref "/user-guide/process-applications/maven-archetypes.md" >}}) called ```camunda-archetype-servlet-war```, which gives you a complete running project based on a ServletProcessApplication.
+  有一个 名为 ```camunda-archetype-servlet-war``` 的 [Maven 模板]({{< ref "/user-guide/process-applications/maven-archetypes.md" >}})， 它为你提供了一个基于 ServletProcessApplication 的完整运行项目。
 {{< /note >}}
 
 
-## Using the ServletProcessApplication Inside an EJB/Java EE Container such as JBoss
+## 在 JBoss 等 EJB/Java EE 容器中使用 ServletProcessApplication
 
-You can use the ServletProcessApplication inside an EJB / Java EE Container such as JBoss. Process application bootstrapping and deployment will work in the same way. However, you will not be able to use all Java EE features at runtime. In contrast to the `EjbProcessApplication` (see the next section), the `ServletProcessApplication` does not perform proper Java EE cross-application context switching. When the process engine invokes Java Delegates from your application, only the Context Class Loader of the current Thread is set to the classloader of your application. This does allow the process engine to resolve Java Delegate implementations from your application but the container will not perform an EE context switch to your application. As a consequence, if you use the ServletProcessApplciation inside a Java EE container, you will not be able to use features like:
+你可以在 EJB/Java EE 容器（例如 JBoss）中使用 ServletProcessApplication。 Process Application 引导和部署将以相同的方式工作。 但是，你将无法在运行时使用所有 Java EE 功能。 与 `EjbProcessApplication`（见下一节）相比，`ServletProcessApplication` 没有执行正确的 Java EE 跨应用程序上下文切换。 当流程引擎从你的应用程序调用 Java Delegates 时，只有当前线程的 Context Class Loader 被设置为你的应用程序的类加载器。 这确实允许流程引擎从你的应用程序解析 Java Delegate 实现，但容器不会对你的应用程序执行 EE 上下文切换。 因此，如果你在 Java EE 容器内使用 ServletProcessApplciation，你将无法使用以下功能：
 
-  * using CDI beans and EJBs as JavaDelegate implementations in combination with the Job Executor,
-  * using @RequestScoped CDI Beans with the Job Executor,
-  * looking up JNDI resources from the application's naming scope
+  * 将 CDI bean 和 EJB 作为 JavaDelegate 实现与 Job Executor 结合使用
+  * 将 @RequestScoped CDI Beans 与 Job Executor 一起使用
+  * 从应用程序的命名范围查找 JNDI 资源
 
-If your application does not use such features, it is perfectly fine to use the ServletProcessApplication inside an EE container. In that case you only get servlet specification guarantees.
-
-
-# The EjbProcessApplication
-
-**Supported on:** JBoss/Wildfly. The EjbProcessApplication is supported on Java EE 6 containers or higher. It is not supported on Servlet Containers like Apache Tomcat. It may be adapted to work inside Java EE 5 Containers.
-
-**Packaging:** JAR, WAR, EAR
-
-The EjbProcessApplication is the base class for developing Java EE based process applications. An Ejb process application class itself must be deployed as an EJB.
-
-To add an Ejb process application to your Java Application, you have two options:
-
-  * **Bundle the camunda-ejb-client**: we provide a generic, reusable EjbProcessApplication implementation (named `org.camunda.bpm.application.impl.ejb.DefaultEjbProcessApplication`) bundled as a maven artifact. The simplest possibility is to add this implementation to your application as a maven dependency.
-  * **Write a custom EjbProcessApplication**: if you want to customize the behavior of the EjbProcessApplication, you can write a custom subclass of the EjbProcessApplication class and add it to your application.
-
-Both options are explained in greater detail below.
+如果你的应用程序不使用此类功能，则在 EE 容器内使用 ServletProcessApplication 完全没问题。 在这种情况下，你只能获得 servlet 规范保证。
 
 
-## Bundling the camunda-ejb-client Jar
+# EjbProcessApplication
 
-The most convenient option for deploying a process application to an Ejb Container is by adding the following maven dependency to your maven project:
+**支持:** JBoss/Wildfly. Java EE 6 容器或更高版本支持 EjbProcessApplication。 它在 Apache Tomcat 等 Servlet 容器上不受支持。 它可能适用于在 Java EE 5 Containers 中工作。
+
+**打包格式:** JAR, WAR, EAR
+
+EjbProcessApplication 是用于开发基于 Java EE 的 Process Application 的基类。 Ejb Process Application 类本身必须部署为 EJB。
+
+要将 Ejb Process Application 添加到你的 Java 应用程序，你有两个选择：
+
+  * **绑定 camunda-ejb-client**: 我们提供了一个通用的、可重用的 EjbProcessApplication 实现（名为 `org.camunda.bpm.application.impl.ejb.DefaultEjbProcessApplication`），捆绑为一个 maven 工件。 最简单的可能性是将此实现作为 maven 依赖项添加到你的应用程序中。
+  * **实现自定义 EjbProcessApplication**: 如果你想自定义 EjbProcessApplication 的行为，你可以编写 EjbProcessApplication 类的自定义子类并将其添加到你的应用程序中。
+
+下面将更详细地解释这两个选项。
+
+
+## 绑定 camunda-ejb-client Jar
+
+将 Process Application 部署到 Ejb 容器的最方便的选择是将以下 maven 依赖项添加到你的 maven 项目中：
 
 {{< note title="" class="info" >}}
-  Please import the [Camunda BOM](/get-started/apache-maven/) to ensure correct versions for every Camunda project.
+  请导入 [Camunda BOM](/get-started/apache-maven/) 以确保每个 Camunda 项目的版本正确。
 {{< /note >}}
 
 ```xml
@@ -96,20 +96,20 @@ The most convenient option for deploying a process application to an Ejb Contain
 </dependency>
 ```
 
-The camunda-ejb-client contains a reusable default implementation of the EjbProcessApplication as a Singleton Session Bean with auto-activation.
+camunda-ejb-client 包含 EjbProcessApplication 的可重用默认实现，作为具有自动激活功能的单例会话 Bean。
 
-This deployment option requires that your project is a composite deployment (such as a WAR or EAR) since you need to add a library JAR file. You could of course use something like the maven shade plugin for adding the class contained in the camunda-ejb-client artifact to a JAR-based deployment.
+此部署选项要求你的项目是复合部署（例如 WAR 或 EAR），因为你需要添加库 JAR 文件。 你当然可以使用 maven shade 插件之类的东西将包含在 camunda-ejb-client 工件中的类添加到基于 JAR 的部署中。
 
 {{< note title="" class="info" >}}
-  We always recommend using the camunda-ejb-client over deploying a custom EjbProcessApplication class unless you want to customize the behavior of the EjbProcessApplication.
+  我们始终建议使用 camunda-ejb-client 而非部署自定义 EjbProcessApplication 类，除非你想自定义 EjbProcessApplication 的行为。
 
-  There is a [project template for Maven]({{< ref "/user-guide/process-applications/maven-archetypes.md" >}}) called ```camunda-archetype-servlet-war```, which gives you a complete running project based on a ServletProcessApplication.
+  有一个 名为 ```camunda-archetype-servlet-war``` 的 [Maven 模板]({{< ref "/user-guide/process-applications/maven-archetypes.md" >}})， 它为你提供了一个基于 ServletProcessApplication 的完整运行项目。
 {{< /note >}}
 
 
-## Deploying a Custom EjbProcessApplication Class
+## 部署自定义 EjbProcessApplication 类
 
-If you want to customize the behavior of the the EjbProcessApplication class you have the option of writing a custom EjbProcessApplication class. The following is an example of such an implementation:
+如果你想自定义 EjbProcessApplication 类的行为，你可以选择编写自定义 EjbProcessApplication 类。 以下是此类实现的示例：
 
 ```java
 @Singleton
@@ -134,11 +134,11 @@ public class MyEjbProcessApplication extends EjbProcessApplication {
 ```
 
 
-## Expose Servlet Context Path Using a Custom EjbProcessApplication
+## 使用自定义 EjbProcessApplication 公开 Servlet 上下文路径
 
-If your application is a `WAR` (or a `WAR` inside an `EAR`) and you want to use [embedded forms]({{< ref "/user-guide/task-forms/_index.md#embedded-task-forms" >}}) or [external task forms]({{< ref "/user-guide/task-forms/_index.md#external-task-forms" >}}) inside the [Tasklist]({{< ref "/webapps/tasklist/_index.md" >}}) application, then your custom EjbProcessApplication must expose the servlet context path of your application as a property. This enables the Tasklist to resolve the path to the embedded or external task forms.
+如果你的应用程序是一个 `WAR` （或者 `EAR` 中的 `WAR`） 并且你想在 [Tasklist]({{< ref "/webapps/tasklist/_index.md" >}}) 中使用 [嵌入式表单]({{< ref "/user-guide/task-forms/_index.md#embedded-task-forms" >}}) 或 [外部任务表单]({{< ref "/user-guide/task-forms/_index.md#external-task-forms" >}})，那么你自定义的 EjbProcessApplication 必须将应用程序的 servlet 上下文路径公开为属性。 这样 Tasklist 才能够解析嵌入或外部任务表单的路径。
 
-Therefore your custom EjbProcessApplication must be extended by a `Map` and a getter-method for that `Map` as follows:
+因此，你的自定义 EjbProcessApplication 必须通过 `Map` 和该 `Map` 的getter 方法进行扩展，如下所示：
 
 ```java
 @Singleton
@@ -168,13 +168,13 @@ public class MyEjbProcessApplication extends EjbProcessApplication {
 }
 ```
 
-Furthermore, to provide the servlet context path a custom `javax.servlet.ServletContextListener` must be added to your application. Inside your custom implementation of the `ServletContextListener` you have to
+此外，要提供 servlet 上下文路径，必须将自定义 `javax.servlet.ServletContextListener` 添加到你的应用程序中。 在 `ServletContextListener` 的自定义实现中，你需要：
 
-* inject your custom EjbProcessApplication using the `@EJB` annotation,
-* resolve the servlet context path and
-* expose the servlet context path through the `ProcessApplicationInfo#PROP_SERVLET_CONTEXT_PATH` property inside your custom EjbProcessApplication.
+* 使用 `@EJB` 注解注入你自定义的 EjbProcessApplication
+* 解析servlet上下文路径
+* 通过自定义 EjbProcessApplication 中的 `ProcessApplicationInfo#PROP_SERVLET_CONTEXT_PATH` 属性公开 servlet 上下文路径。
 
-This can be done as follows:
+这可以按如下方式实现：
 
 ```java
 public class ProcessArchiveServletContextListener implements ServletContextListener {
@@ -195,7 +195,7 @@ public class ProcessArchiveServletContextListener implements ServletContextListe
 
 }
 ```
-Finally the custom `ProcessArchiveServletContextListener` has to be added to your `WEB-INF/web.xml` file:
+最后，自定义的 `ProcessArchiveServletContextListener` 必须添加到你的 `WEB-INF/web.xml` 文件中：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -213,7 +213,7 @@ Finally the custom `ProcessArchiveServletContextListener` has to be added to you
 ```
 
 
-## Invocation Semantics of the EjbProcessApplication
+## EjbProcessApplication 的调用语义
 
 The fact that the EjbProcessApplication exposes itself as a Session Bean Component inside the EJB container determines
 
@@ -256,32 +256,32 @@ public class MyEjbProcessApplication extends EjbProcessApplication {
 
 When the EjbProcessApplication registers with a process engine (see `ManagementService#registerProcessApplication(String, ProcessApplicationReference)`, the process application passes a reference to itself to the process engine. This reference allows the process engine to reference the process application. The EjbProcessApplication takes advantage of the Ejb Containers naming context and passes a reference containing the EJBProcessApplication's Component Name to the process engine. Whenever the process engine needs access to process application, the actual component instance is looked up and invoked.
 
-# The EmbeddedProcessApplication
+# EmbeddedProcessApplication
 
-**Supported on:** JVM, Apache Tomcat, JBoss/Wildfly
+**支持：** JVM, Apache Tomcat, JBoss/Wildfly
 
-**Packaging:** JAR, WAR, EAR
+**打包格式：** JAR, WAR, EAR
 
-The `org.camunda.bpm.application.impl.EmbeddedProcessApplication` can only be used in combination with an embedded process engine. Usage in combination with a Shared Process Engine is not supported as the class performs no process application context switching at runtime.
+`org.camunda.bpm.application.impl.EmbeddedProcessApplication` 只能与嵌入式流程引擎结合使用。 不支持与共享流程引擎结合使用，因为该类在运行时不执行 Process Application 上下文切换。
 
-The embedded process application also does not provide auto-startup. You need to manually call the deploy method of your process application:
+嵌入式 Process Application 也不提供自启动。 你需要手动调用 Process Application 的 deploy 方法：
 
 ```java
-// instantiate the process application
+// 实例化 process application
 MyProcessApplication processApplication = new MyProcessApplication();
 
-// deploy the process application
+// 部署 process application
 processApplication.deploy();
 
-// interact with the process engine
+// 与流程引擎交互
 ProcessEngine processEngine = BpmPlatform.getDefaultProcessEngine();
 processEngine.getRuntimeService().startProcessInstanceByKey(...);
 
-// undeploy the process application
+// 取消部署 process application
 processApplication.undeploy();
 ```
 
-Where the class `MyProcessApplication` could look like this:
+“MyProcessApplication”类可能如下所示：
 
 ```java
 @ProcessApplication(
@@ -293,7 +293,7 @@ public class MyProcessApplication extends EmbeddedProcessApplication {
 }
 ```
 
-Remember that to make a manually managed EmbeddedProcessApplication work, you will have to register your ProcessEngine on the RuntimContainer:
+请记住，要使手动管理的 EmbeddedProcessApplication 生效，你必须在 RuntimContainer 上注册你的 ProcessEngine：
 
 ```java
 RuntimeContainerDelegate runtimeContainerDelegate = RuntimeContainerDelegate.INSTANCE.get();
@@ -301,23 +301,23 @@ runtimeContainerDelegate.registerProcessEngine(processEngine);
 ```
 
 
-# The SpringProcessApplication
+# SpringProcessApplication
 
-**Supported on:** JVM, Apache Tomcat. The Spring process application is currently not supported on JBoss EAP 6
+**支持：** JVM, Apache Tomcat. The Spring process application is currently not supported on JBoss EAP 6
 
-**Packaging:** JAR, WAR, EAR
+**打包类型：** JAR, WAR, EAR
 
-The `org.camunda.bpm.engine.spring.application.SpringProcessApplication` class allows bootstrapping a process application through a Spring Application Context. You can either reference the SpringProcessApplication class from an XML-based application context configuration file or use an annotation-based setup.
+`org.camunda.bpm.engine.spring.application.SpringProcessApplication` 类允许通过 Spring 应用程序上下文引导 Process Application 。 你可以从基于 XML 的应用程序上下文配置文件中引用 SpringProcessApplication 类，也可以使用基于注释的设置。
 
-If your application is a web application you should use `org.camunda.bpm.engine.spring.application.SpringServletProcessApplication` as it provides support for exposing the servlet context path through the `ProcessApplicationInfo#PROP_SERVLET_CONTEXT_PATH` property.
+如果你的应用程序是 Web 应用程序，则应使用“org.camunda.bpm.engine.spring.application.SpringServletProcessApplication”，因为它支持通过“ProcessApplicationInfo#PROP_SERVLET_CONTEXT_PATH”属性公开 servlet 上下文路径。
 
-We recommend to always use SpringServletProcessApplication unless the deployment is not a web application. Using this class requires the ```org.springframework:spring-web``` module to be on the classpath.
+我们建议始终使用 SpringServletProcessApplication，除非部署不是 Web 应用程序。 使用这个类需要 ```org.springframework:spring-web``` 模块在类路径上。
 
 
 
-## Configuring a Spring Process Application
+## 配置Spring Process应用程序
 
-The following shows an example of how to bootstrap a SpringProcessApplication inside a Spring application context XML file:
+下面显示了如何在 Spring 应用程序上下文 XML 文件中引导 SpringProcessApplication 的示例：
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -330,19 +330,19 @@ The following shows an example of how to bootstrap a SpringProcessApplication in
 </beans>
 ```
 
-(Remember that you additionally need a `META-INF/processes.xml` file.
+请记住，你还需要一个“META-INF/processes.xml”文件。
 
-> If you are manually managing your processEngine, you will have to register it on the RuntimeContainerDelegate as described in the EmbeddedProcessEngine section.
-
-
-## Process Application Name
-
-The SpringProcessApplication will use the bean name (`id="invoicePa"` in the example above) as auto-detected name for the process application. Make sure to provide a unique process application name here (unique across all process applications deployed on a single application server instance). As an alternative, you can provide a custom subclass of SpringProcessApplication (or SpringServletProcessApplication) and override the `getName()` method.
+> 如果你手动管理 processEngine，则必须按照 EmbeddedProcessEngine 部分中的说明在 RuntimeContainerDelegate 上注册它。
 
 
-## Configure a Managed Process Engine Using Spring
+## Process Application 名称
 
-If you use a Spring process application, you may want to configure your process engine inside the Spring application context Xml file (as opposed to the processes.xml file). In this case, you must use the `org.camunda.bpm.engine.spring.container.ManagedProcessEngineFactoryBean` class for creating the process engine object instance. In addition to creating the process engine object, this implementation registers the process engine with the Camunda Platform infrastructure so that the process engine is returned by the `ProcessEngineService`. The following is an example of how to configure a managed process engine using Spring.
+SpringProcessApplication 将使用 bean 名称（上例中的`id="invoicePa"`）作为 Process Application 的自动检测名称。 确保在此处提供唯一的 Process Application 名称（在部署在单个应用程序服务器实例上的所有 Process Application 中唯一）。 作为替代方案，你可以提供 SpringProcessApplication（或 SpringServletProcessApplication）的自定义子类并覆盖 `getName()` 方法。
+
+
+## 使用 Spring 配置托管流程引擎
+
+如果你使用 Spring Process Application ，你可能希望在 Spring 应用程序上下文 Xml 文件（而不是 processes.xml 文件）中配置你的流程引擎。 在这种情况下，你必须使用 `org.camunda.bpm.engine.spring.container.ManagedProcessEngineFactoryBean` 类来创建流程引擎对象实例。 除了创建流程引擎对象之外，该实现还将流程引擎注册到 Camunda 平台基础架构，以便流程引擎由“ProcessEngineService”返回。 以下是如何使用 Spring 配置托管流程引擎的示例。
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -373,7 +373,7 @@ If you use a Spring process application, you may want to configure your process 
         <property name="jobExecutorActivate" value="false"/>
     </bean>
 
-    <!-- using ManagedProcessEngineFactoryBean allows registering the ProcessEngine with the BpmPlatform -->
+    <!-- 使用 ManagedProcessEngineFactoryBean 允许使用 BpmPlatform 注册 ProcessEngine -->
     <bean id="processEngine" class="org.camunda.bpm.engine.spring.container.ManagedProcessEngineFactoryBean">
         <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
     </bean>
