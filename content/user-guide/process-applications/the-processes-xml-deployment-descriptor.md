@@ -11,7 +11,7 @@ menu:
 ---
 
 
-The processes.xml deployment descriptor contains the deployment metadata for a process application. The following example is a simple example of a `processes.xml` deployment descriptor:
+processes.xml 部署描述符包含流程应用程序的部署元数据。 以下示例是一个简单的 `processes.xml` 部署描述符示例：
 
 ```xml
 <process-application
@@ -29,17 +29,17 @@ The processes.xml deployment descriptor contains the deployment metadata for a p
 </process-application>
 ```
 
-A single deployment (process-archive) is declared. The process archive has the name *loan-approval* and is deployed to the process engine with the name *default*. Two additional properties are specified:
+声明了单个部署（流程档案）。 流程档案名为 *loan-approval*，并以名称 *default* 部署到流程引擎。 指定了两个附加属性：
 
-  * `isDeleteUponUndeploy`: this property controls whether the undeployment of the process application should entail that the process engine deployment is deleted from the database. The default setting is false. If this property is set to true, undeployment of the process application leads to the removal of the deployment (including process instances) from the database.
-  * `isScanForProcessDefinitions`: if this property is set to true, the classpath of the process application is automatically scanned for deployable resources. Deployable resources must end in `.bpmn20.xml`, `.bpmn`, `.cmmn11.xml`, `.cmmn`, `.dmn11.xml` or `.dmn`.
+  * `isDeleteUponUndeploy`: 此属性控制流程应用程序的取消部署是否需要从数据库中删除流程引擎部署。 默认设置为假。 如果此属性设置为 true，则取消部署流程应用程序会导致从数据库中删除部署（包括流程实例）。
+  * `isScanForProcessDefinitions`: 如果此属性设置为 true，则会自动扫描流程应用程序的类路径以查找可部署资源。 可部署的资源必须以 `.bpmn20.xml`、`.bpmn`、`.cmmn11.xml`、`.cmmn`、`.dmn11.xml` 或 `.dmn` 结尾。
 
-See [Deployment Descriptor Reference]({{< ref "/reference/deployment-descriptors/descriptors/processes-xml.md" >}}) for complete documentation of the syntax of the `processes.xml` file.
+参阅 [部署描述符参考文档]({{< ref "/reference/deployment-descriptors/descriptors/processes-xml.md" >}}) 了解有关“processes.xml”文件的语法。
 
 
-# Empty processes.xml
+# 空 processes.xml
 
-The processes.xml may optionally be empty (left blank). In this case default values are used. The empty processes.xml corresponds to the following configuration:
+processes.xml 可以选择为空（留空）。 在这种情况下，使用默认值。 空的processes.xml对应如下配置：
 
 ```xml
 <process-application
@@ -56,19 +56,19 @@ The processes.xml may optionally be empty (left blank). In this case default val
 </process-application>
 ```
 
-The empty processes.xml will scan for process definitions and perform a single deployment to the default process engine.
+空的 processes.xml 将扫描流程定义并对默认流程引擎执行单一部署。
 
 
-# Location of the processes.xml File
+# processes.xml 文件的位置
 
-The default location of the processes.xml file is `META-INF/processes.xml`. The Camunda Platform will parse and process all processes.xml files on the classpath of a process application. Composite process applications (WAR / EAR) may carry multiple subdeployments providing a META-INF/processes.xml file.
+processes.xml 文件的默认位置是`META-INF/processes.xml`。 Camunda 平台将解析和处理流程应用程序类路径上的所有 processes.xml 文件。 复合流程应用程序（WAR / EAR）可以携带多个子部署，提供一个 META-INF/processes.xml 文件。
 
-In an apache maven based project, add the the processes.xml file to the `src/main/resources/META-INF` folder.
+在基于 apache maven 的项目中，将 processes.xml 文件添加到 `src/main/resources/META-INF` 文件夹。
 
 
-# Custom Location for the processes.xml File
+# processes.xml 文件的自定义位置
 
-If you want to specify a custom location for the processes.xml file, you need to use the `deploymentDescriptors` property of the `@ProcessApplication` annotation:
+如果要为 processes.xml 文件指定自定义位置，则需要使用 `@ProcessApplication` 注释的 `deploymentDescriptors` 属性：
 
 ```java
 @ProcessApplication(
@@ -80,14 +80,14 @@ public class MyProcessApp extends ServletProcessApplication {
 }
 ```
 
-The provided path(s) must be resolvable through the `ClassLoader#getResourceAsStream(String)`-Method of the classloader returned  by the `AbstractProcessApplication#getProcessApplicationClassloader()` method of the process application.
+提供的路径必须可通过流程应用程序的 `AbstractProcessApplication#getProcessApplicationClassloader()` 方法返回的类加载器的 `ClassLoader#getResourceAsStream(String)` 方法解析。
 
-Multiple distinct locations are supported.
+支持多个不同的位置。
 
 
-# Configure Process Engines in the processes.xml File
+# 在 processes.xml 文件中配置流程引擎
 
-The processes.xml file can also be used for configuring one or multiple process engine(s). The following is an example of a configuration of a process engine inside a processes.xml file:
+processes.xml 文件也可用于配置一个或多个流程引擎。 以下是流程引擎在 processes.xml 文件中的配置示例：
 
 ```xml
 <process-application
@@ -109,11 +109,11 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 </process-application>
 ```
 
-The `<configuration>...</configuration>` property allows specifying the name of a process engine configuration class to be used when building the process engine.
+`<configuration>...</configuration>` 属性允许指定在构建流程引擎时要使用的流程引擎配置类的名称。
 
-# Specify Tenant-Ids for Process Archives in the processes.xml File
+# 在 processes.xml 文件中为流程档案指定 租户ID
 
-For [Multi-Tenancy with Tenant-Identifiers]({{< ref "/user-guide/process-engine/multi-tenancy.md#single-process-engine-with-tenant-identifiers" >}}), you can specify a tenant-id of a process archive by setting the attribute `tenantId`. If a tenant-id is set then all containing resources will be deployed for the given tenant-id. The following is an example of a processes.xml file which contains one process archive with a tenant-id:
+对于[带租户标识符的多租户]({{< ref "/user-guide/process-engine/multi-tenancy.md#single-process-engine-with-tenant-identifiers" >}})，您可以 通过设置属性“tenantId”来指定流程档案的租户ID。 如果设置了租户ID，则将为给定的租户ID 部署所有包含资源。 以下是一个 processes.xml 文件的示例，其中包含一个具有租户ID 的流程档案：
 
 ```xml
 <process-application
@@ -131,47 +131,47 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 </process-application>
 ```
 
-Note that the processes.xml file can contain multiple process archives with different tenant-ids. 
+请注意，processes.xml 文件可以包含具有不同 租户ID 的多个流程档案。
 
-# Process Application Deployment
+# 流程应用部署
 
-When deploying a set of BPMN 2.0 files to the process engine, a process deployment is created. The process deployment is performed to the process engine database so that when the process engine is stopped and restarted, the process definitions can be restored from the database and execution can continue. When a process application performs a deployment, in addition to the database deployment it will create a registration for this deployment with the process engine. This is illustrated in the following figure:
+BPMN 2.0 文件部署到流程引擎时，会创建流程部署。通过将流程部署到引擎数据库，可以在流程引擎停止和重新启动时，从数据库中恢复流程定义并继续执行。当流程应用程序执行部署时，除了数据库部署之外，还将为流程引擎创建此部署的注册。如下图所示：
 
 
 {{< img src="../img/process-application-deployment.png" title="Process Application Deployment" >}}
 
-Deployment of the process application "invoice.war" is illustrated on the left hand side:
+流程应用程序“invoice.war”的部署显示在左侧：
 
-1. The process application "invoice.war" deploys the invoice.bpmn file to the process engine.
-2. The process engine checks the database for a previous deployment. In this case, no such deployment exists. As a result, a new database deployment `deployment-1` is created for the process definition.
-3. The process application is registered for the `deployment-1` and the registration is returned.
+1. 流程应用程序 “invoice.war” 将 invoice.bpmn 文件部署到流程引擎。
+2. 流程引擎检查数据库中是否有之前的部署。如果不存在此类数据库部署。因此，为流程定义创建了一个新的数据库部署 `deployment-1`。
+3. 流程申请注册为 `deployment-1` 并返回注册。
 
-When the process application is undeployed, the registration for the deployment is removed (see right hand side of the illustration above). After the registration is cleared, the deployment is still present in the database.
+取消部署流程应用程序时，会删除部署注册（请参见上图的右侧）。清除注册后，部署仍然存在于数据库中。
 
-The registration allows the process engine to load additional Java Classes and resources from the process application when executing the processes. In contrast to the database deployment, which can be restored whenever the process engine is restarted, the registration of the process application is kept as in-memory state. This in-memory state is local to an individual cluster node, allowing us to undeploy or redeploy a process application on a particular cluster node without affecting the other nodes and without having to restart the process engine. If the Job Executor is deployment aware, job execution will also stop for jobs created by this process application. However, as a consequence, the registration also needs to be re-created when the application server is restarted. This happens automatically if the process application takes part in the application server deployment lifecycle. For instance, ServletProcessApplications are deployed as ServletContextListeners and when the servlet context is started, it creates the deployment and registration with the process engine. The redeployment process is illustrated in the next figure:
+注册允许流程引擎在执行流程时从流程应用程序加载额外的 Java 类和资源。与可以在流程引擎重新启动时恢复的数据库部署相比，流程应用程序的注册保持在内存中状态。这种内存状态对于单个集群节点来说是本地的，允许我们在特定集群节点上取消部署或重新部署流程应用程序，而不会影响其他节点，也无需重新启动流程引擎。如果 Job Executor 具有部署感知能力，则此流程应用程序创建的作业的作业执行也将停止。但是，因此，在重新启动应用程序服务器时，也需要重新创建注册。如果流程应用程序参与应用程序服务器部署生命周期，这将自动发生。例如，ServletProcessApplications 被部署为 ServletContextListeners，当 servlet 上下文启动时，它会创建部署并注册到流程引擎。下图说明了重新部署过程：
 
 {{< img src="../img/process-application-redeployment.png" title="Process Application Redeployment" >}}
 
-(a) Left hand side: invoice.bpmn has not changed:
+(a) 左边：invoice.bpmn 没有改变：
 
-1. The process application "invoice.war" deploys the invoice.bpmn file to the process engine.
-2. The process engine checks the database for a previous deployment. Since `deployment-1` is still present in the database, the process engine compares the xml content of the database deployment with the bpmn20.xml file from the process application. In this case, both xml documents are identical which means that the existing deployment can be resumed.
-3. The process application is registered for the existing deployment `deployment-1`.
+1. 流程应用程序“invoice.war”将 invoice.bpmn 文件部署到流程引擎。
+2. 流程引擎检查数据库中是否有先前的部署。 由于`deployment-1` 仍然存在于数据库中，流程引擎将数据库部署的xml 内容与流程应用程序中的 bpmn20.xml 文件进行比较。 在这种情况下，两个 xml 文档是相同的，这意味着可以恢复现有部署。
+3. 流程应用程序为现有部署 `deployment-1` 注册。
 
-(b) Right hand side: invoice.bpmn has changed:
+(b) 右边: invoice.bpmn 改变了:
 
-1. The process application "invoice.war" deploys the invoice.bpmn file to the process engine.
-2. The process engine checks the database for a previous deployment. Since `deployment-1` is still present in the database, the process engine compares the xml content of the database deployment with the invoice.bpmn file from the process application. In this case, changes are detected which means that a new deployment must be created.
-3. The process engine creates a new deployment `deployment-2`, containing the updated invoice.bpmn process.
-3. The process application is registered for the new deployment `deployment-2` AND the existing deployment `deployment-1`.
+1. 流程应用程序“invoice.war”将invoice.bpmn 文件部署到流程引擎。
+2. 流程引擎检查数据库中是否有先前的部署。 由于`deployment-1` 仍然存在于数据库中，流程引擎将数据库部署的xml 内容与流程应用程序中的invoice.bpmn 文件进行比较。 在这种情况下，会检测到更改，这意味着必须创建新部署。
+3. 流程引擎创建一个新的部署 `deployment-2`，其中包含更新的 invoice.bpmn 流程。
+3. 流程应用程序为新部署`deployment-2` 和现有部署`deployment-1` 注册。
 
-The resuming of the previous deployment (deployment-1) is a feature called `resumePreviousVersions` and is activated by default. There are two different possibilities how to resume previous deployments.
+恢复之前的部署（deployment-1）是一个名为 `resumePreviousVersions` 的特性，默认是激活的。 如何恢复以前的部署有两种不同的可能性。
 
-The first one, which is the default way, is that a previous deployment will be resolved based on the process definition keys. Depending on the processes you deploy with your process application all deployments will be resumed that contain process definitions with the same key.
+第一个是默认方式，是根据流程定义键解析先前的部署。 根据您使用流程应用程序部署的流程，所有包含具有相同密钥的流程定义的部署都将恢复。
 
-The second option is to resume deployments based on the deployment name (more precisely the value of the `name` attribute of the process archive). That way you can delete a process in a new  deployment but the process application will register itself for the previous deployments and therefore also for the deleted process. This makes it possible that the running process instances of the deleted process can continue for this process application.
+第二个选项是根据部署名称（更准确地说是流程存档的`name` 属性的值）恢复部署。 这样，您可以删除新部署中的流程，但流程应用程序将为以前的部署注册自己，因此也会为已删除的流程注册。 这使得已删除流程的正在运行的流程实例可以为该流程应用程序继续运行。
 
-To activate this behavior you have set the property `isResumePreviousVersions` to true and the property `resumePreviousBy` to `deployment-name`:
+要激活此行为，您已将属性 `isResumePreviousVersions` 设置为 true，并将属性 `resumePreviousBy` 设置为 `deployment-name`：
 
 ```xml
 <process-application
@@ -190,7 +190,7 @@ To activate this behavior you have set the property `isResumePreviousVersions` t
 </process-application>
 ```
 
-If you want to deactivate this feature, you have to set the property to `false` in processes.xml file:
+如果要停用此功能，则必须在 processes.xml 文件中将该属性设置为 `false`：
 
 ```xml
 <process-application
