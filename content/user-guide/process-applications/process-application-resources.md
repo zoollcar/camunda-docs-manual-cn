@@ -10,36 +10,36 @@ menu:
 
 ---
 
-Process applications provide and logically group resources specific to the processes they contain. There are resources that are part of the application itself, like a classloader and its classes and resources, as well as resources managed by the process engine at runtime, like a set of [scripting engines]({{< ref "/user-guide/process-engine/scripting.md" >}}) or [Spin data formats]({{< ref "/user-guide/data-formats/_index.md" >}}). This section describes under which conditions the process engine looks up resources on process application level and how that lookup can be enforced.
+流程应用程序提供特定于它们所包含的流程的资源并对其进行逻辑分组。 有些资源是应用程序本身的一部分，例如类加载器及其类和资源，以及在运行时由流程引擎管理的资源，例如一组 [脚本引擎]({{< ref "/user-guide/process-engine/scripting.md" >}}) 或 [Spin 数据格式]({{< ref "/user-guide/data-formats/_index.md" >}})。 本节描述了流程引擎在哪些条件下在流程应用程序级别查询资源以及如何执行该查询。
 
 {{< img src="../img/process-application-context.png" title="Process Application Context" >}}
 
 
-# Context Switch
+# 上下文切换
 
-When executing a process instance, the process engine has to know which process application provides the corresponding resources. It then internally performs a *context switch*. This has the following effects:
+在执行流程实例时，流程引擎必须知道哪个流程应用程序提供了相应的资源。然后它在内部执行*上下文切换*。这有以下影响：
 
-* The thread context class loader is set to the process application classloader. This enables loading classes from the process application, e.g., a Java Delegate implementation.
-* The process engine can access the resources it manages for that particular process application. This enables invoking scripting engines or Spin data formats specific to the process application.
+* 流程上下文类加载器设置为流程应用类加载器。这允许从流程应用程序加载类，例如 Java 委托实现。
+* 流程引擎可以访问它为该特定流程应用程序管理的资源。这允许调用特定于流程应用程序的脚本引擎或 Spin 数据格式。
 
-For example, before invoking a Java Delegate, the process engine performs a context switch into the respective process application. It is therefore able to set the thread context classloader to the process application classloader. If no context switch is performed, only those resources are available that are accessible on the process engine level. This is typically a different classloader and a different set of managed resources.
+例如，在调用 Java Delegate 之前，流程引擎执行上下文切换到相应的流程应用程序。因此，可以将流程上下文类加载器设置为流程应用程序类加载器。如果不执行上下文切换，则只有那些可在流程引擎级别访问的资源可用。这通常是不同的类加载器和一组不同的托管资源。
 
-{{< note title="Mechanics behind the Context Switch" >}}
-Note that the actual mechanics behind the context switch are platform dependent. For example: in a servlet container like Apache Tomcat, it is only necessary to set the Thread's current Context Classloader to the web application Classloader. Context specific operations like the resolution of application-local JNDI names all build on this. In an EJB container, this is more complex. This is why the ProcessApplication class is an EJB itself in that environment (see: [Ejb Process Application]({{< ref "/user-guide/process-applications/the-process-application-class.md#invocation-semantics-of-the-ejbprocessapplication" >}})). The process engine can then add an invocation of a business method of that EJB to the call stack and have the Application Server perform its specific logic behind the scenes.
+{{< note title="上下文切换背后的机制" >}}
+请注意，上下文切换背后的实际机制取决于平台。 例如：在Apache Tomcat这样的servlet容器中，只需要将Thread当前的Context Classloader设置为web应用的Classloader即可。 上下文特定的操作，例如应用程序本地 JNDI 名称的解析，都建立在此之上。 在 EJB 容器中，这更复杂。 这就是 ProcessApplication 类在该环境中本身就是 EJB 的原因（请参阅：[Ejb Process Application]({{< ref "/user-guide/process-applications/the-process-application-class.md#invocation-semantics- of-the-ejbprocessapplication" >}}))。 然后，流程引擎可以将对该 EJB 的业务方法的调用添加到调用堆栈中，并让应用服务器在后台执行其特定的逻辑。
 {{</ note >}}
 
-A context switch is guaranteed in the following cases:
+在以下情况下可以保证上下文切换：
 
-* **Delegation Code Invocation**: Whenever delegation code like Java Delegates, execution/task listeners (Java code or scripts), etc. is called by the process engine
-* **Explicit Process Application Context Declaration**: For every engine API invocation, when a process application was declared using the utility class `org.camunda.bpm.application.ProcessApplicationContext`
+* **委托代码调用**：每当流程引擎调用 Java 委托、执行/任务侦听器（Java 代码或脚本）等委托代码时
+* **显式流程应用程序上下文声明**：对于每个引擎 API 调用，当使用实用程序类 `org.camunda.bpm.application.ProcessApplicationContext` 声明流程应用程序时
 
-# Declare Process Application Context
+# 声明流程应用程序上下文
 
-Process application context must be declared whenever custom code uses the engine API that is not part of delegation code and when a context switch is needed for proper function.
+每当自定义代码使用不属于委托代码一部分的引擎 API 时，以及需要上下文切换以实现正确功能时，都必须声明流程应用程序上下文。
 
-## Example
+## 案例
 
-To clarify the use case, we assume that a process application employs the [feature to serialize object-type variables in the JSON format]({{< ref "/user-guide/data-formats/json.md#serializing-process-variables" >}}). However, for that application JSON serialization shall be customized (think about the numerous ways to serialize a date as a JSON string). The process application therefore contains a Camunda Spin data format configurator implementation that configures the Spin JSON data format in the desired way. In turn, the process engine manages a Spin data format for that specific process application to serialize object values with. Now, we assume that a Java servlet calls the process engine API to submit a Java object and serialize it with the JSON format. The code might look as follows:
+为了阐明用例，我们假设流程应用程序使用 [功能以 JSON 格式序列化对象类型变量]({{< ref "/user-guide/data-formats/json.md#serializing-process-variables">}})。 但是，对于该应用程序，应自定义 JSON 序列化（考虑将日期序列化为 JSON 字符串的多种方法）。 因此，流程应用程序包含一个 Camunda Spin 数据格式配置器实现，它以所需的方式配置 Spin JSON 数据格式。 反过来，流程引擎为该特定流程应用程序管理 Spin 数据格式以序列化对象值。 现在，我们假设一个 Java servlet 调用流程引擎 API 来提交一个 Java 对象并将其序列化为 JSON 格式。 代码可能如下所示：
 
 ```java
 public class ObjectValueServlet extends HttpServlet {
@@ -57,9 +57,9 @@ public class ObjectValueServlet extends HttpServlet {
 }
 ```
 
-Note that the engine API is not called from within delegation code but from a servlet instead. The process engine is therefore not aware of the process application context and cannot perform a context switch to use the correct JSON data format for variable serialization. In consequence, the process application-specific JSON configuration does not apply.
+请注意，引擎 API 不是从委托代码中调用的，而是从 servlet 调用的。 因此，流程引擎不知道流程应用程序上下文，并且无法执行上下文切换以使用正确的 JSON 数据格式进行变量序列化。 因此，特定于流程应用程序的 JSON 配置不适用。
 
-In such a case, the process application context can be declared by using the static methods that the class `org.camunda.bpm.application.ProcessApplicationContext` provides. In particular, the method  `#setCurrentProcessApplication` declares the process application to switch into for following engine API invocations. The method `#clear` resets this declaration. In the example, we wrap the `#setVariable` invocation accordingly:
+在这种情况下，可以使用类“org.camunda.bpm.application.ProcessApplicationContext”提供的静态方法来声明流程应用程序上下文。 特别是，`#setCurrentProcessApplication` 方法声明了流程应用程序要切换到以下引擎 API 调用。 方法`#clear` 重置这个声明。 在示例中，我们相应地包装了 `#setVariable` 调用：
 
 ```java
 try {
@@ -70,12 +70,12 @@ try {
 }
 ```
 
-Now, the process engine knows in which context to execute the `#setVariable` call in. It therefore can access the correct JSON data format and serializes the variable correctly.
+现在，流程引擎知道在哪个上下文中执行 `#setVariable` 调用。因此它可以访问正确的 JSON 数据格式并正确地序列化变量。
 
 ## Java API
 
-The methods `ProcessApplicationContext#setCurrentProcessApplication` declare process application context for all following API invocations until `ProcessApplicationContext#clear` is called. It is therefore advised to use a try-finally block to ensure clearance even when exceptions are raised. In addition, the methods `ProcessApplicationContext#withProcessApplicationContext` execute a Callable and declare the context during the Callable's execution.
+方法 ProcessApplicationContext#setCurrentProcessApplication 为所有后续 API 调用声明流程应用程序上下文，直到调用 ProcessApplicationContext#clear 。 因此，建议使用 try-finally 块以确保即使在引发异常时也能清除。 此外，方法 ProcessApplicationContext#withProcessApplicationContext 执行 Callable 并在 Callable 执行期间声明上下文。
 
-## Programming Model Integration
+## 编程模型集成
 
-Declaring process application context whenever engine API is invoked can result in highly repetitive code. Depending on your programming model, you may consider declaring the context in a place that applies to all the desired business logic in a cross-cutting manner. For example, in CDI it is possible to define method invocation interceptors that trigger based on the presence of annotations. Such an interceptor can identify the process application based on the annotation and declare the context transparently.
+每当调用引擎 API 时声明流程应用程序上下文会导致高度重复的代码。 根据你的编程模型，你可以考虑在适用于所有所需业务逻辑的地方以横切方式声明上下文。 例如，在 CDI 中，可以定义基于注解的存在触发的方法调用拦截器。 这样的拦截器可以根据注解识别流程应用并透明地声明上下文。
