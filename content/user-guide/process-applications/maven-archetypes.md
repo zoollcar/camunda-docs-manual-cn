@@ -10,77 +10,77 @@ menu:
 
 ---
 
-We provide several project templates for Maven, which are also called Archetypes.
-They enable a quickstart for developing production-ready process applications using the Camunda Platform.
-We incorporated best practices for different application types into the templates to help you start off with a solid base.
+我们为 Maven 提供了几个项目模板，也称为原型。
+它们支持使用 Camunda 平台开发可用于生产的流程应用程序的快速搭建。
+我们将不同应用程序类型的最佳实践纳入模板，以帮助您从坚实的基础开始。
 
-The Archetypes can be used to generate projects as detailed in the different usage sections.
-In case generating a project from an Archetype on your own is not feasible, we also provide a template GitHub repository for every Archetype.
+原型可用于生成不同使用部分中详述的项目。
+如果你不能自己从 Archetype 生成项目，我们还为每个 Archetype 提供了一个模板 GitHub 存储库。
 
-# Overview of Available Maven Archetypes
+# 可用的 Maven 原型概述
 
-The following archetypes are currently provided. They are distributed via our Maven repository: https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/
+当前提供了以下原型。 它们通过我们的 Maven 存储库分发: https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/
 
 <table class="table table-bordered">
   <thead>
-    <tr><th>Archetype</th><th>Description</th></tr>
+    <tr><th>原型</th><th>描述</th></tr>
   </thead>
   <tbody>
     <tr>
       <td><a href="https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/org/camunda/bpm/archetype/camunda-archetype-cockpit-plugin/">Camunda Cockpit Plugin</a></td>
-      <td>Plugin for Camunda Cockpit, contains REST-Backend, MyBatis database query, HTML and JavaScript frontend, Ant build script for one-click deployment</td>
+      <td>Camunda Cockpit 插件，包含 REST-Backend、MyBatis 数据库查询、HTML 和 JavaScript 前端、用于一键部署的 Ant 构建脚本</td>
     </tr>
     <tr>
       <td><a href="https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/org/camunda/bpm/archetype/camunda-archetype-ejb-war/">Process Application (EJB, WAR)</a></td>
-      <td>Process application that uses a shared Camunda Platform engine in a Java EE Container, e.g., JBoss Wildfly.
-          Contains: Camunda EJB Client, Camunda CDI Integration, BPMN Process, Java Delegate as CDI bean, HTML5- & JSF-based start and task forms,
-          configuration for JPA (Hibernate), JUnit Test with in-memory engine and visual process test coverage, Arquillian Test for JBoss AS7 & Wildfly, Maven Plugins or Ant build script for one-click deployment in Eclipse</td>
+      <td>在 Java EE 容器中使用共享 Camunda 平台引擎的流程应用程序，例如 JBoss Wildfly。
+           包含：Camunda EJB 客户端、Camunda CDI 集成、BPMN 流程、Java 委托作为 CDI bean、基于 HTML5 和 JSF 的启动和任务表单，
+           JPA (Hibernate) 配置、内存引擎和可视化过程测试覆盖的 JUnit 测试、JBoss AS7 和 Wildfly 的 Arquillian 测试、Maven 插件或 Ant 构建脚本，用于在 Eclipse 中一键部署</td>
     </tr>
     <tr>
       <td><a href="https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/org/camunda/bpm/archetype/camunda-archetype-servlet-war/">Process Application (Servlet, WAR)</a></td>
-      <td>Process application that uses a shared Camunda Platform engine in a Servlet Container, e.g., Apache Tomcat.
-          Contains: Servlet process application, BPMN Process, Java Delegate, HTML5-based start and task forms,
-          JUnit Test with in-memory engine, Maven Plugins or Ant build script for one-click deployment in Eclipse</td>
+      <td>在 Servlet 容器中使用共享 Camunda Platform 引擎的流程应用程序，例如 Apache Tomcat。
+           包含：Servlet 流程应用程序、BPMN 流程、Java Delegate、基于 HTML5 的启动和任务表单、
+           使用内存引擎、Maven 插件或 Ant 构建脚本在 Eclipse 中进行一键部署的 JUnit 测试</td>
     </tr>
     <tr>
       <td><a href="https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/org/camunda/bpm/archetype/camunda-archetype-spring-boot/">Camunda Spring Boot Application</a></td>
-      <td>Application that uses the Camunda Spring Boot Starter.
-          Contains: Spring Boot Process Application, Camunda Webapps, BPMN Process, Java Delegate, HTML5-based start and task forms,
-          JUnit Test with in-memory engine, Maven Plugins for packing as an executable application.</td>
+      <td>使用 Camunda Spring Boot Starter 的应用程序。
+           包含：Spring Boot Process Application、Camunda Webapps、BPMN Process、Java Delegate、基于 HTML5 的启动和任务表单、
+           使用内存引擎进行 JUnit 测试，用于打包为可执行应用程序的 Maven 插件。</td>
     </tr>
     <tr>
       <td><a href="https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/org/camunda/bpm/archetype/camunda-archetype-spring-boot-demo/">Camunda Spring Boot Application with Demo Users</a></td>
-      <td>Same as the <i>Spring Boot Application</i> archetype and additionally creates demo users and groups for easy start with the Camunda Webapps (use <code>demo/demo</code> to log in).</td>
+      <td>与 <i>Spring Boot Application</i> 原型相同，另外还创建了演示用户和组，以便轻松启动 Camunda Webapps（使用 <code>demo/demo</code> 登录）。</td>
     </tr>
     <tr>
       <td><a href="https://app.camunda.com/nexus/service/rest/repository/browse/camunda-bpm/org/camunda/bpm/archetype/camunda-archetype-engine-plugin/">Process Engine Plugin</a></td>
-      <td>An example for a process engine plugin.
-      Contains: Process engine plugin, BPMN Parse Listener that is registered via the plugin, Task Listener that is added to every user task, JUnit Test with in-memory engine.</td>
+      <td>流程引擎插件的示例。
+       包含：流程引擎插件、通过插件注册的 BPMN 解析监听器、添加到每个用户任务的任务监听器、使用内存引擎的 JUnit 测试。</td>
     </tr>
   </tbody>
 </table>
 
-# Template repositories
+# 模板代码仓库
 
-We provide a template repository for every Camunda Archetype. 
-Every repository contains a project generated from one specific template.
-You can find the whole list on [GitHub](https://github.com/camunda?q=%22camunda-bpm-archetype-%22).
+我们为每个 Camunda Archetype 提供了一个模板存储库。
+每个存储库都包含一个从一个特定模板生成的项目。
+您可以在 [GitHub](https://github.com/camunda?q=%22camunda-bpm-archetype-%22) 上找到整个列表。
 
-With every new release of the Archetypes, we will update those repositories with a new version as well.
-This allows to investigate possible update paths from one Camunda version to another and also enables you to simply update your existing project by pulling in the latest changes.
+随着 Archetypes 的每个新版本，我们也将使用新版本更新这些存储库。
+这允许调查从一个 Camunda 版本到另一个版本的可能更新路径，还使您能够通过提取最新更改来简单地更新现有项目。
 
-In case you need more flexibility and customization for your project, you can generate a project on your own using one of the methods detailed in the next sections.
+如果您的项目需要更多的灵活性和自定义，您可以使用下一节中详述的方法之一自行生成项目。
 
-# Usage in Eclipse IDE
+# 使用 Eclipse IDE
 
-## Summary
+## 概括
 
 1. Add archetype catalog (**Preferences -> Maven -> Archetypes -> Add Remote Catalog**):
     **https://app.camunda.com/nexus/content/repositories/camunda-bpm/**
 2. Create Maven project from archetype (**File -> New -> Project... -> Maven -> Maven Project**)
 
 
-## Detailed Instructions
+## 详细说明
 
 1. Go to **Preferences -> Maven -> Archetypes -> Add Remote Catalog**
 {{< img src="../img/eclipse-00-preferences-maven-archetypes.png" title="Eclipse Preferences: Maven Archetypes" >}}
@@ -102,16 +102,16 @@ Now you should be able to use the archetypes when creating a new Maven project i
 4. Specify Maven coordinates and Camunda version and finish the project creation.
 {{< img src="../img/eclipse-05-specify-maven-coordinates-and-camunda-version.png" title="Eclipse: Specify Maven coordinates and Camunda version" >}}
 
-The resulting project should look like this:
+生成的项目应如下所示：
 
 {{< img src="../img/eclipse-06-generated-maven-project.png" title="Generated Maven Project in Eclipse" >}}
 
 
-## Troubleshooting
+## 故障排除
 
-Sometimes the creation of the very first Maven project fails in Eclipse. If that happens to you, just try it again. Most of the times the second try works. If the problem persists, [contact us](https://forum.camunda.org/).
+有时在 Eclipse 中创建第一个 Maven 项目会失败。 如果您遇到这种情况，请再试一次。 大多数情况下，第二次尝试有效。 如果问题仍然存在，[联系我们](https://forum.camunda.org/).
 
-# Usage in IntelliJ IDEA
+# 使用 IntelliJ IDEA
 
 1. On the "Welcome to IntelliJ IDEA" screen, click on "Configure" and select "Plugins" in the dropdown.
 2. In the plugins dialog, click on "Browse repositories...".
@@ -125,9 +125,9 @@ Sometimes the creation of the very first Maven project fails in Eclipse. If that
 9. In the new project dialog, click on the left side on "Maven", check "Create from archetype" 
    and select any `org.camunda.bpm.archetype` entry.
 
-# Usage on Command Line
+# 使用 Command Line
 
-## Interactive
+## 交互式生成
 
 Run the following command in a terminal to generate a project. Maven will allow you to select an archetype and ask you for all parameters needed to configure it:
 
@@ -136,7 +136,7 @@ mvn archetype:generate -Dfilter=org.camunda.bpm.archetype:
 </pre>
 
 
-## Full Automation
+## 自动化生成
 
 The following command completely automates the project generation and can be used in shell scripts or Ant builds:
 <pre class="console">
@@ -152,6 +152,6 @@ mvn archetype:generate \
 </pre>
 
 
-# Source Code and Customization
+# 源代码和定制
 
 You can also customize the project templates for your own technology stack. Just [fork them on GitHub](https://github.com/camunda/camunda-archetypes)!
