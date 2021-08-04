@@ -1,6 +1,6 @@
 ---
 
-title: 'The Camunda JBoss/WildFly Subsystem'
+title: 'Camunda JBoss/WildFly 子系统'
 weight: 50
 
 menu:
@@ -11,24 +11,24 @@ menu:
 
 ---
 
-{{< note title="Installation Guide" class="info" >}}
-  If you [download a full distribution](http://camunda.org/download/), the Camunda JBoss/Wildfly subsystem is readily installed into the application server.
+{{< note title="安装指南" class="info" >}}
+  如果你[下载完整发行版](http://camunda.org/download/), Camunda JBoss/Wildfly 子系统已经内置于应用程序服务器中了。
 
-  [Read the installation guide]({{< ref "/installation/full/jboss/_index.md" >}}) to learn how to install the Camunda JBoss/Wildfly subsystem into your JBoss AS 7 or Wildfly Server.
+  [阅读安装指南]({{< ref "/installation/full/jboss/_index.md" >}}) 了解如何将 Camunda JBoss/Wildfly 子系统安装到您的 JBoss AS 7 或 Wildfly 服务器中。
 {{< /note >}}
 
-Camunda Platform provides advanced integration for JBoss AS 7 and Wildfly in the form of a custom [JBoss/Wildfly Subsystem](https://docs.jboss.org/author/display/AS71/Extending+JBoss+AS+7).
+Camunda 平台以自定义 [JBoss/Wildfly 子系统](https://docs.jboss.org/author/display/AS71/Extending+JBoss+AS+7). 的形式为 JBoss AS 7 和 Wildfly 提供高级集成
 
-The most prominent features are:
+最突出的特点是：
 
-* Deploy the process engine as shared JBoss module.
-* Configure the process engine in `standalone.xml` / `domain.xml` and administer it though the JBoss Management System.
-* Process Engines are native JBoss Services with service lifecycles and dependencies.
-* Automatic deployment of BPMN 2.0 processes (through the Process Application API).
-* (JBoss AS 7 only) - Use a managed Thread Pool provided by JBoss Threads in combination with the Job Executor.
-* (Wildfly only) - Use a managed Thread Pool for the Job Executor configured through the Camunda Platform Subsystem.
+* 将流程引擎部署为共享 JBoss 模块。
+* 在 `standalone.xml` / `domain.xml` 中配置流程引擎并通过 JBoss 管理系统对其进行管理。
+* 流程引擎是具有服务生命周期和依赖关系的原生 JBoss 服务。
+* 自动部署 BPMN 2.0 流程（通过流程应用 API）。
+* （仅限 JBoss AS 7）- 将 JBoss Threads 提供的托管线程池与 Job Executor 结合使用。
+* （仅限 Wildfly）- 为通过 Camunda 平台子系统配置的作业执行器使用托管线程池。
 
-# Configure the Job Executor in standalone.xml/domain.xml
+# 配置 Job 执行器 standalone.xml/domain.xml
 
 {{< note title="This section only applies to Wildfly!" class="info" >}}
 On JBoss AS 7, the thread pool is configured through the JBoss Threads subsystem. See [Manual Installation]({{<ref "/installation/full/jboss/manual.md" >}}).
@@ -51,7 +51,7 @@ Optional configuration elements are:
 
 Shown values are the default ones.
 
-# Configure a Process Engine in standalone.xml/domain.xml
+# 配置流程引擎 standalone.xml/domain.xml
 
 
 
@@ -92,7 +92,7 @@ It should be easy to see that the configuration consists of a single process eng
 If you start up your JBoss AS 7 / Wildfly server with this configuration, it will automatically create the corresponding services and expose them through the management model.
 
 
-# Provide a Custom Process Engine Configuration Class
+# 提供自定义流程引擎配置类
 
 It is possible to provide a custom Process Engine Configuration class on JBoss AS 7 and Wildfly Application Server. To this extent, provide the fully qualified classname of the class in the `standalone.xml` file:
 
@@ -135,7 +135,7 @@ public void setMyCustomProperty(boolean boolean) {
 {{< /note >}}
 
 
-# Extend a Process Engine Using Process Engine Plugins
+# 使用流程引擎插件扩展流程引擎
 
 It is possible to extend a process engine using the process engine plugins concept.
 You specify the process engine plugins in `standalone.xml`/`domain.xml` for each process engine separately as shown below:
@@ -172,13 +172,13 @@ The restrictions which apply for [providing a custom process engine configuratio
  * Properties map can be used for invoking primitive valued setters (Integer, String, Boolean) that follow the Java Bean conventions.
 
 
-# Using System Properties
+# 使用系统属性
 
 To externalize environment specific parts of the configuration, it is possible to reference system properties using Ant-style expressions (i.e., `${PROPERTY_KEY}`). 
 Expression resolution is supported for all elements and attributes except for the `name` attribute on the elements `process-engine` and `job-acquisition`. 
 System properties may be set via command line (`-D`option). Read more on expressions in the documentation for [JBoss](https://docs.jboss.org/author/display/AS71/Expressions) and [WildFly](http://docs.wildfly.org/15/Extending_WildFly.html#expressions).
 
-## Example
+## 案例
 
 ```xml
 <!-- ... -->
@@ -192,7 +192,7 @@ System properties may be set via command line (`-D`option). Read more on express
 ```
 
 
-# Look Up a Process Engine in JNDI
+# 在 JNDI 中查找流程引擎
 
 The Camunda JBoss/Wildfly subsystem provides the same [JNDI bindings for the ProcessApplicationService and the ProcessEngineService]({{< ref "/user-guide/runtime-container-integration/jndi-bindings-for-bpmn-platform-services.md" >}}) as provided on other containers. In addition, the Camunda JBoss/Wildfly subsystem creates JNDI Bindings for all managed process engines, allowing us to look them up directly.
 
@@ -214,12 +214,12 @@ A declarative mechanism like `@Resource` could be
 {{< /note >}}
 
 
-# Manage the Process Engine Through the JBoss Management System
+# 通过 JBoss 管理系统管理流程引擎
 
 To inspect and change the management model, we can use [one of the multiple JBoss Management clients available](https://docs.jboss.org/author/display/AS72/Management+Clients).
 
 
-## Inspect the Configuration
+## 检查配置
 
 It is possible to inspect the configuration using the CLI (Command Line Interface, jboss-cli.bat/sh):
 
@@ -259,7 +259,7 @@ You are disconnected at the moment. Type 'connect' to connect to the server or '
 ```
 
 
-## Stop the Process Engine Through the JBoss Management System
+## 通过 JBoss 管理系统停止流程引擎
 
 Once the process engine is registered in the JBoss Management Model, it is possible to control it through the management API. For example, you can stop it through the CLI:
 
@@ -276,7 +276,7 @@ This removes the process engine and all dependent services. This means that if y
 {{< /note >}}
 
 
-## Start the Process Engine Through the JBoss Management System
+## 通过 JBoss 管理系统启动流程引擎
 
 It is also possible to start a new process engine at runtime:
 
@@ -291,7 +291,7 @@ One of the nice features of the JBoss AS 7 and Wildfly Management System is that
 * Distribute the configuration in the cluster and start / stop the process engine on all servers that are part of the same domain.
 
 
-## Use the JBoss JConsole Extensions
+## 使用 JBoss JConsole 扩展
 
 In some cases, you may find it more convenient to use the JBoss JConsole extension for starting a process engine.
 
@@ -300,7 +300,8 @@ In some cases, you may find it more convenient to use the JBoss JConsole extensi
 The JConsole plugin allows you to inspect the management model graphically and build operations using a wizard. To start the JBoss JConsole plugin, start the jconsole.bat/sh file provided in the JBoss distribution. [More Information in the JBoss Docs](https://docs.jboss.org/author/display/AS72/JMX+subsystem+configuration).
 
 
-# Manage Classpath Dependencies
+# 管理 Classpath 依赖项
+
 
 {{< note title="Implicit Module Dependencies" class="info" >}}
    Classpath dependencies are automatically managed for you if you use the [Process Application API]({{< ref "/user-guide/process-applications/_index.md" >}}).
@@ -312,12 +313,12 @@ When using the Camunda JBoss/Wildfly subsystem, the process engine classes are d
 By default, the application server will not add this module to the classpath of applications. If an application needs to interact with the process engine, we must declare a module dependency in the application. This can be achieved using either an implicit or an explicit module dependency.
 
 
-## Implicit Module Dependencies with the Process Application API
+## Process Application API 的隐式模块依赖关系
 
 When using the Process Application API (i.e., when deploying either a ServletProcessApplication or an EjbProcessApplication), the Camunda JBoss/Wildfly subsystem will detect the `@ProcessApplication` class in the deployment and automatically add a module dependency between the application and the process engine module. As a result, we don't have to declare the dependency ourselves. It is called an [implicit module dependency](https://docs.jboss.org/author/display/AS72/Implicit+module+dependencies+for+deployments) because it is not explicitly declared but can be derived by inspecting the application and seeing that it provides a `@ProcessApplication` class.
 
 
-## Explicit Module Dependencies
+## 显式模块依赖
 
 If an application does not use the Process Application API but still needs the process engine classes to be added to its classpath, an explicit module dependency is required.
 JBoss AS 7 and Wildfly offer multiple [different mechanisms for achieving this](https://docs.jboss.org/author/display/AS72/Class+Loading+in+AS7). The simplest way is to add a manifest entry to the MANIFEST.MF file of the deployment. The following example illustrates how to generate such a dependency using the maven WAR plugin:
@@ -342,7 +343,7 @@ JBoss AS 7 and Wildfly offer multiple [different mechanisms for achieving this](
 As a result, the Application Service will add the process engine module to the classpath of the application.
 
 
-# Manage Service Dependencies
+# 管理服务依赖
 
 {{< note title="Implicit Service Dependencies" class="info" >}}
    Service dependencies are automatically managed for you if you use the [Process Application API]({{< ref "/user-guide/process-applications/_index.md" >}}).
@@ -355,12 +356,12 @@ The Camunda JBoss/Wildfly subsystem manages process engines as JBoss Services in
 There are three applications deployed and two process engine services exist. Application 1 and Application 2 are using Process Engine 1 and Application 3 is using Process Engine 2.
 
 
-## Implicit Service Dependencies
+## 隐式服务依赖
 
 When using the Process Application API (i.e., when deploying either a ServletProcessApplication or an EjbProcessApplication), the Camunda JBoss/Wildfly subsystem will detect the `@ProcessApplication` class in the deployment and automatically add a service dependency between the process application component and the process engine module. This ensures that the process engine is available when the process application is deployed.
 
 
-## Explicit Service Dependencies
+## 显式服务依赖
 
 If an application does not use the Process Application API but still needs to interact with a process engine, it is important to declare the dependency on the Process Engine Service explicitly. If we fail to declare the dependency, there is no guarantee that the process engine is available to the application.
 

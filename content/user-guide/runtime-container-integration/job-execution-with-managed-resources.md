@@ -1,6 +1,6 @@
 ---
 
-title: 'Job Execution with Managed Resources'
+title: 'Job Execution 与 托管服务'
 weight: 60
 
 menu:

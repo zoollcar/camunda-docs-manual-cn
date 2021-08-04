@@ -1,6 +1,6 @@
 ---
 
-title: 'Apache Tomcat Integration'
+title: 'Apache Tomcat 整合'
 weight: 30
 
 menu:
@@ -12,9 +12,9 @@ menu:
 ---
 
 
-# JNDI Bindings
+# JNDI 绑定
 
-To use the JNDI Bindings for Camunda Platform Services on Apache Tomcat you have to add the file `META-INF/context.xml` to your process application and add the following [ResourceLinks](http://tomcat.apache.org/tomcat-9.0-doc/config/context.html#Resource_Links):
+要在 Apache Tomcat 上使用 Camunda 平台服务的 JNDI 绑定，您必须将文件“META-INF/context.xml”添加到流程应用程序并添加以下 [ResourceLinks](http://tomcat.apache.org/tomcat-9.0-doc/config/context.html#Resource_Links):
 
 ```xml
 <Context>
@@ -28,9 +28,9 @@ To use the JNDI Bindings for Camunda Platform Services on Apache Tomcat you have
 </Context>
 ```
 
-These elements are used to create a link to the global JNDI Resources defined in `$TOMCAT_HOME/conf/server.xml`.
+这些元素用于创建到在`$TOMCAT_HOME/conf/server.xml` 中定义的全局 JNDI 资源的链接。
 
-Furthermore, declare the dependency on the JNDI binding inside the `WEB-INF/web.xml` deployment descriptor.
+此外，在`WEB-INF/web.xml` 部署描述符中声明对JNDI 绑定的依赖。
 
 ```xml
 <web-app>
@@ -50,73 +50,59 @@ Furthermore, declare the dependency on the JNDI binding inside the `WEB-INF/web.
 </web-app>
 ```
 
-**Note**: You can choose different resource link names for the Process Engine Service and Process Application Service. The resource link name has to match the value inside the `<res-ref-name>`-element inside the corresponding `<resource-ref>`-element in `WEB-INF/web.xml`. We propose the name `ProcessEngineService` for the Process Engine Service and `ProcessApplicationService` for the Process Application Service.
+**注意**: 您可以为流程引擎服务和流程应用服务选择不同的资源链接名。资源链接名必须与“WEB-INF/web.xml”中相应“<resource-ref>”元素内的“<res-ref-name>”元素的值相匹配。我们建议流程引擎服务的名为“ProcessEngineService”，流程应用程序服务的名为“ProcessApplicationService”。
 
-To do a lookup for a Camunda Platform Service you have to use the resource link name to get the linked global resource. For example:
+要查找 Camunda 平台服务，您必须使用资源链接名称来获取链接的全局资源。 例如：
 
 * Process Engine Service: `java:comp/env/ProcessEngineService`
 * Process Application Service: `java:comp/env/ProcessApplicationService`
 
-If you have declared other resource link names than we proposed, you have to use `java:comp/env/$YOUR_RESOURCE_LINK_NAME` to do a lookup to get the corresponding Camunda Platform Service.
+如果您声明了我们建议的其他资源链接名称，则必须使用`java:comp/env/$YOUR_RESOURCE_LINK_NAME` 进行查找以获取相应的 Camunda 平台服务。
 
 
-# Job Executor Configuration
+# Job执行器配置
 
-## Tomcat Default Job Executor
+## Tomcat 默认 Job执行器
 
-The Camunda Platform on Apache Tomcat 9.x uses the default job executor. The default [job executor]({{< ref "/user-guide/process-engine/the-job-executor.md" >}}) uses a ThreadPoolExecutor which manages a thread
-pool and a job queue.
+Apache Tomcat 9.x 上的 Camunda 平台使用默认Job执行程序。 默认的 [job执行器]({{< ref "/user-guide/process-engine/the-job-executor.md" >}}) 使用 ThreadPoolExecutor 来管理线程池和Job队列。
 
-The core pool size, queue size, maximum pool size and keep-alive-time can be configured in the `bpm-platform.xml`.
-After configuring job acquisition, it is possible to set the values with the help of a `<properties>`
-tag. The correct syntax can be found in the [references]({{< ref "/reference/deployment-descriptors/tags/job-executor.md" >}}).
+核心池大小、队列大小、最大池大小和保持活动时间可以在 `bpm-platform.xml` 中配置。
+配置job获取后，可以在`<properties>`标签下设置值。语法可以参考[文档]({{< ref "/reference/deployment-descriptors/tags/job-executor.md" >}}) 。
 
-All the previously mentioned properties except the queue size can be modified at runtime via the use of a JMX client.
+除了队列大小之外，前面提到的所有属性都可以在运行时通过 JMX 客户端进行修改。
 
 
-## Core Pool Size
+## 核心池大小
 
-The ThreadPoolExecutor automatically adjusts the size of the thread pool. The number of threads in
-the thread pool will tend to come to equilibrium with the number of threads set to core pool size.
-If a new job is presented to the job executor and the total number of threads in the pool is less
-than core, then a new thread will be created. Hence on initial use, the number of threads in the
-thread pool will ramp up to the core thread count.
+ThreadPoolExecutor 会自动调整线程池的大小。 线程池中的线程数将趋向于与设置为核心池大小的线程数达到平衡。
+如果一个新的Job提交给Job执行器并且池中的线程总数小于核心，那么将创建一个新线程。 因此，在初次使用时，线程池中的线程数将增加到核心线程数。
 
-* The default core pool size is 3.
+* 默认核心池大小为 3 。
 
 
-## Queue Size
+## 队列大小
 
-The ThreadPoolExecutor includes a job queue for buffering jobs. Once the core number of threads has
-been reached (and are in use), a new job presented to the job executor will result in the job being
-added to the ThreadPoolExecutor job queue.
+ThreadPoolExecutor 包括一个用于缓冲Job的Job队列。 一旦达到（并正在使用）线程的核心数量，提交给Job执行器的新Job将导致该Job被添加到 ThreadPoolExecutor Job队列。
 
-* The default maximum length of the job queue is 3.
+* Job队列的默认最大长度为 3 。
 
 
-## Maximum Pool Size
+## 最大池大小
 
-If the length of the queue were to exceed the maximum queue size, and the number of threads in the
-thread pool is less than the maximum pool size, then an additional thread is added to the thread
-pool. This will continue until the number of threads in the pool is equal to the maximum pool size:
+如果队列的长度超过最大队列大小，并且线程池中的线程数小于最大池大小，则将额外的线程添加到线程池中。 这将一直持续到池中的线程数等于最大池大小：
 
-* The default maximum pool size is 10.
+* 默认的最大池大小为 10 。
 
 
-## KeepAlive
+## keepalive
 
-If a thread remains idle in the thread pool for longer than the keepalive time, and the number of
-threads exceeds core pool size, then the thread will be terminated. Hence the pool tends to settle
-around core thread count.
+如果线程在线程池中空闲的时间长于 keepalive 时间，并且线程数超过核心池大小，则该线程将被终止。 因此，池倾向于围绕核心线程数来解决。
 
-* The default keepalive time is 0.
+* 默认 keepalive 时间为 0。
 
 
-## Clustered Deployment
+## 集群部署
 
-In a clustered deployment, multiple job executors will work with each other (Note: see [Job
-Execution in Heterogeneous
-Clusters]({{< ref "/user-guide/process-engine/the-job-executor.md#job-execution-in-heterogeneous-clusters" >}})).
-On startup, each job executor allocates a UUID which is used for identifying locked job ownership in the job
-table.  Hence in a two node cluster, the job executors may total up to 20 concurrent threads of
-execution.
+在集群部署中，多个Job执行程序将相互协作（注意：请参阅 [Job
+在异构集群中执行]({{< ref "/user-guide/process-engine/the-job-executor.md#job-execution-in-heterogeneous-clusters" >}})）.
+在启动时，每个Job执行器分配一个 UUID，用于标识Job表中锁定的Job所有权。 因此，在一个双节点集群中，Job执行程序总共可能有多达 20 个并发执行线程。

@@ -1,6 +1,6 @@
 ---
 
-title: 'Camunda Platform Services'
+title: 'Camunda Platform 服务'
 weight: 10
 
 menu:
@@ -10,18 +10,18 @@ menu:
 
 ---
 
-To inspect the current state of configured process engines and deployed process applications, the class `org.camunda.bpm.BpmPlatform` offers access to the `ProcessEngineService` and the `ProcessApplicationService`.
+`org.camunda.bpm.BpmPlatform` 类提供对 `ProcessEngineService` 和 `ProcessApplicationService` 的访问，可以用来检查配置的流程引擎和部署的流程应用程序的当前状态。
 
 
 # ProcessEngineService
 
-The {{< javadocref page="?org/camunda/bpm/ProcessEngineService.html" text="ProcessEngineService" >}} can be accessed by calling `BpmPlatform.getProcessEngineService()`. It offers access to the default process engine, as well as any process engine by its name as specified in the process engine configuration. It returns `ProcessEngine` objects from which any services for a specific engine can be accessed.
+{{< javadocref page="?org/camunda/bpm/ProcessEngineService.html" text="ProcessEngineService" >}} 可以通过调用 `BpmPlatform.getProcessEngineService()` 来访问。它提供对默认流程引擎以及流程引擎配置中指定的名称的任何流程引擎的访问。它返回“ProcessEngine”对象，可以从中访问特定引擎的任何服务。
 
 
 # ProcessApplicationService
 
-The {{< javadocref page="?org/camunda/bpm/ProcessApplicationService.html" text="ProcessApplicationService" >}} is accessible via `BpmPlatform.getProcessApplicationService()`. It provides details on the process application deployments made on the application server it is running on. That means that it does not provide a global view across all nodes in a cluster.
+{{< javadocref page="?org/camunda/bpm/ProcessApplicationService.html" text="ProcessApplicationService" >}} 可以通过 `BpmPlatform.getProcessApplicationService()` 访问。它提供了在其运行的应用程序服务器上进行的流程应用程序部署的详细信息。这意味着它不提供跨集群中所有节点的全局视图。
 
-Given a process application name, a `ProcessApplicationInfo` object can be retrieved that contains details on the deployments made by this process application. These correspond to the process archives declared in [processes.xml]({{< ref "/user-guide/process-applications/the-processes-xml-deployment-descriptor.md" >}}).
+通过流程应用程序名称，可以检索包含有关此流程应用程序进行的部署的详细信息的“ProcessApplicationInfo”对象。这些对应于 [processes.xml]({{< ref "/user-guide/process-applications/the-processes-xml-deployment-descriptor.md" >}}) 中声明的流程档案。
 
-Furthermore, application-specific properties can be retrieved such as the servlet context path in case of a servlet process application.
+此外，可以检索特定于应用程序的属性，例如 servlet 流程应用程序中的 servlet 上下文路径。

@@ -113,7 +113,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 # 在 processes.xml 文件中为流程档案指定 租户ID
 
-对于[带租户标识符的多租户]({{< ref "/user-guide/process-engine/multi-tenancy.md#single-process-engine-with-tenant-identifiers" >}})，您可以 通过设置属性“tenantId”来指定流程档案的租户ID。 如果设置了租户ID，则将为给定的租户ID 部署所有包含资源。 以下是一个 processes.xml 文件的示例，其中包含一个具有租户ID 的流程档案：
+对于[带租户标识符的多租户]({{< ref "/user-guide/process-engine/multi-tenancy.md#single-process-engine-with-tenant-identifiers" >}})，你可以 通过设置属性“tenantId”来指定流程档案的租户ID。 如果设置了租户ID，则将为给定的租户ID 部署所有包含资源。 以下是一个 processes.xml 文件的示例，其中包含一个具有租户ID 的流程档案：
 
 ```xml
 <process-application
@@ -148,7 +148,7 @@ BPMN 2.0 文件部署到流程引擎时，会创建流程部署。通过将流�
 
 取消部署流程应用程序时，会删除部署注册（请参见上图的右侧）。清除注册后，部署仍然存在于数据库中。
 
-注册允许流程引擎在执行流程时从流程应用程序加载额外的 Java 类和资源。与可以在流程引擎重新启动时恢复的数据库部署相比，流程应用程序的注册保持在内存中状态。这种内存状态对于单个集群节点来说是本地的，允许我们在特定集群节点上取消部署或重新部署流程应用程序，而不会影响其他节点，也无需重新启动流程引擎。如果 Job Executor 具有部署感知能力，则此流程应用程序创建的作业的作业执行也将停止。但是，因此，在重新启动应用程序服务器时，也需要重新创建注册。如果流程应用程序参与应用程序服务器部署生命周期，这将自动发生。例如，ServletProcessApplications 被部署为 ServletContextListeners，当 servlet 上下文启动时，它会创建部署并注册到流程引擎。下图说明了重新部署过程：
+注册允许流程引擎在执行流程时从流程应用程序加载额外的 Java 类和资源。与可以在流程引擎重新启动时恢复的数据库部署相比，流程应用程序的注册保持在内存中状态。这种内存状态对于单个集群节点来说是本地的，允许我们在特定集群节点上取消部署或重新部署流程应用程序，而不会影响其他节点，也无需重新启动流程引擎。如果 Job Executor 具有部署感知能力，则此流程应用程序创建的Job的Job执行也将停止。但是，因此，在重新启动应用程序服务器时，也需要重新创建注册。如果流程应用程序参与应用程序服务器部署生命周期，这将自动发生。例如，ServletProcessApplications 被部署为 ServletContextListeners，当 servlet 上下文启动时，它会创建部署并注册到流程引擎。下图说明了重新部署过程：
 
 {{< img src="../img/process-application-redeployment.png" title="Process Application Redeployment" >}}
 
@@ -167,11 +167,11 @@ BPMN 2.0 文件部署到流程引擎时，会创建流程部署。通过将流�
 
 恢复之前的部署（deployment-1）是一个名为 `resumePreviousVersions` 的特性，默认是激活的。 如何恢复以前的部署有两种不同的可能性。
 
-第一个是默认方式，是根据流程定义键解析先前的部署。 根据您使用流程应用程序部署的流程，所有包含具有相同密钥的流程定义的部署都将恢复。
+第一个是默认方式，是根据流程定义键解析先前的部署。 根据你使用流程应用程序部署的流程，所有包含具有相同密钥的流程定义的部署都将恢复。
 
-第二个选项是根据部署名称（更准确地说是流程存档的`name` 属性的值）恢复部署。 这样，您可以删除新部署中的流程，但流程应用程序将为以前的部署注册自己，因此也会为已删除的流程注册。 这使得已删除流程的正在运行的流程实例可以为该流程应用程序继续运行。
+第二个选项是根据部署名称（更准确地说是流程存档的`name` 属性的值）恢复部署。 这样，你可以删除新部署中的流程，但流程应用程序将为以前的部署注册自己，因此也会为已删除的流程注册。 这使得已删除流程的正在运行的流程实例可以为该流程应用程序继续运行。
 
-要激活此行为，您已将属性 `isResumePreviousVersions` 设置为 true，并将属性 `resumePreviousBy` 设置为 `deployment-name`：
+要激活此行为，你已将属性 `isResumePreviousVersions` 设置为 true，并将属性 `resumePreviousBy` 设置为 `deployment-name`：
 
 ```xml
 <process-application

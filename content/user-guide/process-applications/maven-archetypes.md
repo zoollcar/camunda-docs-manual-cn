@@ -12,7 +12,7 @@ menu:
 
 我们为 Maven 提供了几个项目模板，也称为原型。
 它们支持使用 Camunda 平台开发可用于生产的流程应用程序的快速搭建。
-我们将不同应用程序类型的最佳实践纳入模板，以帮助您从坚实的基础开始。
+我们将不同应用程序类型的最佳实践纳入模板，以帮助你从坚实的基础开始。
 
 原型可用于生成不同使用部分中详述的项目。
 如果你不能自己从 Archetype 生成项目，我们还为每个 Archetype 提供了一个模板 GitHub 存储库。
@@ -64,12 +64,12 @@ menu:
 
 我们为每个 Camunda Archetype 提供了一个模板存储库。
 每个存储库都包含一个从一个特定模板生成的项目。
-您可以在 [GitHub](https://github.com/camunda?q=%22camunda-bpm-archetype-%22) 上找到整个列表。
+你可以在 [GitHub](https://github.com/camunda?q=%22camunda-bpm-archetype-%22) 上找到整个列表。
 
 随着 Archetypes 的每个新版本，我们也将使用新版本更新这些存储库。
-这允许调查从一个 Camunda 版本到另一个版本的可能更新路径，还使您能够通过提取最新更改来简单地更新现有项目。
+这允许调查从一个 Camunda 版本到另一个版本的可能更新路径，还使你能够通过提取最新更改来简单地更新现有项目。
 
-如果您的项目需要更多的灵活性和自定义，您可以使用下一节中详述的方法之一自行生成项目。
+如果你的项目需要更多的灵活性和自定义，你可以使用下一节中详述的方法之一自行生成项目。
 
 # 使用 Eclipse IDE
 
@@ -109,7 +109,7 @@ Now you should be able to use the archetypes when creating a new Maven project i
 
 ## 故障排除
 
-有时在 Eclipse 中创建第一个 Maven 项目会失败。 如果您遇到这种情况，请再试一次。 大多数情况下，第二次尝试有效。 如果问题仍然存在，[联系我们](https://forum.camunda.org/).
+有时在 Eclipse 中创建第一个 Maven 项目会失败。 如果你遇到这种情况，请再试一次。 大多数情况下，第二次尝试有效。 如果问题仍然存在，[联系我们](https://forum.camunda.org/).
 
 # 使用 IntelliJ IDEA
 
