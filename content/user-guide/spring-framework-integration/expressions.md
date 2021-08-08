@@ -1,11 +1,11 @@
 ---
 
-title: 'Spring Beans in Processes'
+title: '流程引擎中的 Spring Beans'
 weight: 40
 
 menu:
   main:
-    name: "Spring Bean Resolving"
+    name: "Spring Bean 解释"
     identifier: "user-guide-spring-framework-integration-expressions"
     parent: "user-guide-spring-framework-integration"
     pre: "Use Spring Beans in Processes"
@@ -14,7 +14,7 @@ menu:
 
 # Limit the Exposing Spring Beans in Expressions
 
-When using the `ProcessEngineFactoryBean`, by default, all expressions in the BPMN processes will also "see" all the Spring beans. It's possible to limit the beans you want to expose in expressions or even exposing no beans at all using a map that you can configure. The example below exposes a single bean (printer), available to use under the key `printer`. To have NO beans exposed at all, just pass an empty list as `beans` property on the `SpringProcessEngineConfiguration`. When no `beans` property is set, all Spring beans in the context will be available.
+使用 ProcessEngineFactoryBean 时，默认情况下，BPMN 流程中的所有表达式也将“看到”所有 Spring bean。 可以使用可配置的映射来限制要在表达式中公开的 bean，甚至根本不公开 bean。 下面的示例公开了一个 bean（printer），可在键 `printer` 下使用。 要完全不暴露 bean，只需在 `SpringProcessEngineConfiguration` 上传递一个空列表作为 `beans` 属性。 当没有设置 `beans` 属性时，上下文中的所有 Spring bean 都将可用。 
 
 ```xml
 <bean id="processEngineConfiguration"
@@ -31,9 +31,9 @@ When using the `ProcessEngineFactoryBean`, by default, all expressions in the BP
       class="org.camunda.bpm.engine.spring.test.transaction.Printer" />
 ```
 
-# Using Spring Beans in Expressions
+# 在表达式中使用 Spring Bean
 
-The exposed beans can be used in expressions. For example, the `SpringTransactionIntegrationTest` `testBasicActivitiSpringIntegration.bpmn20.xml` shows how a method on a Spring bean can be invoked using a UEL method expression:
+暴露的 bean 可以在表达式中使用。 例如，`SpringTransactionIntegrationTest``testBasicActivitiSpringIntegration.bpmn20.xml` 显示了如何使用 UEL 方法表达式调用 Spring bean 上的方法：
 
 ```xml
 <definitions id="definitions" ...>
@@ -57,7 +57,7 @@ The exposed beans can be used in expressions. For example, the `SpringTransactio
 </definitions>
 ```
 
-Where Printer looks like this:
+Printer 看起来像这样：
 
 ```java
 public class Printer {
@@ -68,7 +68,7 @@ public class Printer {
 }
 ```
 
-And the Spring bean configuration (also shown above) looks like this:
+Spring bean 配置如下所示：
 
 ```xml
 <beans ...>
@@ -79,23 +79,23 @@ And the Spring bean configuration (also shown above) looks like this:
 </beans>
 ```
 
-# Expression Resolving With the Shared Process Engine
+# 使用共享流程引擎进行表达式解析
 
-In a shared process engine deployment scenario, you have a process engine which dispatches to multiple applications. In this case, there is not a single Spring application context but each application may maintain its own application context. The process engine cannot use a single expression resolver for a single application context but must delegate to the appropriate process application, depending on which process is currently being executed.
+在共享流程引擎部署场景中，你的一个流程引擎可以分派到多个应用程序。在这种情况下，没有单一的 Spring 应用程序上下文，每个应用程序都可以维护自己的应用程序上下文。流程引擎不能将单个表达式解析器用于单个应用程序上下文，但必须委托给适当的流程应用程序，具体取决于当前正在执行的流程。
 
-This functionality is provided by the `org.camunda.bpm.engine.spring.application.SpringProcessApplicationElResolver`. This class is a `ProcessApplicationElResolver` implementation delegating to the local application context. Expression resolving then works in the following way:
+此功能由 `org.camunda.bpm.engine.spring.application.SpringProcessApplicationElResolver` 提供。此类是委托给本地应用程序上下文的“ProcessApplicationElResolver”实现。表达式解析然后按以下方式工作：
 
-1. The shared process engine checks which process application corresponds to the process it is currently executing.
-2. It then delegates to that process application for resolving expressions.
-3. The process application delegates to the `SpringProcessApplicationElResolver` which uses the local Spring application context for resolving beans.
+1. 共享流程引擎检查哪个流程应用程序对应于它当前正在执行的流程。
+2. 然后它委托该流程应用程序来解析表达式。
+3. 流程应用程序委托给`SpringProcessApplicationElResolver`，它使用本地Spring 应用程序上下文来解析bean。 
 
 {{< note title="" class="info" >}}
   The `SpringProcessApplicationElResolver` class is automatically detected if the `camunda-engine-spring` module is included as a library of the process application, not as a global library.
 {{< /note >}}
 
-# Using Spring Beans in Scripting
+# 在脚本中使用 Spring Bean
 
-When using `ProcessEngineFactoryBean`, all Spring beans are accessible in Groovy, JavaScript, and Jython. For example, the `ScriptTaskTest-applicationContext.xml` exposes the bean 'testbean':
+使用 ProcessEngineFactoryBean 时，所有 Spring bean 都可以在 Groovy、JavaScript 和 Jython 中访问。 例如，`ScriptTaskTest-applicationContext.xml` 公开了 bean 'testbean'：
 
 ```xml
 <beans ...>
@@ -105,7 +105,7 @@ When using `ProcessEngineFactoryBean`, all Spring beans are accessible in Groovy
         class="org.camunda.bpm.engine.spring.test.scripttask.Testbean" />
 </beans>
 ```
-Where Testbean looks like this:
+Testbean 如下所示：
 
 ```java
 @Component
@@ -118,7 +118,7 @@ public class Testbean {
 }
 ```
 
-`Testbean` is referenced then form JavaScript:
+`Testbean` 被引用，然后 JavaScript：
 
 ```javascript
   execution.setVariable('foo', testbean.name);

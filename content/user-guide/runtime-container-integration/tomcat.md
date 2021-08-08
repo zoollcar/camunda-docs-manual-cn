@@ -14,7 +14,7 @@ menu:
 
 # JNDI 绑定
 
-要在 Apache Tomcat 上使用 Camunda 平台服务的 JNDI 绑定，您必须将文件“META-INF/context.xml”添加到流程应用程序并添加以下 [ResourceLinks](http://tomcat.apache.org/tomcat-9.0-doc/config/context.html#Resource_Links):
+要在 Apache Tomcat 上使用 Camunda 平台服务的 JNDI 绑定，你必须将文件“META-INF/context.xml”添加到流程应用程序并添加以下 [ResourceLinks](http://tomcat.apache.org/tomcat-9.0-doc/config/context.html#Resource_Links):
 
 ```xml
 <Context>
@@ -50,14 +50,14 @@ menu:
 </web-app>
 ```
 
-**注意**: 您可以为流程引擎服务和流程应用服务选择不同的资源链接名。资源链接名必须与“WEB-INF/web.xml”中相应“<resource-ref>”元素内的“<res-ref-name>”元素的值相匹配。我们建议流程引擎服务的名为“ProcessEngineService”，流程应用程序服务的名为“ProcessApplicationService”。
+**注意**: 你可以为流程引擎服务和流程应用服务选择不同的资源链接名。资源链接名必须与“WEB-INF/web.xml”中相应“<resource-ref>”元素内的“<res-ref-name>”元素的值相匹配。我们建议流程引擎服务的名为“ProcessEngineService”，流程应用程序服务的名为“ProcessApplicationService”。
 
-要查找 Camunda 平台服务，您必须使用资源链接名称来获取链接的全局资源。 例如：
+要查找 Camunda 平台服务，你必须使用资源链接名称来获取链接的全局资源。 例如：
 
 * Process Engine Service: `java:comp/env/ProcessEngineService`
 * Process Application Service: `java:comp/env/ProcessApplicationService`
 
-如果您声明了我们建议的其他资源链接名称，则必须使用`java:comp/env/$YOUR_RESOURCE_LINK_NAME` 进行查找以获取相应的 Camunda 平台服务。
+如果你声明了我们建议的其他资源链接名称，则必须使用`java:comp/env/$YOUR_RESOURCE_LINK_NAME` 进行查找以获取相应的 Camunda 平台服务。
 
 
 # Job执行器配置

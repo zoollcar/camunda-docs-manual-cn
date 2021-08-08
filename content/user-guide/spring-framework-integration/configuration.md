@@ -1,24 +1,24 @@
 ---
 
-title: 'Process Engine Configuration'
+title: 'Process Engine 配置'
 weight: 10
 
 menu:
   main:
-    name: "Bootstrapping"
+    name: "引导"
     identifier: "user-guide-spring-framework-integration-configuration"
     parent: "user-guide-spring-framework-integration"
     pre: "Bootstrap the Process Engine via Spring context XML or JavaConfig"
 
 ---
 
-You can use a Spring application context XML file to bootstrap the process engine. It is possible to bootstrap both application-managed and container-managed process engines through Spring.
+你可以使用 Spring 应用上下文 XML 文件来引导流程引擎。 可以通过 Spring 引导应用管理和容器管理的流程引擎。
 
-Note that you can also use a [Spring JavaConfig]({{< relref "#using-spring-javaconfig" >}}) for bootstrapping instead of XML.
+请注意，你还可以使用 [Spring JavaConfig]({{< relref "#using-spring-javaconfig" >}}) 代替 XML 进行引导。
 
-# Configure an Application-Managed Process Engine
+# 配置应用程序管理的流程引擎
 
-The ProcessEngine can be configured as a regular Spring bean. The starting point of the integration is the class `org.camunda.bpm.engine.spring.ProcessEngineFactoryBean`. That bean takes a process engine configuration and creates the process engine. This means that the creation and configuration of properties for Spring is the same as documented in the configuration section. For Spring integration the configuration and engine beans will look like this:
+ProcessEngine 可以配置为常规的 Spring bean。 集成的起点是类 `org.camunda.bpm.engine.spring.ProcessEngineFactoryBean`。 该 bean 采用流程引擎配置并创建流程引擎。 这意味着 Spring 属性的创建和配置与配置部分中记录的相同。 对于 Spring 集成，配置和引擎 bean 将如下所示：
 
 ```xml
 <bean id="processEngineConfiguration"
@@ -32,15 +32,15 @@ The ProcessEngine can be configured as a regular Spring bean. The starting point
 </bean>
 ```
 
-Note that the processEngineConfiguration bean uses the {{< javadocref page="?org/camunda/bpm/engine/spring/SpringProcessEngineConfiguration.html" text="SpringProcessEngineConfiguration" >}} class.
+请注意， processEngineConfiguration bean 使用 {{< javadocref page="?org/camunda/bpm/engine/spring/SpringProcessEngineConfiguration.html" text="SpringProcessEngineConfiguration" >}} 类。
 
 
-# Configure a Container-Managed Process Engine as a Spring Bean
+# 将容器管理的流程引擎配置为 Spring Bean
 
-If you want the process engine to be registered with the Camunda Platform ProcessEngineService, you must use `org.camunda.bpm.engine.spring.container.ManagedProcessEngineFactoryBean` instead of the ProcessEngineFactoryBean shown in the example above. You will also need to ensure:
+如果你希望流程引擎注册到 Camunda Platform ProcessEngineService，你必须使用 `org.camunda.bpm.engine.spring.container.ManagedProcessEngineFactoryBean` 而不是上面示例中显示的 ProcessEngineFactoryBean。 你还需要确保：
 
-1. That none of your webapps include camunda-webapp\*.jar within their own lib folder, this should be at a shared level.
-2. That your server.xml contains JNDI entries for the 'ProcessEngineService' and 'ProcessApplicationService' as below:
+1. 你的所有 web 应用都不要在它们自己的 lib 文件夹中包含 camunda-webapp\*.jar，这应该处于共享级别。
+2. server.xml 包含“ProcessEngineService”和“ProcessApplicationService”的 JNDI 条目，如下所示：
 
 ```xml
 <!-- Global JNDI resources
@@ -63,13 +63,13 @@ If you want the process engine to be registered with the Camunda Platform Proces
   </GlobalNamingResources>
 ```
 
-In that case the constructed process engine object is registered with the Camunda Platform and can be referenced for creating process application deployments and exposed through the runtime container integration.
+在这种情况下，构建的流程引擎对象会注册到 Camunda 平台，并且可以被引用以创建流程应用程序部署并通过运行时容器集成公开。
 
 
-# Configure a Process Engine Plugin
+# 配置流程引擎插件
 
-In Spring you can configure a process engine plugin by setting a list value to the
-`processEnginePlugins` property of the `processEngineConfiguration` bean:
+在 Spring 中，你可以通过将列表值设置为
+`processEngineConfiguration` bean 的 `processEnginePlugins` 属性：
 
 ```xml
 <bean id="processEngineConfiguration" class="org.camunda.bpm.engine.spring.SpringProcessEngineConfiguration">
@@ -83,9 +83,9 @@ In Spring you can configure a process engine plugin by setting a list value to t
 </bean>
 ```
 
-# Using Spring JavaConfig
+# 使用 Spring JavaConfig
 
-In addition to the Spring application context XML file, you can bootstrap the process engine using Spring JavaConfig. The configuration class can look like this:
+除了 Spring 应用程序上下文 XML 文件之外，你还可以使用 Spring JavaConfig 引导流程引擎。 配置类可以是这样的：
 
 ```java
 @Configuration
@@ -93,10 +93,8 @@ public class ExampleProcessEngineConfiguration {
 
   @Bean
   public DataSource dataSource() {
-     // Use a JNDI data source or read the properties from
-     // env or a properties file.
-     // Note: The following shows only a simple data source
-     // for In-Memory H2 database.
+     // 使用 JNDI 数据源或从 env 或属性文件中读取属性。
+     // 注意：以下仅演示了使用 内存数据库H2 作为一个简单数据源。
 
     SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
     dataSource.setDriverClass(org.h2.Driver.class);
@@ -147,12 +145,12 @@ public class ExampleProcessEngineConfiguration {
     return processEngine.getTaskService();
   }
 
-  // more engine services and additional beans ...
+  // 更多的引擎服务和额外的 bean ...
 
 }
 ```
 
-Note that you can define your custom beans in the configuration class, in combination with an additional XML file or using component scan. The following example adds a component scan to the configuration class to detect and instantiate all beans in the package "com.example".
+请注意，你可以在配置类中定义自定义 bean，结合附加的 XML 文件或使用组件扫描。 下面的示例在配置类中添加了一个组件扫描，以检测并实例化包“com.example”中的所有bean。
 
 ```java
 @Configuration

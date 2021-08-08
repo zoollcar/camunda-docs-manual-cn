@@ -1,18 +1,18 @@
 ---
 
-title: 'Spring-Based Testing'
+title: 'Spring-Based 测试'
 weight: 50
 
 menu:
   main:
-    name: "Testing"
+    name: "测试"
     identifier: "user-guide-spring-framework-integration-testing"
     parent: "user-guide-spring-framework-integration"
     pre: "Write Spring-Based Unit Tests"
 
 ---
 
-When integrating with Spring, business processes can be tested very easily (in scope 2, see [Testing Scopes]) using the standard Camunda testing facilities. The following example shows how a business process is tested in a typical Spring-based unit test:
+与 Spring 集成时，可以使用标准的 Camunda 测试工具非常轻松地测试业务流程（在范围 2 中，请参阅 [测试范围][Testing Scopes]）。 以下示例显示了如何在典型的基于 Spring 的单元测试中测试业务流程：
 
 ```java
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -43,7 +43,7 @@ public class MyBusinessProcessTest {
 }
 ```
 
-Note that for this to work, you need to define a {{< javadocref page="?org/camunda/bpm/engine/test/ProcessEngineRule.html" text="ProcessEngineRule" >}} bean in the Spring configuration (which is injected by auto-wiring in the example above).
+请注意，要使其正常工作，你需要在 Spring 配置中定义一个 {{< javadocref page="?org/camunda/bpm/engine/test/ProcessEngineRule.html" text="ProcessEngineRule" >}} bean（即 在上面的例子中通过自动布线注入）。
 
 ```xml
 <bean id="processEngineRule" class="org.camunda.bpm.engine.test.ProcessEngineRule">

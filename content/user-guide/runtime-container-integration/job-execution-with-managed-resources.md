@@ -10,7 +10,7 @@ menu:
 
 ---
 
-对于[支持的环境]({{<relref "../../../introduction/supported-environments.md#container-managed-process-engine-and-camunda-cockpit-tasklist-admin">}}) ，Camunda 平台提供了将Job执行与应用程序服务器的托管线程池集成的服务器模块。如果您使用其中一种环境，建议使用随附的集成。
+对于[支持的环境]({{<relref "../../../introduction/supported-environments.md#container-managed-process-engine-and-camunda-cockpit-tasklist-admin">}}) ，Camunda 平台提供了将Job执行与应用程序服务器的托管线程池集成的服务器模块。如果你使用其中一种环境，建议使用随附的集成。
 
 此页面上的描述适用于 *不提供* 现有资源感知实现的用例。 在这些情况下，建议使用应用程序服务器提供的托管资源而不是使用非托管资源。为了使集成工作，需要一个符合 JEE 7+ 的应用服务器。
 
@@ -18,7 +18,7 @@ menu:
 
 没有资源感知实现的应用程序服务器的集成由称为“ManagedJobExecutor”的特定类型的“JobExecutor”提供。 `ManagedJobExecutor` 的目的是通过使用托管资源（主要是：托管线程）确保流程引擎中的作业执行由应用程序服务器正确控制。
 
-引擎必须配置以使用`ManagedJobExecutor`。 例如，当从 Java 代码引导引擎时，您将创建一个“ManagedJobExecutor”的新实例，并通过从应用程序服务器的环境中注入它来提供它所具有的资源依赖关系。 然后可以将“ManagedJobExecutor”设置为流程引擎应该使用的“JobExecutor”。
+引擎必须配置以使用`ManagedJobExecutor`。 例如，当从 Java 代码引导引擎时，你将创建一个“ManagedJobExecutor”的新实例，并通过从应用程序服务器的环境中注入它来提供它所具有的资源依赖关系。 然后可以将“ManagedJobExecutor”设置为流程引擎应该使用的“JobExecutor”。
 
 ## 示例用法
 

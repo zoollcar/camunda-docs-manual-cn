@@ -1,6 +1,6 @@
 ---
 
-title: 'Spring Transaction Integration'
+title: 'Spring Transaction 集成'
 weight: 20
 
 menu:
@@ -12,7 +12,7 @@ menu:
 
 ---
 
-# Transaction Integration by Example
+# Transaction 整合案例
 
 The following explains the [SpringTransactionIntegrationTest](https://github.com/camunda/camunda-bpm-platform/blob/{{< minor-version >}}.0/engine-spring/core/src/test/java/org/camunda/bpm/engine/spring/test/transaction/SpringTransactionIntegrationTest.java) of the core codebase step by step. Below is the Spring configuration file that we use in this example (you can find it in [SpringTransactionIntegrationTest-context.xml](https://github.com/camunda/camunda-bpm-platform/blob/{{< minor-version >}}.0/engine-spring/core/src/test/resources/org/camunda/bpm/engine/spring/test/transaction/SpringTransactionIntegrationTest-context.xml)). The section shown below contains the `dataSource`, `transactionManager`, `processEngine` and the process engine services.
 
@@ -134,7 +134,7 @@ public class UserBean {
 }
 ```
 
-# Using Inner Spring Transactions
+# 使用内置 Spring Transactions
 
 When engine API calls are executed in the Spring context, Spring doesn't 
 make it transparent to the Process Engine when nested API calls need to 
@@ -155,7 +155,7 @@ The Process Engine Context must be declared whenever a Spring
 `Propagation.REQUIRES_NEW` inner transaction is defined in an already 
 running transaction. 
 
-## Example
+## 案例
 
 In the following code-snippet, we can see a Spring `Propagation.REQUIRED` 
 transaction, defined on the `execute` method, and a Spring `Propagation.REQUIRES_NEW`
@@ -230,7 +230,7 @@ try {
 }
 ```
 
-# Using Spring Transactions with CockroachDB
+# 使用 Spring Transactions 和 CockroachDB
 
 Please see the documentation section on [external transaction management with CockroachDB]({{< ref "/user-guide/process-engine/database/cockroachdb-configuration.md#using-external-transaction-management-with-the-spring-java-ee-integrations" >}})
 to understand how to use the Spring Transaction integration with CockroachDB.

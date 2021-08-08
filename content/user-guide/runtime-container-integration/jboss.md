@@ -14,7 +14,7 @@ menu:
 {{< note title="安装指南" class="info" >}}
   如果你[下载完整发行版](http://camunda.org/download/), Camunda JBoss/Wildfly 子系统已经内置于应用程序服务器中了。
 
-  [阅读安装指南]({{< ref "/installation/full/jboss/_index.md" >}}) 了解如何将 Camunda JBoss/Wildfly 子系统安装到您的 JBoss AS 7 或 Wildfly 服务器中。
+  [阅读安装指南]({{< ref "/installation/full/jboss/_index.md" >}}) 了解如何将 Camunda JBoss/Wildfly 子系统安装到你的 JBoss AS 7 或 Wildfly 服务器中。
 {{< /note >}}
 
 Camunda 平台以自定义 [JBoss/Wildfly 子系统](https://docs.jboss.org/author/display/AS71/Extending+JBoss+AS+7). 的形式为 JBoss AS 7 和 Wildfly 提供高级集成
