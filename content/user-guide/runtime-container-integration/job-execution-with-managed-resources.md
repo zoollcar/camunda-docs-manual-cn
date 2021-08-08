@@ -10,26 +10,26 @@ menu:
 
 ---
 
-For [supported environments]({{<relref "../../../introduction/supported-environments.md#container-managed-process-engine-and-camunda-cockpit-tasklist-admin">}}), Camunda Platform provides server modules that integrate the Job Execution with the application server's managed threadpools. If you are using one of those environments, it is recommended to use the integration provided with it. 
+对于[支持的环境]({{<relref "../../../introduction/supported-environments.md#container-managed-process-engine-and-camunda-cockpit-tasklist-admin">}}) ，Camunda 平台提供了将Job执行与应用程序服务器的托管线程池集成的服务器模块。如果您使用其中一种环境，建议使用随附的集成。
 
-The descriptions on this page apply to the use case where there is *no* existing resource-aware implementation provided. In those cases, using managed resources provided by the application server is recommended over using unmanaged resources. In order for the integration to work, a JEE 7+ compliant application server is required. 
+此页面上的描述适用于 *不提供* 现有资源感知实现的用例。 在这些情况下，建议使用应用程序服务器提供的托管资源而不是使用非托管资源。为了使集成工作，需要一个符合 JEE 7+ 的应用服务器。
 
 # ManagedJobExecutor
 
-Integration into application servers without a resource-aware implementation is offered by a specific type of `JobExecutor` called the `ManagedJobExecutor`. The purpose of the `ManagedJobExecutor` is to ensure that job execution within the process engine is correctly controlled by the application server, by using managed resources (primarily: managed threads).
+没有资源感知实现的应用程序服务器的集成由称为“ManagedJobExecutor”的特定类型的“JobExecutor”提供。 `ManagedJobExecutor` 的目的是通过使用托管资源（主要是：托管线程）确保流程引擎中的作业执行由应用程序服务器正确控制。
 
-In order to facilitate the `ManagedJobExecutor`, the engine must be configured to use it. For instance, when bootstrapping the engine from Java code, you would create a new instance of the `ManagedJobExecutor` and provide the resource dependency it has by injecting it from your application server's environment. The `ManagedJobExecutor` can then be set as the `JobExecutor` that the process engine should use.
+引擎必须配置以使用`ManagedJobExecutor`。 例如，当从 Java 代码引导引擎时，您将创建一个“ManagedJobExecutor”的新实例，并通过从应用程序服务器的环境中注入它来提供它所具有的资源依赖关系。 然后可以将“ManagedJobExecutor”设置为流程引擎应该使用的“JobExecutor”。
 
-## Example usage
+## 示例用法
 
-The following code listing shows the essential configuration performed.
+以下代码示例了基本配置。
 
 ```java
 
 @ApplicationScoped
 public class EngineBuilder {
 
-  // Inject the ManagedExecutorService from the application server
+  // 从应用服务器注入 ManagedExecutorService
   @Resource
   private ManagedExecutorService managedExecutorService;
   
@@ -38,34 +38,34 @@ public class EngineBuilder {
 
   @PostConstruct
   public void build() {
-  	// Create a new ManagedJobExecutor
+  	// 创建一个新的 ManagedJobExecutor
   	managedJobExecutor = new ManagedJobExecutor(this.managedExecutorService);
 
-  	// Create a process engine configuration 
+  	// 创建一个流程引擎配置
     ProcessEngineConfigurationImpl engineConfiguration = ...
 
-    // Other configuration
+    // 其他配置
 
-    // Use the ManagedJobExecutor
+    // 使用 ManagedJobExecutor
     engineConfiguration.setJobExecutor(managedJobExecutor);
     
-    // Build the process engine
+    // 构建流程引擎
     processEngine = engineConfiguration.buildProcessEngine();
   }
   
   @PreDestroy
   public void stopEngine() {
-    // Ensure the engine and job executor are shutdown as well
+    // 确保引擎和Job执行器也关闭
     processEngine.close();
     managedJobExecutor.shutdown();
   }
 }
 ```
 
-{{< note title="Unmanaged resources" class="info" >}}
-  The example above injects a container managed resource, the `ManagedExecutorService`, into an object for which the lifecycle is **not** controlled by the application server (the `ManagedJobExecutor` which is instantiated with its constructor). This is not a generally recommended practice, because the dependencies that are injected may become unavailable.
+{{< note title="非托管资源" class="info" >}}
+  上面的示例将容器管理的资源“ManagedExecutorService”注入到生命周期不受应用程序服务器**控制的对象（“ManagedJobExecutor”，通过其构造函数实例化）。 这不是通常推荐的做法，因为注入的依赖项可能变得不可用。
 
-  In this use case however, this approach is chosen because the `ManagedJobExecutor` relies on the existence of the `ManagedExecutorService` and this interface was only introduced with JEE7. Earlier versions of JEE could not fulfill this dependency and would fault if the component was activated automatically for all application servers.
+   然而，在这个用例中，之所以选择这种方法，是因为`ManagedJobExecutor` 依赖于`ManagedExecutorService` 的存在，并且该接口仅在JEE7 中引入。 早期版本的 JEE 无法满足这种依赖性，并且如果为所有应用程序服务器自动激活该组件，则会出现故障。
 
-  In order to avoid that the job executor is running on unavailable resources, we recommend to shutdown the job executor via its `shutdown()` method when the `ManagedExecutorService` becomes unavailable.
+   为了避免作业执行器在不可用的资源上运行，我们建议在“ManagedExecutorService”变得不可用时通过其“shutdown()”方法关闭作业执行器。
 {{< /note >}}
