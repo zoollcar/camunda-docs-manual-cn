@@ -1,6 +1,6 @@
 ---
 
-title: "Web应用程序"
+title: "Web应用"
 weight: 50
 
 menu:
