@@ -81,7 +81,7 @@ Camunda Platform Run 已预先配置为使用基于文件的 H2 数据库进行�
 
 1. 确保您的数据库系统在 [支持的数据库系统]({{< ref "/introduction/supported-environments.md#supported-database-products" >}}) 中。
 1. 为 Camunda 平台创建一个数据库。
-1. 执行创建所有必需表和默认索引的 SQL DDL 脚本。 这些脚本可以在 `configuration/sql/create` 文件夹中找到。
+1. Install the database schema to create all required tables and default indices using our [database schema installation guide]({{< ref "/installation/database-schema.md" >}}).
 1. 在 `configuration/userlib` 文件夹中为您的数据库系统放置一个 JDBC 驱动程序 jar 文件。
 1. 将 JDBC URL 和登录凭据添加到配置文件中，[如下所述](#数据库).
 1. 重启 Camunda Platform Run
@@ -91,7 +91,9 @@ Camunda Platform Run 已预先配置为使用基于文件的 H2 数据库进行�
 
 在发行版解压后，您会看到一个 `resources` 文件夹。 所有文件（包括 BPMN、DMN、CMMN、表单和脚本文件）将在您启动 Camunda Platform Run 时部署。
 
-通过 [REST API]({{< ref "/reference/rest/deployment/post-deployment.md" >}}) 部署也是可以的。
+You can reference forms and scripts in the BPMN diagram with `embedded:deployment:/my-form.html`, `camunda-forms:deployment:/myform.form`, or `deployment:/my-script.js`. The deployment requires adding an extra `/` as a prefix to the filename.
+
+也可以通过 [REST API]({{< ref "/reference/rest/deployment/post-deployment.md" >}}) 部署。
 
 
 ## 自动领取许可证密钥
@@ -104,7 +106,7 @@ Camunda Platform Run 已预先配置为使用基于文件的 H2 数据库进行�
 就像所有其他发行版一样，您可以根据自己的需要定制 Camunda Platform Run。 为此，您只需选择配置文件夹中找到的一个 [配置文件](#在默认配置和生产配置之间进行选择) 编辑即可。
 
 {{< note title="注意:" class="info" >}}
-Camunda Platform Run 基于 [Camunda Spring Boot Starter](https://github.com/camunda/camunda-bpm-spring-boot-starter). 
+Camunda Platform Run 基于 [Camunda Spring Boot Starter](https://github.com/camunda/camunda-bpm-spring-boot-starter).
 所有的 [配置项]({{< ref "/user-guide/spring-boot-integration/configuration.md#camunda-engine-properties" >}}) 来自 camunda-spring-boot-starter 可用于自定义 Camunda Platform Run。
 {{< /note >}}
 
