@@ -1,6 +1,6 @@
 ---
 
-title: 'Camunda License Keys'
+title: 'Camunda 许可证密钥'
 weight: 220
 
 menu:
@@ -10,9 +10,7 @@ menu:
 
 ---
 
-Some Camunda Platform features (e.g. enterprise plugins) require a license key. The license will be provided as a string by 
-the Camunda support team. The license mechanism has no impact on the engine or other runtime components. The following 
-section explains the various methods by which a Camunda license can be added to the Process Engine.
+某些 Camunda 平台功能（例如企业插件）需要许可证密钥。 许可证由 Camunda 支持团队 以字符串形式提供。 许可机制对引擎或其他运行时组件没有影响。 以下部分说明了将 Camunda 许可证添加到 Process Engine 的各种方法。
 
 
 # Deployment Scenarios and the License Key

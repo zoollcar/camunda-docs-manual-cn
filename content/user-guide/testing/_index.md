@@ -1,6 +1,6 @@
 ---
 
-title: "Testing"
+title: "测试"
 weight: 70
 layout: "single"
 
