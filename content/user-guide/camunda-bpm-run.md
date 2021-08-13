@@ -1,6 +1,6 @@
 ---
 
-title: '运行Camunda平台'
+title: 'Camunda Platform Run'
 weight: 50
 
 menu:
@@ -10,28 +10,28 @@ menu:
 
 ---
 
-This guide gives an introduction to Camunda Platform Run, a pre-packaged, lightweight distribution of the Camunda Platform. Camunda Platform Run is easy to configure and does not require Java knowledge.
+本指南介绍了 Camunda Platform Run，这是 Camunda Platform 的一个预打包的轻量级发行版。 Camunda Platform Run 易于配置，不需要 Java 知识。
 
-# Prerequisites and audience
+# 前提条件和受众
 
-To use this guide, you should at least know what Camunda Platform is and what it does. Check out the [Get Started guides](https://docs.camunda.org/get-started/quick-start/) if you have never used Camunda Platform before. The [Installation guide]({{< ref "/installation/camunda-bpm-run.md" >}}) is also worth looking at if you are completely new to Camunda Platform.
+要使用本指南，您至少应该知道 Camunda 平台是什么以及它的作用。 如果您之前从未使用过Camunda平台，请查看 [入门指南](https://docs.camunda.org/get-started/quick-start/)。如果您是 Camunda 平台的新手， [安装指南]({{< ref "/installation/camunda-bpm-run.md" >}})也值得一看。
 
-This guide will teach you about Camunda Platform Run and how to configure it. It can serve as a reference page for configuration and operation options. It will not give you a step-by-step guide on how to install Camunda Platform Run. Head over to the [Installation guide]({{< ref "/installation/camunda-bpm-run.md" >}}) for details on how to install and start Camunda Platform Run.
+本指南将教您有关 Camunda Platform Run 以及如何配置它。 它可以作为配置和操作选项的参考页面。 它不会为您提供有关如何安装 Camunda Platform Run 的分步指南。 有关如何安装和启动 Camunda Platform Run 的详细信息，请转到 [安装指南]({{< ref "/installation/camunda-bpm-run.md" >}})。
 
-# What is Camunda Platform Run?
+# 什么是 Camunda Platform Run ？
 
-Camunda Platform Run is a full distribution of the Camunda Platform. It includes:
+Camunda Platform Run 是 Camunda Platform 的完整发行版。 这包括：
 
 * Camunda webapps
   * Cockpit
   * Tasklist
   * Admin
 * [REST API]({{< ref "/reference/rest/overview/_index.md" >}})
-* [Swagger UI](https://github.com/swagger-api/swagger-ui) (web application for exploring the REST API)
+* [Swagger UI](https://github.com/swagger-api/swagger-ui) (用于查看 REST API 的 Web 应用)
 
-# Starting with Camunda Platform Run
+# Camunda Platform Run 启动
 
-To start with Camunda Platform Run, download the [distribution](https://downloads.camunda.cloud/release/camunda-bpm/run/) ([enterprise](https://downloads.camunda.cloud/enterprise-release/camunda-bpm/run/)) and unpacking it. You will find the following structure:
+要开始使用 Camunda Platform Run，请下载 [发行版](https://downloads.camunda.cloud/release/camunda-bpm/run/) ([企业发行版](https://downloads.camunda.cloud/enterprise-release/camunda-bpm/run/)) 并解压它。 您会看到如下结构：
 
 ```
 camunda-bpm-run
@@ -50,169 +50,167 @@ camunda-bpm-run
 ├── start.bat
 └── start.sh
 ```
-Execute one of the two start scripts (`start.bat` for Windows, `start.sh` for Linux/Mac). After a few seconds, you will be able to access the Camunda webapps via http://localhost:8080/camunda/app/, the REST API via http://localhost:8080/engine-rest/ and Swagger UI via http://localhost:8080/swaggerui/.
+执行两个启动脚本之一（Windows 的`start.bat`，Linux/Mac 的`start.sh`）。几秒钟后，您将能查看 Camunda webapps 于 http://localhost:8080/camunda/app/ ， REST API 于 http://localhost:8080/engine-rest/ 和 Swagger UI 于 http://localhost:8080/swaggerui/。
 
 
-## Starting Camunda Platform Run using Docker
+## 使用 Docker 启动 Camunda Platform Run
 
-Camunda Platform Run is also available as a Docker image. Please see the Camunda Platform Run section of the Camunda Docker documentation [here]({{< ref "/installation/docker.md#start-camunda-bpm-run-using-docker" >}}) for more details.
-
-
-## Disable components
-
-By default, Camunda Platform Run launches with the webapps, REST API and Swagger UI modules. If you want only a subset of them enabled, execute the start script through a command-line interface with any of the `--webapps`, `--rest` or `--swaggerui` properties to enable the specific module.
+Camunda Platform Run 也可用作 Docker 映像运行。更多详细信息，请参阅 Camunda Docker 文档 [此处]({{< ref "/installation/docker.md#start-camunda-bpm-run-using-docker" >}}) 的 Camunda Platform Run 部分。
 
 
-## Choose between default and production configuration
+## 禁用组件
 
-Camunda Platform Run ships with two different configuration files which are both located in the `configuration` folder. 
-
-* The `default.yml` configuration only contains necessary configuration like the H2 database, a demo user and [CORS](#cross-origin-resource-sharing) for REST calls from a client application.
-* The `production.yml` configuration is intended to provide the recommended properties according to the [Security Instructions]({{< ref "/user-guide/security.md" >}}). 
-  When using Camunda Platform Run in a production environment, make sure to base your custom configuration on this one and carefully read through the security instructions.
-
-By default, Run launches with the `default.yml` configuration. To enable the `production.yml` configuration, execute the start script, through a command-line interface, with the `--production` property.
-Using `--production` disables Swagger UI. It can be enabled by explicitly passing `--swaggerui`, however, it is not recommended to use Swagger UI in production. 
+默认情况下，Camunda Platform Run 与 webapps、REST API 和 Swagger UI 模块一起启动。 如果您只想启用其中的一个子集，请通过命令行界面执行启动脚本，并使用任何 `--webapps`、`--rest` 或 `--swaggerui` 参数来启用特定模块。
 
 
-## Connect to a Database
+## 在默认配置和生产配置之间进行选择
 
-Camunda Platform Run is pre-configured to use a file-based H2 database for testing. The database schema and all required tables are automatically created when the engine starts up for the first time. If you want to use a custom standalone database, follow these steps:
+Camunda Platform Run 附带了两个不同的配置文件，它们都位于“configuration”文件夹中。
 
-1. Make sure your database is among the [supported database systems]({{< ref "/introduction/supported-environments.md#supported-database-products" >}}).
-1. Create a database schema for the Camunda Platform yourself.
-1. Execute the SQL DDL scripts which create all required tables and default indices. The scripts can be found in the `configuration/sql/create` folder.
-1. Drop a JDBC driver jar for your database system in the `configuration/userlib` folder.
-1. Add the JDBC URL and login credentials to the configuration file like described [below](#database).
-1. Restart Camunda Platform Run
+* `default.yml` 配置文件仅包含必要的配置，例如 H2 数据库、演示用户和用于来自客户端应用程序 REST 调用的 [CORS](#cross-origin-resource-sharing)。
+* `production.yml` 配置文件用于根据 [安全说明]({{< ref "/user-guide/security.md" >}}) 提供的推荐属性。
+  在生产环境中使用 Camunda Platform Run 时，请确保您的自定义配置基于此配置并仔细阅读安全说明。
 
-
-## Deploy BPMN Models
-
-In the unpacked distro, you will find a `resources` folder. All files (including BPMN, DMN, CMMN, form, and script files) will be deployed when you start Camunda Platform Run.
-
-Deployments via the [REST API]({{< ref "/reference/rest/deployment/post-deployment.md" >}}) are still possible.
+默认情况下，Run 使用 `default.yml` 配置启动。 要启用 `production.yml` 配置，请通过命令行界面使用 `--production` 属性执行启动脚本。
+使用 `--production` 将禁用 Swagger UI。 它可以通过显式传递 `--swaggerui` 来启用，但是，不建议在生产中使用 Swagger UI。
 
 
-## Automatic License Pickup
+## 连接数据库
 
-If you downloaded the enterprise version of Camunda Platform Run, you will need a license key to enable the enterprise 
-features. Please see the [dedicated License section]({{< ref "/user-guide/license-use.md#with-the-camunda-spring-boot-starter-camunda-run" >}}) 
-of the docs, to learn more.
+Camunda Platform Run 已预先配置为使用基于文件的 H2 数据库进行测试。 引擎第一次启动时，会自动创建数据库架构和所有必需的表。 如果要使用自定义独立数据库，请执行以下步骤：
+
+1. 确保您的数据库系统在 [支持的数据库系统]({{< ref "/introduction/supported-environments.md#supported-database-products" >}}) 中。
+1. 为 Camunda 平台创建一个数据库。
+1. 执行创建所有必需表和默认索引的 SQL DDL 脚本。 这些脚本可以在 `configuration/sql/create` 文件夹中找到。
+1. 在 `configuration/userlib` 文件夹中为您的数据库系统放置一个 JDBC 驱动程序 jar 文件。
+1. 将 JDBC URL 和登录凭据添加到配置文件中，[如下所述](#数据库).
+1. 重启 Camunda Platform Run
 
 
-# Configure Camunda Platform Run
+## 部署 BPMN 模型
 
-Just like all the other distros, you can tailor Camunda Platform Run to your needs. To do this, you only have to edit one of the [configuration files](#choose-between-default-and-production-configuration) that you can find in the configuration folder.
+在发行版解压后，您会看到一个 `resources` 文件夹。 所有文件（包括 BPMN、DMN、CMMN、表单和脚本文件）将在您启动 Camunda Platform Run 时部署。
 
-{{< note title="Note:" class="info" >}}
-Camunda Platform Run is based on the [Camunda Spring Boot Starter](https://github.com/camunda/camunda-bpm-spring-boot-starter). 
-All [configuration properties]({{< ref "/user-guide/spring-boot-integration/configuration.md#camunda-engine-properties" >}}) from the camunda-spring-boot-starter are available to customize Camunda Platform Run.
+通过 [REST API]({{< ref "/reference/rest/deployment/post-deployment.md" >}}) 部署也是可以的。
+
+
+## 自动领取许可证密钥
+
+如果您下载了 Camunda Platform Run 的企业版，则需要许可证密钥才能启用企业功能。 请参阅文档的 [专用许可证部分]({{< ref "/user-guide/license-use.md#with-the-camunda-spring-boot-starter-camunda-run" >}})部分以了解更多。
+
+
+# 配置 Camunda Platform Run
+
+就像所有其他发行版一样，您可以根据自己的需要定制 Camunda Platform Run。 为此，您只需选择配置文件夹中找到的一个 [配置文件](#在默认配置和生产配置之间进行选择) 编辑即可。
+
+{{< note title="注意:" class="info" >}}
+Camunda Platform Run 基于 [Camunda Spring Boot Starter](https://github.com/camunda/camunda-bpm-spring-boot-starter). 
+所有的 [配置项]({{< ref "/user-guide/spring-boot-integration/configuration.md#camunda-engine-properties" >}}) 来自 camunda-spring-boot-starter 可用于自定义 Camunda Platform Run。
 {{< /note >}}
 
 
-## Database
+## 数据库
 
-The distro comes with a file-based h2 database for testing. It is recommended to connect to a standalone database system for use in production.
+该发行版带有一个基于文件的 h2 数据库用于测试。 建议生产环境连接到独立的数据库系统。
 
 <table class="table desc-table">
   <tr>
-      <th>Prefix</th>
-      <th>Property name</th>
-      <th>Description</th>
-      <th>Default value</th>
+      <th>前缀</th>
+      <th>参数名</th>
+      <th>描述</th>
+      <th>默认值</th>
   </tr>
   <tr>
       <td rowspan="15"><code>spring.datasource</code></td>
       <td><code>.url</code></td>
-      <td>The jdbc URL for the database.</td>
+      <td>数据库的JDBC URL。</td>
       <td><code>-</code></td>
   </tr>
   <tr>
       <td><code>.driver-class-name</code></td>
-      <td>The class name of the JDBC driver for your database system. Remember to put the driver jar for your database system in <code>configuration/userlib</code>.</td>
+      <td>数据库系统的 JDBC 驱动程序的类名。 记得把你的数据库系统的驱动jar放在<code>configuration/userlib</code>。</td>
       <td>-</td>
   </tr>
   <tr>
       <td><code>.username</code></td>
-      <td>The username for the database connection.</td>
+      <td>数据库连接的用户名。</td>
       <td>-</td>
   </tr>
   <tr>
       <td><code>.password</code></td>
-      <td>The password for the database connection.</td>
+      <td>数据库连接的密码。</td>
       <td>-</td>
   </tr>
 </table>
 
 
-## Authentication
+## 认证
 
-To add authentication to requests against the [REST API]({{< ref "/reference/rest/overview/_index.md" >}}), you can enable basic authentication.
+要向针对 [REST API]({{< ref "/reference/rest/overview/_index.md" >}}) 的请求添加身份验证，您可以启用基本身份验证。
 
 <table class="table desc-table">
   <tr>
-      <th>Prefix</th>
-      <th>Property name</th>
-      <th>Description</th>
-      <th>Default value</th>
+      <th>前缀</th>
+      <th>参数名</th>
+      <th>描述</th>
+      <th>默认值</th>
   </tr>
   <tr>
       <td rowspan="15"><code>camunda.bpm.run.auth</code></td>
       <td><code>.enabled</code></td>
-      <td>Switch to enable basic authentication for requests to the REST API.</td>
+      <td>是否启用对 REST API 请求的基本身份验证。</td>
       <td><code>false</code></td>
   </tr>
   <tr>
       <td><code>.authentication</code></td>
-      <td>Authentication method, currently only basic is supported.</td>
+      <td>认证方式，目前只支持basic。</td>
       <td>basic</td>
   </tr>
 </table>
 
 
-## Cross-Origin Resource Sharing
+## 跨域资源共享
 
-If you want to allow cross-origin requests to the [REST API]({{< ref "/reference/rest/overview/_index.md" >}}), you need to enable CORS.
+如果你想允许对[REST API]({{< ref "/reference/rest/overview/_index.md" >}}) 的跨域请求，你需要启用CORS。
 <table class="table desc-table">
   <tr>
-      <th>Prefix</th>
-      <th>Property name</th>
-      <th>Description</th>
-      <th>Default value</th>
+      <th>前缀</th>
+      <th>参数名</th>
+      <th>描述</th>
+      <th>默认值</th>
   </tr>
   <tr>
       <td rowspan="15"><code>camunda.bpm.run.cors</code></td>
       <td><code>.enabled</code></td>
-      <td>Switch to enable CORS.</td>
+      <td>是否启用 CORS。</td>
       <td><code>false</code></td>
   </tr>
   <tr>
       <td><code>.allowed-origins</code></td>
-      <td>Origins that are allowed to make CORS requests. Multiple origins can be separated with commas. To support both HTTP authentication and CORS, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials"><code>allowed-origins</code> must not be</a> <code>\*</code>. To allow Camunda Modeler to deploy with authentication, including <code>file://</code> in the allowed origins.</td>
+      <td>允许发出 CORS 请求的源。 多个来源可以用逗号分隔。 同时支持 HTTP 身份验证和 CORS， <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials"><code>allowed-origins</code> 不能设为</a> <code>\*</code>。 To allow Camunda Modeler to deploy with authentication, including <code>file://</code> in the allowed origins.</td>
     <td><code>\*</code> (all origins, including <code>file://</code>)</td>
   </tr>
 </table>
 
 
-## LDAP Identity Service
+## LDAP 身份服务
 
-Camunda Platform can manage users and authorizations on its own, but if you want to use an existing LDAP authentication database you can enable the [LDAP Identity Service Plugin]({{< ref "/user-guide/process-engine/identity-service.md#the-ldap-identity-service" >}})
-which provides read-only access to the LDAP repository.
+Camunda 平台可以自行管理用户和授权，但如果您想使用现有的 LDAP 身份验证数据库，您可以启用[LDAP 身份服务插件]({{< ref "/user-guide/process-engine/identity-service.md#the-ldap-identity-service" >}})
+它提供对 LDAP 存储库的只读访问。
 
-Find all available configuration properties in the [LDAP Plugin Guide]({{< ref "/user-guide/process-engine/identity-service.md#configuration-properties-of-the-ldap-plugin" >}})
+在 [LDAP 插件指南]({{< ref "/user-guide/process-engine/identity-service.md#configuration-properties-of-the-ldap-plugin" >}}) 中查找所有可用的配置属性
 
 <table class="table desc-table">
   <tr>
-      <th>Prefix</th>
-      <th>Property name</th>
-      <th>Description</th>
-      <th>Default value</th>
+      <th>前缀</th>
+      <th>参数名</th>
+      <th>描述</th>
+      <th>默认值</th>
   </tr>
   <tr>
       <td rowspan="15"><code>camunda.bpm.run.ldap</code></td>
       <td><code>.enabled</code></td>
-      <td>Switch to enable the LDAP identity service plugin.</td>
+      <td>是否启用 LDAP 身份服务插件。</td>
       <td><code>false</code></td>
   </tr>
 </table>
@@ -220,8 +218,8 @@ Find all available configuration properties in the [LDAP Plugin Guide]({{< ref "
 
 ## HTTPS
 
-Camunda Platform Run supports HTTPS over SSL. To enable it, you will need a valid SSL certificate signed by a trusted provider and stored in a key store file (either .jks or .p12).
-For testing, we included a self-signed certificate. You should not use this in production. To enable it, add the following properties to your configuration file.
+Camunda Platform Run 支持基于 SSL 的 HTTPS。 要启用它，您需要一个由受信任的提供商签署并存储在密钥库文件（.jks 或 .p12）中的有效 SSL 证书。
+为了测试，我们包含了一个自签名证书。 你不应该在生产中使用它。 要启用它，请将以下属性添加到您的配置文件中。
 
 ```yaml
 server:
@@ -233,39 +231,39 @@ server:
     key-password: camunda
   port: 8443
 ```
-After starting Camunda Platform Run, you can access the webapps via https://localhost:8443/camunda/app/ and the REST API via https://localhost:8443/engine-rest/.
+启动 Camunda Platform Run 后，你可以通过 https://localhost:8443/camunda/app/ 和 REST API https://localhost:8443/engine-rest/ 访问应用。
 
 <table class="table desc-table">
   <tr>
-      <th>Prefix</th>
-      <th>Property name</th>
-      <th>Description</th>
-      <th>Default value</th>
+      <th>前缀</th>
+      <th>参数名</th>
+      <th>描述</th>
+      <th>默认值</th>
   </tr>
   <tr>
       <td rowspan="15"><code>server.ssl</code></td>
       <td><code>.key-store</code></td>
-      <td>Name of the key store file that holds the SSL certificate. This file must be placed in the <code>configuration/keystore</code> folder and has to be either a .jks or a .p12 file.</td>
+      <td>保存 SSL 证书的密钥库文件的名称。 此文件必须放在 <code>configuration/keystore</code> 文件夹中，并且必须是 .jks 或 .p12 文件。</td>
       <td><code>-</code></td>
   </tr>
   <tr>
       <td><code>.key-store-password</code></td>
-      <td>Password to access the key store.</td>
+      <td>访问密钥库的密码。</td>
       <td><code>-</code></td>
   </tr>
   <tr>
       <td><code>.key-store-type</code></td>
-      <td>Type of the key store. Can either be <code>jks</code> or <code>p12</code></td>
+      <td>密钥库的类型。 可以是 <code>jks</code> 或 <code>p12</code></td>
       <td><code>-</code></td>
   </tr>
   <tr>
       <td><code>.key-alias</code></td>
-      <td>Name that identifies the SSL certificate in the key store.</td>
+      <td>在密钥库中标识 SSL 证书的名称。</td>
       <td><code>-</code></td>
   </tr>
   <tr>
       <td><code>.key-password</code></td>
-      <td>Password to access the SSL certificate in the key store.</td>
+      <td>访问密钥库中 SSL 证书的密码。</td>
       <td><code>-</code></td>
   </tr>
 </table>
@@ -273,17 +271,17 @@ After starting Camunda Platform Run, you can access the webapps via https://loca
 
 ## Logging
 
-Camunda Platform provides fine-grained and customizable logging. An overview of the available logging categories can be found in the [Logging User Guide]({{< ref "/user-guide/logging.md#process-engine" >}}).
-To configure the logging behavior in Camunda Platform Run, customize your configuration file with the following properties.
+Camunda 平台提供细粒度和可定制的日志记录。 可以在 [日志用户指南]({{< ref "/user-guide/logging.md#process-engine" >}}) 中找到可用日志类别的概述。
+要在 Camunda Platform Run 中配置日志记录行为，请使用以下属性自定义配置文件。
 
-For more information on logging configuration visit the [Spring Boot Logging Guide](https://docs.spring.io/spring-boot/docs/2.4.0/reference/html/spring-boot-features.html#boot-features-logging).
+有关日志配置的更多信息，请访问 [Spring Boot 日志指南](https://docs.spring.io/spring-boot/docs/2.4.0/reference/html/spring-boot-features.html#boot-features-logging).
 
 <table class="table desc-table">
   <tr>
-      <th>Prefix</th>
-      <th>Property name</th>
-      <th>Description</th>
-      <th>Default value</th>
+      <th>前缀</th>
+      <th>参数名</th>
+      <th>描述</th>
+      <th>默认值</th>
   </tr>
   <tr>
       <td rowspan="15"><code>logging</code></td>
