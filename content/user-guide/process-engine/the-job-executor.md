@@ -72,10 +72,12 @@ Job是由流程引擎为很多不同的目的而创建的。存在以下Job类�
 
 Job优先级在流程执行过程中影响两个阶段：Job创建和Job获取。在Job创建期间，一个Job被分配了一个优先级。在Job获取过程中，流程引擎可以根据给定的Job优先级，相应地安排其执行。这意味着，Job是严格按照优先级的顺序来获取的。
 
-{{< note title="关于Job饥饿的提示" class="info" >}}
-  在调度场景中，饿死是一个典型的问题。当高优先级的Job不断被创建时，可能会发生低优先级的Job从未被获取。在使用优先级时，流程引擎没有应对这种情况的对策。这有两个原因：性能与资源利用。
-  从性能上讲，严格按照优先级获取Job，使Job执行器能够使用索引进行排序。像[aging](https://en.wikipedia.org/wiki/Aging_%28scheduling%29)这样动态提升饥饿Job的优先级的解决方案不能轻易用索引来排序。
-  此外，在一个环境中，Job执行器永远无法赶上执行Job表中的所有Job，以至于低优先级的Job无法在合理的时间内被执行，这可能是一个资源过载的普遍问题。在这种情况下，解决方案可以是增加额外的Job执行器资源，如在集群中增加一个新的节点。
+{{< note title="关于Job饥饿问题的提示" class="info" >}}
+在调度场景中，饥饿是一个典型的问题。当连续创建高优先级Job时，可能会发生永远无法获取低优先级Job的情况。
+
+在性能方面，严格按优先级获取Job使Job执行器能够使用索引进行排序。 像 [aging](https://en.wikipedia.org/wiki/Aging_%28scheduling%29) 这样动态提高饥饿Job优先级的解决方案不能轻易地用索引来补充。
+
+此外，在Job执行器永远无法赶上执行Job表中的所有Job以致无法在合理的时间内执行低优先级Job的环境中，可能存在资源过载的普遍问题。 在这种情况下，解决方案可能是根据 Job Executor 优先级范围分配工作负载（请参阅 [Job Executor priority range]({{< relref "#job-executor-priority-range" >}})）或增加 通过向集群添加新节点来分配Job执行器资源。
 {{< /note >}}
 
 
@@ -332,6 +334,16 @@ Job获取有两个阶段。第一阶段，Job执行器按照配置的数量查�
     <td><code>ACT_RU_JOB(TYPE_ DESC, DUEDATE_ ASC)</code></td>
   </tr>
 </table>
+
+## Job Executor priority range
+
+By default, the Job Executor executes all jobs regardless of their priorities. Some jobs might be more important to finish quicker than others, so we assign them priorities and set `jobExecutorAcquireByPriority` to `true` as described above. Depending on the workload, the Job Executor might be able to execute all jobs eventually. But if the load is high enough, we might face starvation where a Job Executor is always busy working on high-priority jobs and never manages to execute the lower priority jobs.
+
+To prevent this, you can specify a priority range for the job executor by setting values for [`jobExecutorPriorityRangeMin`]({{< ref "/reference/deployment-descriptors/tags/process-engine.md#jobExecutorPriorityRangeMin" >}}) or [`jobExecutorPriorityRangeMax`]({{< ref "/reference/deployment-descriptors/tags/process-engine.md#jobExecutorPriorityRangeMax" >}}) (or both). The Job Executor will only acquire jobs that are inside its priority range (inclusive). Both properties are optional, so it is fine only to set one of them.
+
+To avoid job starvation, make sure to have no gaps between Job Executor priority ranges. If, for example, Job Executor A has a priority range of 0 to 100 and Job Executor B executes jobs from priority 200 to `Long.MAX_VALUE` any job that receives a priority of 101 to 199 will never be executed. Job starvation can also occur with `batch jobs` and `history cleanup jobs` as both types of jobs also receive priorities (default: `0`). You can configure them via their respective properties: `batchJobPriority` and `historyCleanupJobPriority`.
+
+This feature is particularly useful if you want to separate multiple types of jobs from each other. For example, short-running, urgent jobs with high priority and long-running jobs that are not urgent but should finish eventually. Setting up a Job Executor priority range for both types will ensure that long-running jobs can not block urgent ones.
 
 ## 规避策略
 Job执行器使用一个规避策略来避免集群中的获取冲突，并在没有Job到期时减少数据库的负载。第二点可能会导致Job创建和Job执行之间的延迟，因为默认情况下，Job获取会将延迟时间翻倍到下一次获取运行。

@@ -101,9 +101,14 @@ Map<String, Object> variables = Variables.putValue("my-variable", "my-value");
 runtimeService.setVariablesAsync(processInstanceIds, variables);
 ```
 
-### 已知的限制
-
+{{< note title="已知的限制" class="info" >}}
 目前，无法通过批处理操作设置瞬时变量。 但是，你可以同步[设置瞬时变量][set transient variables]。
+
+The execution jobs of this batch can be scheduled by the job executor as [exclusive jobs]({{< ref "/user-guide/process-engine/the-job-executor.md#exclusive-jobs" >}}).
+As a result, the execution of some of this batch's jobs may be delayed by other exclusive jobs that are related to the same process instance that the variables should be set to.
+However, exclusive scheduling only happens when the jobs of this batch relate to exactly one process instance. 
+This can be controlled by configuring the [invocationsPerBatchJob]({{< ref "/user-guide/process-engine/batch.md#configuration" >}}) property.
+{{< /note >}}
 
 ## 设置移除时间
 
@@ -175,4 +180,3 @@ Batch batch = historyService.setRemovalTimeToHistoricBatches()
 
 [batch-migration]: {{< ref "/user-guide/process-engine/process-instance-migration.md#asynchronous-batch-migration-execution" >}}
 [batch]: {{< ref "/user-guide/process-engine/batch.md" >}}
-[set transient variables]: {{< ref "/user-guide/process-engine/variables.md#transient-variables" >}}

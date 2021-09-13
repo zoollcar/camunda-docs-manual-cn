@@ -23,12 +23,18 @@ menu:
 ## 嵌入应用程序的流程引擎
 
 * 所有的 Java 应用服务器
-* Camunda Spring Boot Starter: 启用 Tomcat （参见 [支持的版本]({{< ref "/user-guide/spring-boot-integration/version-compatibility.md" >}}) 和 [部署场景]({{< ref "/user-guide/spring-boot-integration/_index.md#supported-deployment-scenarios" >}})）
+* Camunda Spring Boot Starter: 启用 Tomcat
+  * [支持的版本]({{< ref "/user-guide/spring-boot-integration/version-compatibility.md" >}})
+  * [部署场景]({{< ref "/user-guide/spring-boot-integration/_index.md#supported-deployment-scenarios" >}})）
+* Camunda Engine Quarkus Extension
+  * [支持的版本]({{< ref "/user-guide/quarkus-integration/version-compatibility.md" >}})
+  * [部署场景]({{< ref "/user-guide/quarkus-integration/_index.md#supported-deployment-scenarios" >}})
+
 
 ## 容器管理的流程引擎 和 Camunda Cockpit, Tasklist, Admin
 
 * Apache Tomcat 9.0
-* JBoss EAP 7.0 / 7.1 / 7.2 / 7.3
+* JBoss EAP 7.0 / 7.1 / 7.2 / 7.3 / 7.4
 * Wildfly Application Server 13.0 / 14.0 / 15.0 / 16.0 / 17.0 / 18.0 / 19.0 / 20.0 / 21.0 / 22.0 / 23.0
 * IBM WebSphere Application Server 8.5 / 9.0 ([Enterprise Edition only](http://camunda.com/enterprise/))
 * Oracle WebLogic Server 12c (12R2) ([Enterprise Edition only](http://camunda.com/enterprise/))
@@ -45,6 +51,11 @@ menu:
 * PostgreSQL 9.6 / 10 / 11 / 12 / 13
 * Amazon Aurora PostgreSQL compatible with PostgreSQL 9.6 / 10.4 / 10.7 / 10.13 / 12.4
 * Microsoft SQL Server 2014/2016/2017/2019 (see [Configuration Note]({{< ref "/user-guide/process-engine/database/mssql-configuration.md" >}}))
+* Microsoft Azure SQL with Camunda-supported SQL Server compatibility levels 
+  (see [Configuration Note]({{< ref "/user-guide/process-engine/database/mssql-configuration.md#azure-sql-compatibility-levels-supported-by-camunda" >}})): 
+  * SQL Server on Azure Virtual Machines
+  * Azure SQL Managed Instance
+  * Azure SQL Database
 * H2 1.4 (not recommended for [Cluster Mode]({{< ref "/introduction/architecture.md#clustering-model" >}}) - see [Deployment Note]({{< ref "/user-guide/process-engine/deployments.md" >}}))
 * CockroachDB v20.1.3 (see [Configuration guide]({{< ref "/user-guide/process-engine/database/cockroachdb-configuration.md" >}}) for more details)
 
@@ -63,14 +74,14 @@ menu:
 
 # Java
 
-* Java 8 / 9 / 10 / 11 / 12 / 13 / 14 (前提是你的应用服务器/容器支持)
+* Java 8 / 9 / 10 / 11 / 12 / 13 / 14 / 15 (前提是你的应用服务器/容器支持)
 
 
 # Java 运行时
 
-* Oracle JDK 8 / 9 / 10 / 11 / 12 / 13 / 14
+* Oracle JDK 8 / 9 / 10 / 11 / 12 / 13 / 14 / 15
 * IBM JDK 8 (with J9 JVM)
-* OpenJDK 8 / 9 / 10 / 11 / 12 / 13 / 14, 包括以下的发行版：
+* OpenJDK 8 / 9 / 10 / 11 / 12 / 13 / 14 / 15, 包括以下的发行版：
   * Oracle OpenJDK
   * AdoptOpenJDK (with HotSpot JVM)
   * Amazon Corretto

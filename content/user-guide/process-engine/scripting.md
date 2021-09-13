@@ -460,7 +460,7 @@ execution.getProcessEngineServices().getRuntimeService().createMessageCorrelatio
 
 下面展示了如何在各种脚本语言中做到：
 
-* Goovy:
+* Groovy:
 
 ```groovy
 println 'This prints to the console'

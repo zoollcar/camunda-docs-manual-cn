@@ -12,9 +12,9 @@ menu:
 
 ---
 
-# Limit the Exposing Spring Beans in Expressions
+# 公开 Spring Beans 的限制
 
-使用 ProcessEngineFactoryBean 时，默认情况下，BPMN 流程中的所有表达式也将“看到”所有 Spring bean。 可以使用可配置的映射来限制要在表达式中公开的 bean，甚至根本不公开 bean。 下面的示例公开了一个 bean（printer），可在键 `printer` 下使用。 要完全不暴露 bean，只需在 `SpringProcessEngineConfiguration` 上传递一个空列表作为 `beans` 属性。 当没有设置 `beans` 属性时，上下文中的所有 Spring bean 都将可用。 
+使用 ProcessEngineFactoryBean 时，默认情况下，BPMN 流程中的所有表达式和脚本也将“看到”所有 Spring bean。 可以使用可以配置的映射来限制要公开的 bean，甚至根本不公开 bean。 下面的示例公开了一个 bean（printer），可在通过key `printer` 使用。 要完全公开任何 bean，请将空映射作为 `SpringProcessEngineConfiguration` 上的 `beans` 属性传递。 当没有设置 `beans` 属性时，上下文中的所有 Spring bean 都将可用。
 
 ```xml
 <bean id="processEngineConfiguration"

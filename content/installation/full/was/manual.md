@@ -367,14 +367,16 @@ Add the following artifacts (if not existing) from the folder `$WAS_DISTRIBUTION
 * `groovy-all-$GROOVY_VERSION.jar`
 
 
-## Freemarker Integration
+## GraalVM JavaScript Integration
 
 Add the following artifacts (if not existing) from the folder `$WAS_DISTRIBUTION/modules/lib/` to the `Camunda` shared library folder:
 
-* `camunda-template-engines-freemarker-$TEMPLATE_VERSION.jar`
-* `freemarker-2.3.29.jar`
-* `camunda-commons-utils-$COMMONS_VERSION.jar`
-
+* `graal-sdk-21.1.0.jar`
+* `icu4j-68.2.jar`
+* `js-21.1.0.jar`
+* `js-scriptengine-21.1.0.jar`
+* `regex-21.1.0.jar`
+* `truffle-api-21.1.0.jar`
 
 # Process Applications
 

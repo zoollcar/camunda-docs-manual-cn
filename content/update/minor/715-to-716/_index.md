@@ -21,6 +21,7 @@ This document guides you through the update from Camunda Platform `7.15.x` to `7
 1. For administrators: [Set Variables on Process Instance Migration](#set-variables-on-process-instance-migration)
 1. For administrators: [Java 15 and GraalVM JavaScript support](#java-15-and-graalvm-javascript-support)
 1. For administrators: [Upcoming Liquibase support](#upcoming-liquibase-support)
+1. For administrators and developers: [New Version of Templating Engines (Freemarker, Velocity)](#new-version-of-templating-engines-freemarker-velocity)
 
 This guide covers mandatory migration steps as well as optional considerations for the initial configuration of new functionality included in Camunda Platform 7.16.
 
@@ -189,8 +190,36 @@ Please consult the [Configure Script Engine Guide] on how to achieve this.
 [Full Distribution]: #full-distribution
 [Configure Script Engine Guide]: {{< ref "/user-guide/process-engine/scripting.md#configure-script-engine" >}}
 
+# Camunda Form Definition parsing
+
+The 7.16.0 release introduces a new database entity called Camunda Form Definition. After Process, Decision, and Case Definition, this is the fourth definition entity in the engine.
+Camunda Form Definitions represent a [Camunda Form] and introduce versioning and more powerful ways of referencing Camunda Forms from other deployments.
+
+To create Camunda Form Definitions, the engine will parse the form JSON when it is deployed. All files with the `.form` file ending will be treated as Camunda Form Definitions. This
+might lead to unwanted behavior in cases where files with the `.form` ending that are not Camunda Forms already exist or are deployed to the engine. In those cases, the parser will throw
+an exception as the definition could not be parsed correctly.
+
+[Camunda Form]: {{< ref "/user-guide/task-forms/_index.md#camunda-forms" >}}
+
 # Upcoming Liquibase support
 
 Starting with Camunda Platform `7.16.0`, Liquibase can be used to [install the database schema]({{< ref "/installation/database-schema.md" >}}) and keep track of necessary changes to it.
 However, Liquibase can *NOT* be used to update from `7.15.x` to `7.16`. Please use the [manual update approach]({{< ref "/installation/database-schema.md#manual-update" >}}) for that.
 Nonetheless, you can already [migrate to Liquibase]({{< ref "/installation/database-schema.md#migrate-to-liquibase" >}}) as soon as you updated to `7.16.0` and prepare your installation for any future updates.
+
+# New Version of Templating Engines (Freemarker, Velocity)
+
+Camunda 7.16 includes version 2.1.0 of the `org.camunda.template-engines` artifacts, in particular `camunda-template-engines-freemarker`, `camunda-template-engines-velocity`, and `camunda-template-engines-xquery-saxon`.
+
+This updates the following template engine versions:
+
+* Apache Freemarker
+  * Old version: 2.3.29 (Release date: August 2019)
+  * New version: 2.3.31 (Release date: February 2021)
+  * Change log: https://freemarker.apache.org/docs/api/freemarker/template/Configuration.html#Configuration-freemarker.template.Version-
+* Apache Velocity
+  * Old version: 2.2 (Release date: January 2020)
+  * New version: 2.3 (Release date: March 2021)
+  * Change log: https://velocity.apache.org/engine/2.3/upgrading.html
+  
+Please note that the new version of Freemarker contains changes that are not compatible with the previous version. We strongly recommend to test the execution of your templates before applying the update. In addition, you can replace the artifacts of version 2.1.0 by the old artifacts in version 2.0.0 to continue using the old versions of Freemarker and Velocity.
