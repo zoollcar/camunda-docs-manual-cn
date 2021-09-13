@@ -26,7 +26,7 @@ Camunda 平台以自定义 [JBoss/Wildfly 子系统](https://docs.jboss.org/auth
 * 流程引擎是具有服务生命周期和依赖关系的原生 JBoss 服务。
 * 自动部署 BPMN 2.0 流程（通过流程应用 API）。
 * （仅限 JBoss AS 7）- 将 JBoss Threads 提供的托管线程池与 Job Executor 结合使用。
-* （仅限 Wildfly）- 为通过 Camunda 平台子系统配置的作业执行器使用托管线程池。
+* （仅限 Wildfly）- 为通过 Camunda 平台子系统配置的Job执行器使用托管线程池。
 
 # 配置 Job 执行器 standalone.xml/domain.xml
 

@@ -16,7 +16,7 @@ menu:
 
 # ManagedJobExecutor
 
-没有资源感知实现的应用程序服务器的集成由称为“ManagedJobExecutor”的特定类型的“JobExecutor”提供。 `ManagedJobExecutor` 的目的是通过使用托管资源（主要是：托管线程）确保流程引擎中的作业执行由应用程序服务器正确控制。
+没有资源感知实现的应用程序服务器的集成由称为“ManagedJobExecutor”的特定类型的“JobExecutor”提供。 `ManagedJobExecutor` 的目的是通过使用托管资源（主要是：托管线程）确保流程引擎中的Job执行由应用程序服务器正确控制。
 
 引擎必须配置以使用`ManagedJobExecutor`。 例如，当从 Java 代码引导引擎时，你将创建一个“ManagedJobExecutor”的新实例，并通过从应用程序服务器的环境中注入它来提供它所具有的资源依赖关系。 然后可以将“ManagedJobExecutor”设置为流程引擎应该使用的“JobExecutor”。
 
@@ -67,5 +67,5 @@ public class EngineBuilder {
 
    然而，在这个用例中，之所以选择这种方法，是因为`ManagedJobExecutor` 依赖于`ManagedExecutorService` 的存在，并且该接口仅在JEE7 中引入。 早期版本的 JEE 无法满足这种依赖性，并且如果为所有应用程序服务器自动激活该组件，则会出现故障。
 
-   为了避免作业执行器在不可用的资源上运行，我们建议在“ManagedExecutorService”变得不可用时通过其“shutdown()”方法关闭作业执行器。
+   为了避免Job执行器在不可用的资源上运行，我们建议在“ManagedExecutorService”变得不可用时通过其“shutdown()”方法关闭Job执行器。
 {{< /note >}}
