@@ -1,6 +1,6 @@
 ---
 
-title: 'Read a Model'
+title: '读取模型'
 weight: 10
 
 menu:
@@ -11,59 +11,60 @@ menu:
 ---
 
 
-If you already created a BPMN model and want to process it through the BPMN model API, you can import it with the
-following methods.
+如果你已经创建了一个BPMN模型，并想通过BPMN模型API来处理它，你可以用以下方法导入它。
 
 ```java
-// read a model from a file
+// 从文件中读取一个模型
 File file = new File("PATH/TO/MODEL.bpmn");
 BpmnModelInstance modelInstance = Bpmn.readModelFromFile(file);
 
-// read a model from a stream
+// 从流中读取一个模型
 InputStream stream = [...]
 BpmnModelInstance modelInstance = Bpmn.readModelFromStream(stream);
 ```
 
-After you imported your model you can search for elements by their id or by the type of element.
+在导入你的模型后，你可以通过他们的id或元素的类型来搜索元素。
 
 ```java
-// find element instance by ID
+// 通过id获取模型实例
 StartEvent start = (StartEvent) modelInstance.getModelElementById("start");
 
-// find all elements of the type task
+// 找到所有task类型的元素
 ModelElementType taskType = modelInstance.getModel().getType(Task.class);
 Collection<ModelElementInstance> taskInstances = modelInstance.getModelElementsByType(taskType);
 ```
 
-For every element instance you can now read and edit the attribute values. You can do this by either using the provided
-helper methods or the generic XML model API. If you added custom attributes to the BPMN elements, you can
-always access them with the generic XML model API.
+对于每个元素实例，你现在可以读取和编辑属性值。
+
+你可以通过使用辅助方法或通用的XML模型API来实现。
+
+如果你在BPMN元素中添加了自定义属性，你可以始终使用通用的XML模型API来访问它们。
 
 ```java
 StartEvent start = (StartEvent) modelInstance.getModelElementById("start");
 
-// read attributes by helper methods
+// 通过辅助方法读取属性
 String id = start.getId();
 String name = start.getName();
 
-// edit attributes by helper methods
+// 通过辅助方法编辑属性
 start.setId("new-id");
 start.setName("new name");
 
-// read attributes by generic XML model API (with optional namespace)
+// 通过通用的XML模型API读取属性（有可选的命名空间）。
 String custom1 = start.getAttributeValue("custom-attribute");
 String custom2 = start.getAttributeValueNs("custom-attribute-2", "http://camunda.org/custom");
 
-// edit attributes by generic XML model API (with optional namespace)
+// 通过通用的XML模型API编辑属性（有可选的命名空间）。
 start.setAttributeValue("custom-attribute", "new value");
 start.setAttributeValueNs("custom-attribute", "http://camunda.org/custom", "new value");
 ```
 
-You can also access the child elements of an element or references to other elements. For example, a sequence flow
-references a source and a target element while a flow node (like start event, tasks, etc.) has child elements
-for incoming and outgoing sequence flows.
+你也可以访问一个元素的子元素或对其他元素的引用。
 
-For example, the following BPMN model was created by the BPMN model API as an example for a simple process.
+例如，一个序列流引用了一个源元素和一个目标元素，而一个流节点（如开始事件、任务等）有子元素用于传入和传出的序列流。
+
+例如，下面的BPMN模型是由BPMN模型API创建的，作为一个简单流程的例子。
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -85,7 +86,7 @@ For example, the following BPMN model was created by the BPMN model API as an ex
 </definitions>
 ```
 
-You can now use the BPMN model API to get the source and target flow node of the sequence flow with the ID *start-task1*.
+现在你可以使用BPMN模型API来获得ID为*start-task1*的序列流的源和目标流节点。
 
 ```java
 // read bpmn model from file
@@ -103,8 +104,9 @@ Collection<SequenceFlow> outgoing = source.getOutgoing();
 assert(outgoing.contains(sequenceFlow));
 ```
 
-With these references you can easily create helper methods for different use cases. For example, if you want to
-find the following flow nodes of a task or a gateway you can use a helper method like the following.
+有了这些引用，你可以很容易地为不同的使用情况创建辅助方法。
+
+例如，如果你想找到一个任务或网关的流程节点，你可以使用下面这样一个辅助方法。
 
 ```java
 public Collection<FlowNode> getFlowingFlowNodes(FlowNode node) {
@@ -115,3 +117,4 @@ public Collection<FlowNode> getFlowingFlowNodes(FlowNode node) {
   return followingFlowNodes;
 }
 ```
+

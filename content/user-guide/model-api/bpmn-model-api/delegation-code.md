@@ -1,6 +1,6 @@
 ---
 
-title: 'Delegation Code'
+title: '委托代码'
 weight: 20
 
 menu:
@@ -11,14 +11,13 @@ menu:
 ---
 
 
-If you use [Delegation Code]({{< ref "/user-guide/process-engine/delegation-code.md" >}}), you can access the BPMN model instance and current element of the executed process. If a BPMN model is accessed, it will be cached to avoid redundant database queries.
+如果你使用 [委托代码]({{< ref "/user-guide/process-engine/delegation-code.md" >}}), 你可以访问BPMN模型实例和当前执行流程的元素。如果访问BPMN模型，它将被缓存，以避免冗余的数据库查询。
 
+# Java 代理类
 
-# Java Delegate
+如果你的类实现了`org.camunda.bpm.engine.delegate.JavaDelegate`接口，你可以访问BPMN模型实例和当前的流程元素。
 
-If your class implements the `org.camunda.bpm.engine.delegate.JavaDelegate` interface, you can access the BPMN model instance
-and the current flow element. In the following example the `JavaDelegate` was added to a service task in the BPMN model.
-Therefore the returned flow element can be cast to a `ServiceTask`.
+在下面的例子中，`JavaDelegate`被添加到BPMN模型的一个服务任务中。因此，返回的流程元素可以被转换为`ServiceTask`。
 
 ```java
 public class ExampleServiceTask implements JavaDelegate {
@@ -30,12 +29,11 @@ public class ExampleServiceTask implements JavaDelegate {
 }
 ```
 
+# 执行监听器
 
-# Execution Listener
+如果你的类实现了`org.camunda.bpm.engine.delegate.ExecutionListener`接口，你可以访问BPMN模型实例和当前的流程元素。
 
-If your class implements the `org.camunda.bpm.engine.delegate.ExecutionListener` interface, you can access the BPMN model instance
-and the current flow element. As an Execution Listener can be added to several elements like process, events, tasks, gateways
-and sequence flows, it can not be guaranteed which type the flow element will be.
+由于一个执行监听器可以被添加到多个元素中，如流程、事件、任务、网关和序列流，因此不能保证流元素的类型。
 
 ```java
 public class ExampleExecutionListener implements ExecutionListener {
@@ -47,11 +45,9 @@ public class ExampleExecutionListener implements ExecutionListener {
 }
 ```
 
+# 任务监听器
 
-# Task Listener
-
-If your class implements the `org.camunda.bpm.engine.delegate.TaskListener` interface, you can access the BPMN model instance
-and the current user task since a Task Listener can only be added to a user task.
+如果你的类实现了`org.camunda.bpm.engine.delegate.TaskListener`接口，你可以访问BPMN模型实例和当前的用户任务，因为任务监听器只能被添加到用户任务中。
 
 ```java
 public class ExampleTaskListener implements TaskListener {
