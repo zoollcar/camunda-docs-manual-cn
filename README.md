@@ -20,5 +20,5 @@ Camunda平台是一款轻量级的商业流程开源平台
 ## 贡献者列表
 |:construction_worker:|:construction_worker:|:construction_worker:|:construction_worker:|:construction_worker:|:construction_worker:|
 |:-------------------:|:-------------------:|:-------------------:|:-------------------:|:-------------------:|:-------------------:|
-|<img height='48' width='48' src='https://avatars.githubusercontent.com/u/22218688?v=4'>|--|--|--|--|--|
-|[@ChenFeng](https://github.com/zoollcar)|--|--|--|--|--|
+|<img height='48' width='48' src='https://avatars.githubusercontent.com/u/22218688?v=4'>| <img height='48' width='48' src='https://avatars.githubusercontent.com/u/35883111'> |--|--|--|--|
+|[@ChenFeng](https://github.com/zoollcar)| [@marun](https://github.com/marunrun)|--|--|--|--|
