@@ -1,5 +1,5 @@
 ---
-baseURL: "http://camunda-cn.shaochenfeng.com/"
+baseURL: "https://camunda-cn.shaochenfeng.com/"
 languageCode: "zh-cn"
 title: "Camunda 中文站"
 theme: "camunda"
